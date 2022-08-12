@@ -1,0 +1,106 @@
+plugins {
+    id 'com.android.application'
+    // 添加agcp插件配置
+    id 'com.huawei.agconnect'
+}
+
+android {
+    compileSdk 28
+    useLibrary 'org.apache.http.legacy'
+    defaultConfig {
+        applicationId "com.example.lksynthesizeapp"
+        minSdk 26
+        targetSdk 28
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+//        externalNativeBuild {
+//            cmake {
+//                cppFlags '-std=c++11'
+//            }
+//        }
+        ndk {
+            moduleName "ncnn"
+            abiFilters "armeabi-v7a", "arm64-v8a"
+        }
+        //个推
+        manifestPlaceholders = [
+                //从 3.1.2.0 版本开始，APPID 占位符从 GETUI_APP_ID 切换为 GETUI_APPID
+                //后续所有产品的 APPID 均统一配置为 GETUI_APPID 占位符
+                GETUI_APPID       : "iinLTplUFn7b8Zy2dl8755",
+        ]
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+//    compileOptions {
+//        sourceCompatibility JavaVersion.VERSION_1_8
+//        targetCompatibility JavaVersion.VERSION_1_8
+//    }
+    externalNativeBuild {
+        cmake {
+//            path file('src/main/cpp/CMakeLists.txt')
+            path file('src/main/jni/CMakeLists.txt')
+            version '3.18.1'
+        }
+    }
+
+    buildFeatures {
+        viewBinding true
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.3.0'
+    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation files('libs\\jsch_SSH.jar')
+    implementation files('libs\\modbus4Android-1.2.jar')
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    //空间声名插件
+    implementation 'com.jakewharton:butterknife:10.1.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.1.0'
+    //权限声名 AndroidX 的应用
+    implementation 'pub.devrel:easypermissions:3.0.0'
+    implementation 'pub.devrel:easypermissions:2.0.1'
+    //华为二维码扫描
+    implementation 'com.huawei.hms:scanplus:2.4.0.302'
+
+    // Retrofit库
+    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
+    // gson解析，可以自行替换
+    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
+    // 日志的拦截器，也可以自行选择
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.6.0'
+    implementation 'io.reactivex.rxjava2:rxjava:2.0.1'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    //recyclerView
+    implementation "androidx.recyclerview:recyclerview:1.1.0"
+    implementation "androidx.recyclerview:recyclerview-selection:1.1.0-rc01"
+    //上拉加载
+    implementation 'androidx.appcompat:appcompat:1.0.0'//必须 1.0.0 以上
+    implementation  'io.github.scwang90:refresh-layout-kernel:2.0.5'      //核心必须依赖
+    implementation  'io.github.scwang90:refresh-footer-classics:2.0.5'    //经典加载
+    //glide
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+    //既构推流
+    implementation 'com.github.zegolibrary:express-video:2.15.0'
+    //个推SDK
+    implementation 'com.getui:gtsdk:3.2.9.0'
+    //个推核心组件
+    implementation 'com.getui:gtc:3.1.7.0'
+    implementation 'net.butterflytv.utils:rtmp-client:3.1.0'
+    //测试rtmp播放器
+    implementation 'com.github.fanhua1994:FastVideoPlayer:1.0.6'
+    //SerialHelper
+    implementation 'tp.xmaihh:serialport:2.1'
+}

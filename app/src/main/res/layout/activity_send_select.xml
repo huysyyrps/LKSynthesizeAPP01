@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/linelayout_radion"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/relativeLayoutHeader"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/color_bg_selected">
+
+        <TextView
+            android:id="@+id/tv_tittle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/app_name"
+            android:textColor="@android:color/white"
+            android:textSize="18sp" />
+
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_margin="5dp"
+        android:background="@drawable/linelayout_radion"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/linelayout_color_bigradion"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/TextView"
+                android:layout_weight="1"
+                android:text="工程名称* :"
+                android:textColor="@color/white"
+                android:textSize="17dp" />
+
+            <EditText
+                android:id="@+id/etProject"
+                style="@style/EditText"
+                android:layout_weight="2.5"
+                android:hint="请填写工程名称"
+                android:maxLength="15"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/linelayout_color_bigradion"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/TextView"
+                android:layout_weight="1"
+                android:text="工件名称* :"
+                android:textColor="@color/white"
+                android:textSize="17dp" />
+
+            <EditText
+                android:id="@+id/etWorkName"
+                style="@style/EditText"
+                android:layout_weight="2.5"
+                android:hint="请填写工件名称"
+                android:maxLength="15"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/linelayout_color_bigradion"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/TextView"
+                android:layout_weight="1"
+                android:text="工件编号* :"
+                android:textColor="@color/white"
+                android:textSize="17dp" />
+
+            <EditText
+                android:id="@+id/etWorkCode"
+                style="@style/EditText"
+                android:layout_weight="2.5"
+                android:hint="请填写工件编号"
+                android:maxLength="15"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/linelayout_radion"
+            android:orientation="vertical"
+            android:padding="15dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="温馨提示:"
+                android:textColor="@color/red" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:lineHeight="15dp"
+                android:text="\t\t\请在选择“上传方式”之前填写“工程名称”、“工件名称”、“工件编号”等信息，便于电脑端查找和分类."
+                android:textColor="@color/ziti"
+                android:textSize="13dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="165dp"
+        android:orientation="vertical"
+        android:layout_margin="5dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/linelayout_radion">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="10dp"
+            android:gravity="center_vertical"
+            android:text="@string/updata_found" />
+        <View style="@style/HLine" />
+
+        <LinearLayout
+            android:id="@+id/linLocak"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal"
+            android:layout_marginLeft="15dp">
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_local" />
+
+            <TextView
+                style="@style/TextView"
+                android:layout_marginLeft="10dp"
+                android:gravity="center_vertical"
+                android:text="@string/updata_local" />
+        </LinearLayout>
+        <View style="@style/HLine" />
+
+        <LinearLayout
+            android:id="@+id/linSocket"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal"
+            android:layout_marginLeft="15dp">
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_socket" />
+
+            <TextView
+                style="@style/TextView"
+                android:layout_marginLeft="10dp"
+                android:gravity="center_vertical"
+                android:text="@string/updata_socket" />
+        </LinearLayout>
+        <View style="@style/HLine"
+            android:visibility="gone"/>
+
+        <LinearLayout
+            android:id="@+id/linDiscern"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal"
+            android:layout_marginLeft="15dp">
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_discern" />
+
+            <TextView
+                style="@style/TextView"
+                android:layout_marginLeft="10dp"
+                android:gravity="center_vertical"
+                android:text="@string/updata_socket" />
+        </LinearLayout>
+        <View style="@style/HLine" />
+
+        <LinearLayout
+            android:id="@+id/linRobot"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal"
+            android:layout_marginLeft="15dp">
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_robot" />
+
+            <TextView
+                style="@style/TextView"
+                android:layout_marginLeft="10dp"
+                android:gravity="center_vertical"
+                android:text="@string/robot" />
+        </LinearLayout>
+    </LinearLayout>
+
+
+</LinearLayout>

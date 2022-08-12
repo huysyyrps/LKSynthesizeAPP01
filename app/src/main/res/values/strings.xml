@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+
+<resources>
+    <string name="app_name">鲁科检测系统</string>
+    <string-array name="model_array">
+        <item>211223</item>
+        <item>5s</item>
+    </string-array>
+    <string-array name="cpugpu_array">
+        <item>CPU</item>
+        <item>GPU</item>
+    </string-array>
+
+    <string name="title_tips">提示</string>
+    <string name="title_tips_save">保存</string>
+    <string name="title_tips_up">提交</string>
+    <string name="title_tips_confim">确定</string>
+    <string name="title_tips_cancel">取消</string>
+    <string name="QR_code">二维码扫描</string>
+    <string name="viewfinderview_status_text1">将二维码放入取景框内</string>
+    <string name="handler_data">业务处理中</string>
+    <string name="updata_found">上传方式</string>
+    <string name="updata_local">本地存储</string>
+    <string name="updata_socket">实时上传</string>
+    <string name="line_discern">在线检测</string>
+    <string name="robot">机器人</string>
+    <string name="setting">参数设置</string>
+    <string name="save_success">保存成功</string>
+    <string name="save_faile">保存失败</string>
+    <string name="length_video">Length:</string>
+    <string name="gravando">Recording...</string>
+    <string name="stop">Stop</string>
+    <string name="delet">删除</string>
+    <string name="action_settings">Settings</string>
+    <string name="rtc_success">转推成功</string>
+    <string name="rtc_faile">转推失败</string>
+
+    <string name="connect_success">连接成功</string>
+    <string name="connect_faile">连接失败</string>
+
+
+    <string name="ce_up">磁轭抬起</string>
+    <string name="ce_down">磁轭落下</string>
+
+    <string name="light_black">黑光模式</string>
+    <string name="light_wither">白光模式</string>
+
+    <string name="search_light_open">探照灯开启</string>
+    <string name="search_light_close">探照灯关闭</string>
+
+    <string name="ch_control_open">开启磁化</string>
+    <string name="ch_control_close">关闭磁化</string>
+</resources>

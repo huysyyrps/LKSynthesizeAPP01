@@ -1,0 +1,49 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    dependencies {
+        // 增加华为二维码扫描agcp插件配置，推荐您使用最新版本的agcp插件。
+        classpath 'com.huawei.agconnect:agcp:1.6.4.300'
+        classpath 'com.android.tools.build:gradle:7.1.2'
+    }
+}
+
+ plugins {
+    id 'com.android.application' version '7.1.2' apply false
+    id 'com.android.library' version '7.1.2' apply false
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+
+
+//buildscript {
+//    ext {
+//        compose_version = '1.0.1'
+//    }
+//    repositories {
+//        maven { url 'https://jitpack.io' }
+//        maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
+//        mavenCentral()
+//    }
+//    dependencies {
+//        classpath "com.android.tools.build:gradle:7.1.2"
+//        classpath 'com.huawei.agconnect:agcp:1.6.4.300'
+//    }
+//}
+//
+//allprojects {
+//    repositories {
+//        jcenter()
+//        maven { url 'https://jitpack.io' }
+//        maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
+//        mavenCentral()
+//        jcenter(){ url 'http://jcenter.bintray.com/'}
+//        maven { url 'https://jitpack.io' }
+//        google()
+//    }
+//}
+//
+//task clean(type: Delete) {
+//    delete rootProject.buildDir
+//}

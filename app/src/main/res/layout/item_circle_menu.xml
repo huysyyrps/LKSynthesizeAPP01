@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.example.lksynthesizeapp.ChiFen.Robot.View.CircleItemView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+<!--
+    android:background="@drawable/button_select"-->
+    <!--<circle.MyImageView-->
+    <ImageView
+        android:id="@+id/iv_circle_menu_item"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/button_select"
+        android:contentDescription="@string/app_name" />
+    <TextView
+        android:id="@+id/tv_circle_menu_item"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:gravity="center"
+        android:textSize="13sp" />
+
+</com.example.lksynthesizeapp.ChiFen.Robot.View.CircleItemView>

@@ -1,0 +1,46 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+        maven { allowInsecureProtocol = true
+            url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        maven { allowInsecureProtocol = true
+            url 'http://maven.aliyun.com/nexus/content/repositories/jcenter' }
+        maven { allowInsecureProtocol = true
+            url 'http://maven.aliyun.com/nexus/content/repositories/google' }
+        maven { allowInsecureProtocol = true
+            url 'http://maven.aliyun.com/nexus/content/repositories/gradle-plugin' }
+        maven { allowInsecureProtocol = true
+            url "https://jitpack.io" }
+
+        maven { url 'https://www.jitpack.io' }
+        // 配置华为SCAN二维码扫描。
+        maven { url 'https://developer.huawei.com/repo/' }
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven { allowInsecureProtocol = true
+            url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        maven { allowInsecureProtocol = true
+            url 'http://maven.aliyun.com/nexus/content/repositories/jcenter' }
+        maven { allowInsecureProtocol = true
+            url 'http://maven.aliyun.com/nexus/content/repositories/google' }
+        maven { allowInsecureProtocol = true
+            url 'http://maven.aliyun.com/nexus/content/repositories/gradle-plugin' }
+        maven { allowInsecureProtocol = true
+            url "https://jitpack.io" }
+
+        maven { url 'https://www.jitpack.io' }
+        // 配置华为SCAN二维码扫描。
+        maven { url 'https://developer.huawei.com/repo/' }
+        // 个推
+        maven {url "https://mvn.getui.com/nexus/content/repositories/releases/"}
+    }
+}
+rootProject.name = "LKSynthesizeAPP"
+include ':app'
