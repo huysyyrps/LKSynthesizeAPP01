@@ -23,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.lksynthesizeapp.ChiFen.Activity.DescernActivity;
 import com.example.lksynthesizeapp.ChiFen.Activity.LocalActivity;
 import com.example.lksynthesizeapp.ChiFen.Activity.RobotActivity;
+import com.example.lksynthesizeapp.ChiFen.Activity.RobotDescernActivity;
 import com.example.lksynthesizeapp.Constant.Base.AlertDialogUtil;
 import com.example.lksynthesizeapp.Constant.Base.DialogCallBack;
 import com.example.lksynthesizeapp.Constant.Base.EditTextLengClient;
@@ -44,6 +45,8 @@ import butterknife.OnClick;
 public class SendSelectActivity extends AppCompatActivity {
     @BindView(R.id.tv_tittle)
     TextView tvTittle;
+    @BindView(R.id.tvConfim)
+    TextView tvConfim;
     @BindView(R.id.relativeLayoutHeader)
     RelativeLayout relativeLayoutHeader;
     @BindView(R.id.etProject)
@@ -68,10 +71,9 @@ public class SendSelectActivity extends AppCompatActivity {
     MediaProjectionManager projectionManager;
     private WifiManager mWifiManager;
     private String sid = "", pwd = "", max = "";
-    private WifiManager wifiMgr;
-    private WifiManager.LocalOnlyHotspotReservation mReservation;
     Handler handler = new Handler();
     Runnable runnable;
+    String Max, model, camer, descern;
 
     //推出程序
     @Override
@@ -89,6 +91,10 @@ public class SendSelectActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send_select);
         ButterKnife.bind(this);
+        Max =   sharePreferencesUtils.getString(SendSelectActivity.this, "max", "");
+        model =  sharePreferencesUtils.getString(SendSelectActivity.this, "model", "");
+        camer = sharePreferencesUtils.getString(SendSelectActivity.this, "havaCamer", "");
+        descern =  sharePreferencesUtils.getString(SendSelectActivity.this, "haveDescern", "");
 //        new getIp().cleanARP(new GetIpCallBack() {
 //            @Override
 //            public void success(String backAdress) {
@@ -108,23 +114,29 @@ public class SendSelectActivity extends AppCompatActivity {
         new EditTextLengClient().textLeng(etProject, this);
         new EditTextLengClient().textLeng(etWorkCode, this);
         new EditTextLengClient().textLeng(etWorkName, this);
+        String passWord = sharePreferencesUtils.getString(SendSelectActivity.this, "max", "");
+        if (passWord != null && passWord.length() >= 6) {
+            passWord = passWord.substring(passWord.length() - 8, passWord.length());
+            Log.e("XXXXX", passWord);
+        } else {
+            Toast.makeText(this, "设备MAX地址错误", Toast.LENGTH_SHORT).show();
+        }
 
-        alertDialogUtil.showWifiSetting(SendSelectActivity.this, "office",
-                sharePreferencesUtils.getString(SendSelectActivity.this, "max", ""), new DialogCallBack() {
-                    @Override
-                    public void confirm(String data, Dialog dialog) {
-                        //Intent intent = new Intent(Settings.ACTION_AIRPLANE_MODE_SETTINGS);
-                        //startActivity(intent);
-                    }
+        alertDialogUtil.showWifiSetting(SendSelectActivity.this, "office", passWord, new DialogCallBack() {
+            @Override
+            public void confirm(String data, Dialog dialog) {
+                //Intent intent = new Intent(Settings.ACTION_AIRPLANE_MODE_SETTINGS);
+                //startActivity(intent);
+            }
 
-                    @Override
-                    public void cancel() {
+            @Override
+            public void cancel() {
 
-                    }
-                });
+            }
+        });
     }
 
-    @OnClick({R.id.linLocak, R.id.linSocket, R.id.linDiscern, R.id.linRobot})
+    @OnClick({R.id.linLocak, R.id.linSocket, R.id.linDiscern, R.id.linRobot, R.id.tvConfim})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.linLocak:
@@ -143,6 +155,10 @@ public class SendSelectActivity extends AppCompatActivity {
                 seSPData();
                 SelectActivity("机器人");
                 break;
+            case R.id.tvConfim:
+                seSPData();
+                SelectActivity("");
+                break;
         }
     }
 
@@ -154,19 +170,27 @@ public class SendSelectActivity extends AppCompatActivity {
 
     public void SelectActivity(String data) {
         if (address != null) {
-            if (etProject.getText().toString().trim().equals("")) {
+            if (camer.equals("0")) {
+                Toast.makeText(this, "当前设备不具备摄像头功能", Toast.LENGTH_SHORT).show();
+                return;
+            }else if (etProject.getText().toString().trim().equals("")) {
                 Toast.makeText(SendSelectActivity.this, "请输入工程名称", Toast.LENGTH_SHORT).show();
+                return;
             } else if (etWorkName.getText().toString().trim().equals("")) {
                 Toast.makeText(SendSelectActivity.this, "请输入工件名称", Toast.LENGTH_SHORT).show();
+                return;
             } else if (etWorkCode.getText().toString().trim().equals("")) {
                 Toast.makeText(SendSelectActivity.this, "请输入工件编号", Toast.LENGTH_SHORT).show();
+                return;
             } else {
-                if (data.equals("本地存储")) {
-                    haveAddress("本地存储");
-                } else if (data.equals("在线检测")) {
-                    haveAddress("在线检测");
-                } else if (data.equals("机器人")) {
-                    haveAddress("机器人");
+                if (model.equals("LK-PXQ")&&descern.equals("0")) {
+                    haveAddress("PXQNODESCERN");
+                } else if (model.equals("LK-PXQ")&&descern.equals("1")) {
+                    haveAddress("PXQHAVEDESCERN");
+                } else if (descern.equals("1")) {
+                    haveAddress("CFTSYHAVEDESCERN");
+                }else if (descern.equals("0")) {
+                    haveAddress("CFTSYNODESCERN");
                 }
             }
         } else {
@@ -190,6 +214,7 @@ public class SendSelectActivity extends AppCompatActivity {
                                 }
                             }
                         }
+
                         @Override
                         public void faile() {
                             Log.e("XXXXXX11", "11111");
@@ -200,27 +225,59 @@ public class SendSelectActivity extends AppCompatActivity {
             };
             handler.postDelayed(runnable, 1000);
             ProgressDialogUtil.startLoad(this, "设备连接中");
-        }else {
+        } else {
             connect(tag);
         }
     }
 
     private void connect(String tag) {
-        if (handler!=null){
+        if (handler != null) {
             handler.removeCallbacks(runnable);
             handler.removeCallbacksAndMessages(null);
             handler = null;
         }
         ProgressDialogUtil.stopLoad();
-        if (tag.equals("本地存储")){
-            sharePreferencesUtils.setString(SendSelectActivity.this, "sendSelect", "本地存储");
+        if (tag.equals("PXQNODESCERN")){
+//            sharePreferencesUtils.setString(SendSelectActivity.this, "sendSelect", "机器人");
+            intent = new Intent(SendSelectActivity.this, RobotActivity.class);
+            intent.putExtra("address", address + "");
+            startActivity(intent);
+        }
+        if (tag.equals("PXQHAVEDESCERN")){
+//            sharePreferencesUtils.setString(SendSelectActivity.this, "sendSelect", "机器人");
+            intent = new Intent(SendSelectActivity.this, RobotDescernActivity.class);
+            intent.putExtra("address", address + "");
+            startActivity(intent);
+        }
+        if (tag.equals("CFTSYNODESCERN")){
             intent = new Intent(SendSelectActivity.this, LocalActivity.class);
             intent.putExtra("project", etProject.getText().toString().trim());
             intent.putExtra("etWorkName", etWorkName.getText().toString().trim());
             intent.putExtra("etWorkCode", etWorkCode.getText().toString().trim());
             intent.putExtra("address", address + "");
             startActivity(intent);
-        }else if (tag.equals("在线检测")){
+        }
+        if (tag.equals("CFTSYHAVEDESCERN")){
+            intent = new Intent(SendSelectActivity.this, DescernActivity.class);
+            intent.putExtra("project", etProject.getText().toString().trim());
+            intent.putExtra("etWorkName", etWorkName.getText().toString().trim());
+            intent.putExtra("etWorkCode", etWorkCode.getText().toString().trim());
+            intent.putExtra("address", address + "");
+            startActivity(intent);
+        }
+
+
+
+        if (tag.equals("本地存储")) {
+            sharePreferencesUtils.setString(SendSelectActivity.this, "sendSelect", "本地存储");
+//            intent = new Intent(SendSelectActivity.this, LocalActivity.class);
+            intent = new Intent(SendSelectActivity.this, RobotDescernActivity.class);
+            intent.putExtra("project", etProject.getText().toString().trim());
+            intent.putExtra("etWorkName", etWorkName.getText().toString().trim());
+            intent.putExtra("etWorkCode", etWorkCode.getText().toString().trim());
+            intent.putExtra("address", address + "");
+            startActivity(intent);
+        } else if (tag.equals("在线检测")) {
             sharePreferencesUtils.setString(SendSelectActivity.this, "sendSelect", "在线检测");
             intent = new Intent(SendSelectActivity.this, DescernActivity.class);
             intent.putExtra("project", etProject.getText().toString().trim());
@@ -228,60 +285,12 @@ public class SendSelectActivity extends AppCompatActivity {
             intent.putExtra("etWorkCode", etWorkCode.getText().toString().trim());
             intent.putExtra("address", address + "");
             startActivity(intent);
-        }else if (tag.equals("机器人")){
+        } else if (tag.equals("机器人")) {
             sharePreferencesUtils.setString(SendSelectActivity.this, "sendSelect", "机器人");
             intent = new Intent(SendSelectActivity.this, RobotActivity.class);
             intent.putExtra("address", address + "");
             startActivity(intent);
         }
     }
-
-//     else if (data.equals("实时上传")) {
-//        sharePreferencesUtils.setString(SendSelectActivity.this, "sendSelect", "实时上传");
-//        intent = new Intent(SendSelectActivity.this, BroadcastMediaCodecActivity.class);
-//        intent.putExtra("project", etProject.getText().toString().trim());
-//        intent.putExtra("etWorkName", etWorkName.getText().toString().trim());
-//        intent.putExtra("etWorkCode", etWorkCode.getText().toString().trim());
-//        startActivity(intent);
-//    }
-
-//    //获取设备基础信息
-//    public void getNewData() {
-//        try {
-//            address = new getIp().getConnectIp();
-//            new Thread(new Runnable() {
-//                @Override
-//                public void run() {
-////                            cat /data.json  /write_data.sh
-//                    SSHExcuteCommandHelper.writeBefor(address, "cat /data.json", new SSHCallBack() {
-//                        @Override
-//                        public void confirm(String data) {
-//                            if (data != null && !data.equals("\n") && !data.equals("")) {
-//                                Gson gson = new Gson();
-////                                Setting setting = gson.fromJson(data, Setting.class);
-////                                sharePreferencesUtils.setString(SendSelectActivity.this, "acdc", setting.getData().getAcdc());
-////                                sharePreferencesUtils.setString(SendSelectActivity.this, "auto", setting.getData().getAuto());
-////                                sharePreferencesUtils.setString(SendSelectActivity.this, "auto_time", setting.getData().getAuto_time());
-////                                sharePreferencesUtils.setString(SendSelectActivity.this, "bw", setting.getData().getBw());
-////                                sharePreferencesUtils.setString(SendSelectActivity.this, "id", setting.getData().getId());
-////                                sharePreferencesUtils.setString(SendSelectActivity.this, "mac", setting.getData().getMac());
-////                                sharePreferencesUtils.setString(SendSelectActivity.this, "power", setting.getData().getPower());
-////                                sharePreferencesUtils.setString(SendSelectActivity.this, "ip", setting.getData().getIp());
-////                                sharePreferencesUtils.setString(SendSelectActivity.this, "date", setting.getData().getDate());
-////                                sharePreferencesUtils.setString(SendSelectActivity.this, "mode", setting.getData().getMode());
-//                            }
-//                        }
-//
-//                        @Override
-//                        public void error(String s) {
-////                            Toast.makeText(SendSelectActivity.this, s, Toast.LENGTH_SHORT).show();
-//                        }
-//                    });
-//                }
-//            }).start();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
 
 }

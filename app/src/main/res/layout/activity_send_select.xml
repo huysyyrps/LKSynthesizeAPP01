@@ -139,21 +139,24 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="165dp"
+        android:layout_height="55dp"
         android:orientation="vertical"
         android:layout_margin="5dp"
-        android:layout_marginBottom="10dp"
-        android:background="@drawable/linelayout_radion">
+        android:layout_marginBottom="10dp">
 
         <TextView
+            android:id="@+id/tvConfim"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginLeft="10dp"
-            android:gravity="center_vertical"
-            android:text="@string/updata_found" />
-        <View style="@style/HLine" />
+            android:gravity="center"
+            android:background="@drawable/linelayout_color_bigradion"
+            android:text="@string/title_tips_confim"
+            android:layout_gravity="center"
+            android:textColor="@color/whith"/>
 
         <LinearLayout
+            android:visibility="gone"
             android:id="@+id/linLocak"
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -172,7 +175,8 @@
                 android:gravity="center_vertical"
                 android:text="@string/updata_local" />
         </LinearLayout>
-        <View style="@style/HLine" />
+        <View style="@style/HLine"
+            android:visibility="gone"/>
 
         <LinearLayout
             android:id="@+id/linSocket"
@@ -199,6 +203,7 @@
 
         <LinearLayout
             android:id="@+id/linDiscern"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:orientation="horizontal"
@@ -216,10 +221,12 @@
                 android:gravity="center_vertical"
                 android:text="@string/updata_socket" />
         </LinearLayout>
-        <View style="@style/HLine" />
+        <View style="@style/HLine"
+            android:visibility="gone"/>
 
         <LinearLayout
             android:id="@+id/linRobot"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:orientation="horizontal"

@@ -4,7 +4,9 @@ import android.Manifest;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -13,13 +15,13 @@ import com.example.lksynthesizeapp.Constant.Base.BaseActivity;
 import com.example.lksynthesizeapp.Constant.Base.Constant;
 import com.example.lksynthesizeapp.Constant.Bean.Defined;
 import com.example.lksynthesizeapp.Constant.Module.DefinedContract;
-import com.example.lksynthesizeapp.Constant.Presenter.DefinedPresenter;
 import com.example.lksynthesizeapp.R;
 import com.example.lksynthesizeapp.SharePreferencesUtils;
 import com.huawei.hms.hmsscankit.OnResultCallback;
 import com.huawei.hms.hmsscankit.RemoteView;
 import com.huawei.hms.ml.scan.HmsScan;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import butterknife.ButterKnife;
@@ -31,7 +33,7 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
     int mScreenHeight;
     String tag = "first";
     private RemoteView remoteView;
-    DefinedPresenter definedPresenter;
+//    DefinedPresenter definedPresenter;
     final int SCAN_FRAME_SIZE = 240;
     String[] PERMS = {Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.RECORD_AUDIO,Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -45,7 +47,7 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
         ButterKnife.bind(this);
         // Bind the camera preview screen.
         sharePreferencesUtils = new SharePreferencesUtils();
-        definedPresenter = new DefinedPresenter(this,this);
+//        definedPresenter = new DefinedPresenter(this,this);
         frameLayout = findViewById(R.id.rim);
         DisplayMetrics dm = getResources().getDisplayMetrics();
         float density = dm.density;
@@ -83,9 +85,15 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
                 if (tag.equals("first")){
                     if (result != null && result.length > 0 && result[0] != null) {
                         if (result[0].getOriginalValue()!=null){
-                            String[] data=result[0].getOriginalValue().split("/");
-                            sharePreferencesUtils.setString(DefinedActivity.this, "max", data[2]);
-                            definedPresenter.getDefined(data[0]);
+                            String qrData = result[0].getOriginalValue();
+                            String data = decodeToString(qrData);
+                            Log.e("XXXXXX",data);
+                            String[] dataArray = data.split("~~");
+                            sharePreferencesUtils.setString(DefinedActivity.this, "max", dataArray[0]);
+                            sharePreferencesUtils.setString(DefinedActivity.this, "model", dataArray[3]);
+                            sharePreferencesUtils.setString(DefinedActivity.this, "havaCamer", dataArray[4]);
+                            sharePreferencesUtils.setString(DefinedActivity.this, "haveDescern", dataArray[5]);
+//                            definedPresenter.getDefined(data[0]);
                             startActivity(new Intent(DefinedActivity.this, SendSelectActivity.class));
                             finish();
                             tag = "second";
@@ -96,6 +104,36 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
             }
         });
     }
+
+
+    /**
+     * 字符Base64加密
+     * @param str
+     * @return
+     */
+    public static String encodeToString(String str){
+        try {
+            return Base64.encodeToString(str.getBytes("UTF-8"), Base64.DEFAULT);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+    /**
+     * 字符Base64解密
+     * @param str
+     * @return
+     */
+    public static String decodeToString(String str){
+        try {
+            return new String(Base64.decode(str.getBytes("UTF-8"), Base64.DEFAULT));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+
     /**
      * short数组转byte数组
      * @param src

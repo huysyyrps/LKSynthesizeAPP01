@@ -109,7 +109,7 @@ public class AlertDialogUtil {
     public void showWriteDialog(String hint, final ModbusCallBack modbusCallBack) {
         if (dialog == null || !dialog.isShowing()) {
             dialog = new Dialog(context);
-            dialog.setCancelable(false);
+            dialog.setCancelable(true);
             dialog.setCanceledOnTouchOutside(false);
             dialog.show();
             LayoutInflater inflater = LayoutInflater.from(context);
