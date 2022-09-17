@@ -89,27 +89,6 @@
                     android:textColor="@color/red"/>
             </LinearLayout>
         </LinearLayout>
-<!--        <LinearLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_gravity="left"-->
-<!--            android:layout_marginLeft="600dp"-->
-<!--            android:orientation="horizontal">-->
-
-<!--            <TextView-->
-<!--                android:layout_width="40dp"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="FPX:"-->
-<!--                android:textColor="@color/red"-->
-<!--                android:layout_gravity="left|center_vertical"/>-->
-<!--            <TextView-->
-<!--                android:id="@+id/tvFPX"-->
-<!--                android:layout_width="40dp"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_gravity="left|center_vertical"-->
-<!--                android:textColor="@color/red"/>-->
-<!--        </LinearLayout>-->
-
 
     </LinearLayout>
     <LinearLayout
@@ -118,6 +97,17 @@
         android:background="@color/translucent_color1"
         android:orientation="vertical"
         android:layout_gravity="right|center">
+        <RadioButton
+            android:id="@+id/rbCamera"
+            style="@style/MainRadionButton"
+            android:background="@drawable/button_select"
+            android:drawableLeft="@drawable/ic_camera" />
+        <RadioButton
+            android:id="@+id/rbVideo"
+            style="@style/MainRadionButton"
+            android:background="@drawable/button_select"
+            android:drawableLeft="@drawable/ic_video1" />
+
         <RadioButton
             android:id="@+id/rbAlbum"
             android:layout_height="50dp"

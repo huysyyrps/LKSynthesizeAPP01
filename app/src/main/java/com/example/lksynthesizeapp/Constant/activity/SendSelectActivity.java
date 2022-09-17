@@ -183,9 +183,9 @@ public class SendSelectActivity extends AppCompatActivity {
                 Toast.makeText(SendSelectActivity.this, "请输入工件编号", Toast.LENGTH_SHORT).show();
                 return;
             } else {
-                if (model.equals("LK-PXQ")&&descern.equals("0")) {
+                if (model.equals("LKMT-A6")&&descern.equals("0")) {
                     haveAddress("PXQNODESCERN");
-                } else if (model.equals("LK-PXQ")&&descern.equals("1")) {
+                } else if (model.equals("LKMT-A6-QX")&&descern.equals("1")) {
                     haveAddress("PXQHAVEDESCERN");
                 } else if (descern.equals("1")) {
                     haveAddress("CFTSYHAVEDESCERN");

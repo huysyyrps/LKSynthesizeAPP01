@@ -68,14 +68,14 @@ public class DescernActivity extends AppCompatActivity implements View.OnClickLi
         paint = new Paint();
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(2);
-        paint.setColor(Color.GREEN);
+        paint.setColor(Color.RED);
 
         textbgpaint = new Paint();
         textbgpaint.setColor(Color.WHITE);
         textbgpaint.setStyle(Paint.Style.FILL);
 
         textpaint = new Paint();
-        textpaint.setColor(Color.GREEN);
+        textpaint.setColor(Color.RED);
         textpaint.setTextSize(13);
         textpaint.setTextAlign(Paint.Align.LEFT);
 //        w = getWindowManager().getDefaultDisplay().getWidth();
