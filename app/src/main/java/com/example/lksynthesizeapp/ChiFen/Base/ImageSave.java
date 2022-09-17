@@ -49,7 +49,7 @@ public class ImageSave {
      * 获取当前时间,用来给文件夹命名
      */
     private String getNowDate() {
-        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US);
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd-HH:mm:ss", Locale.US);
         return format.format(new Date()) + ".png";
     }
 }
