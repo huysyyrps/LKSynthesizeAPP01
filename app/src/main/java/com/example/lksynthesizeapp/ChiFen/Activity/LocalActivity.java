@@ -7,9 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
-import android.media.Image;
 import android.media.ImageReader;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
@@ -56,7 +54,6 @@ import com.example.lksynthesizeapp.Constant.Net.SSHExcuteCommandHelper;
 import com.example.lksynthesizeapp.R;
 
 import java.io.File;
-import java.nio.ByteBuffer;
 import java.util.List;
 
 import butterknife.BindView;
@@ -201,25 +198,6 @@ public class LocalActivity extends AppCompatActivity implements EasyPermissions.
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.rbCamera:
-//                SelectTag = "Camera";
-//                if (mMediaProjection == null) {
-//                    requestMediaProjection();
-//                } else {
-//                    radioGroup.setVisibility(View.GONE);
-//                    if (toast != null) {
-//                        toast.cancel();
-//                    }
-//                    if (mMediaProjection != null) {
-//                        setUpVirtualDisplay();
-//                        Handler handler = new Handler();
-//                        handler.postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                startCapture();
-//                            }
-//                        }, 200);
-//                    }
-//                }
                 if (toast!=null){
                     toast.cancel();
                 }
@@ -244,7 +222,6 @@ public class LocalActivity extends AppCompatActivity implements EasyPermissions.
                 } else {
                     System.out.println("bitmap is NULL!");
                 }
-//                boolean backstate = new ImageSave().saveBitmap("/LUKEImage/", project, workName, workCode, this, bitmap);
                 break;
             case R.id.rbSound:
                 if (toast!=null){
@@ -280,56 +257,6 @@ public class LocalActivity extends AppCompatActivity implements EasyPermissions.
             case R.id.rbBack:
                 finish();
                 break;
-        }
-    }
-
-    private void setUpVirtualDisplay() {
-        mVirtualDisplay = mMediaProjection.createVirtualDisplay("ScreenCapture",
-                mWindowWidth, mWindowHeight, mScreenDensity,
-                DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
-                mImageReader.getSurface(), null, null);
-    }
-
-    private void startCapture() {
-        Image image = mImageReader.acquireLatestImage();
-        if (image == null) {
-            Log.e("MainActivity", "image is null.");
-            return;
-        }
-        int width = image.getWidth();
-        int height = image.getHeight();
-        final Image.Plane[] planes = image.getPlanes();
-        final ByteBuffer buffer = planes[0].getBuffer();
-        int pixelStride = planes[0].getPixelStride();
-        int rowStride = planes[0].getRowStride();
-        int rowPadding = rowStride - pixelStride * width;
-        Bitmap mBitmap = Bitmap.createBitmap(width + rowPadding / pixelStride, height, Bitmap.Config.ARGB_8888);
-        mBitmap.copyPixelsFromBuffer(buffer);
-        mBitmap = Bitmap.createBitmap(mBitmap, 0, 0, width, height);
-        image.close();
-        stopScreenCapture();
-        if (mBitmap != null) {
-            boolean backstate = new ImageSave().saveBitmap("/LUKEImage/", project, workName, workCode, this, mBitmap);
-            if (backstate) {
-                radioGroup.setVisibility(View.VISIBLE);
-//                toast = Toast.makeText(DescernActivity.this, R.string.save_success, Toast.LENGTH_SHORT);
-//                toast.show();
-                Log.e("XXX", "保存成功");
-            } else {
-                radioGroup.setVisibility(View.VISIBLE);
-//                toast = Toast.makeText(DescernActivity.this, R.string.save_faile, Toast.LENGTH_SHORT);
-//                toast.show();
-                Log.e("XXX", "保存失败");
-            }
-        } else {
-            System.out.println("bitmap is NULL!");
-        }
-    }
-
-    private void stopScreenCapture() {
-        if (mVirtualDisplay != null) {
-            mVirtualDisplay.release();
-            mVirtualDisplay = null;
         }
     }
 
@@ -517,20 +444,7 @@ public class LocalActivity extends AppCompatActivity implements EasyPermissions.
                     new BottomUI().hideBottomUIMenu(this.getWindow());
                     mMediaProjection = mMediaProjectionManager.getMediaProjection(resultCode, backdata);
                     if (mMediaProjection != null) {
-                        if (SelectTag.equals("Camera")) {
-                            radioGroup.setVisibility(View.GONE);
-                            if (toast != null) {
-                                toast.cancel();
-                            }
-                            setUpVirtualDisplay();
-                            Handler handler = new Handler();
-                            handler.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    startCapture();
-                                }
-                            }, 200);
-                        } else if (SelectTag.equals("Sound")) {
+                       if (SelectTag.equals("Sound")) {
                             if (EasyPermissions.hasPermissions(this, PERMS)) {
                                 new TirenSet().checkTirem(ivTimer);
                                 startCapturing(mMediaProjection);

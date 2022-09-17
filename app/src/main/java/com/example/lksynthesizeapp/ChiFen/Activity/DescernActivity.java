@@ -9,9 +9,7 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
-import android.media.Image;
 import android.media.ImageReader;
 import android.media.MediaPlayer;
 import android.media.projection.MediaProjection;
@@ -26,6 +24,7 @@ import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -58,7 +57,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.ByteBuffer;
 import java.util.List;
 
 import butterknife.BindView;
@@ -89,6 +87,8 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
     ImageView ivTimer;
     @BindView(R.id.linearLayoutStop)
     LinearLayout linearLayoutStop;
+    @BindView(R.id.frameLayout)
+    FrameLayout frameLayout;
     private String url;
     private Bitmap bmp = null;
     private Thread mythread;
@@ -135,7 +135,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         mNotifications = new Notifications(getApplicationContext());
         mMediaProjectionManager = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
         //ImageReader允许应用程序直接获取渲染到surface的图形数据，并转换为图片，这里我用
-        Log.e("XXXXX","width-display :" + display.getWidth()+"heigth-display :" + display.getHeight());
+        Log.e("XXXXX", "width-display :" + display.getWidth() + "heigth-display :" + display.getHeight());
         mImageReader = ImageReader.newInstance(display.getWidth(), display.getHeight(), 0x1, 2);
         mediaPlayer = MediaPlayer.create(DescernActivity.this, R.raw.fengming);
         boolean ret_init = yolov5ncnn.Init(getAssets());
@@ -273,25 +273,31 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.rbCamera:
-                SelectTag = "Camera";
-                if (mMediaProjection == null) {
-                    requestMediaProjection();
-                } else {
-                    radioGroup.setVisibility(View.GONE);
-                    if (toast != null) {
-                        toast.cancel();
-                    }
-                    if (mMediaProjection != null) {
-                        setUpVirtualDisplay();
-                        Handler handler = new Handler();
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                startCaptureImg();
-                            }
-                        }, 200);
-                    }
+                if (toast != null) {
+                    toast.cancel();
                 }
+                radioGroup.setVisibility(View.GONE);
+                View view1 = frameLayout;
+                view1.setDrawingCacheEnabled(true);
+                view1.buildDrawingCache();
+                Bitmap bitmap = Bitmap.createBitmap(view1.getDrawingCache());
+                if (bitmap != null) {
+                    boolean backstate = new ImageSave().saveBitmap("/LUKEDecsImage/", project, workName, workCode, this, bitmap);
+                    if (backstate) {
+                        radioGroup.setVisibility(View.VISIBLE);
+                        toast = Toast.makeText(DescernActivity.this, R.string.save_success, Toast.LENGTH_SHORT);
+                        toast.show();
+                        Log.e("XXX", "保存成功");
+                    } else {
+                        radioGroup.setVisibility(View.VISIBLE);
+                        toast = Toast.makeText(DescernActivity.this, R.string.save_faile, Toast.LENGTH_SHORT);
+                        toast.show();
+                        Log.e("XXX", "保存失败");
+                    }
+                } else {
+                    System.out.println("bitmap is NULL!");
+                }
+
                 break;
             case R.id.rbVideo:
                 SelectTag = "Sound";
@@ -345,20 +351,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                     new BottomUI().hideBottomUIMenu(this.getWindow());
                     mMediaProjection = mMediaProjectionManager.getMediaProjection(resultCode, backdata);
                     if (mMediaProjection != null) {
-                        if (SelectTag.equals("Camera")) {
-                            radioGroup.setVisibility(View.GONE);
-                            if (toast != null) {
-                                toast.cancel();
-                            }
-                            setUpVirtualDisplay();
-                            Handler handler = new Handler();
-                            handler.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    startCaptureImg();
-                                }
-                            }, 200);
-                        } else if (SelectTag.equals("Sound")) {
+                       if (SelectTag.equals("Sound")) {
                             if (EasyPermissions.hasPermissions(this, PERMS)) {
                                 new TirenSet().checkTirem(ivTimer);
                                 startCaptureVideo(mMediaProjection);
@@ -374,58 +367,6 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                 break;
         }
     }
-
-    private void setUpVirtualDisplay() {
-        mVirtualDisplay = mMediaProjection.createVirtualDisplay("ScreenCapture",
-                myWindowManager.getWeight(), myWindowManager.getHeight(), myWindowManager.getScreenDensity(),
-                DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
-                mImageReader.getSurface(), null, null);
-    }
-    //获取截图并保存
-    private void startCaptureImg() {
-        Image image = mImageReader.acquireLatestImage();
-        if (image == null) {
-            Toast.makeText(mNotifications, "image is null", Toast.LENGTH_SHORT).show();
-            radioGroup.setVisibility(View.VISIBLE);
-            return;
-        }
-        int width = image.getWidth();
-        int height = image.getHeight();
-        final Image.Plane[] planes = image.getPlanes();
-        final ByteBuffer buffer = planes[0].getBuffer();
-        int pixelStride = planes[0].getPixelStride();
-        int rowStride = planes[0].getRowStride();
-        int rowPadding = rowStride - pixelStride * width;
-        Bitmap mBitmap = Bitmap.createBitmap(width + rowPadding / pixelStride, height, Bitmap.Config.ARGB_8888);
-        mBitmap.copyPixelsFromBuffer(buffer);
-        mBitmap = Bitmap.createBitmap(mBitmap, 0, 0, width, height);
-        image.close();
-        stopScreenCapture();
-        if (mBitmap != null) {
-            boolean backstate = new ImageSave().saveBitmap("/LUKEDecsImage/", project, workName, workCode, this, mBitmap);
-            if (backstate) {
-                radioGroup.setVisibility(View.VISIBLE);
-//                toast = Toast.makeText(DescernActivity.this, R.string.save_success, Toast.LENGTH_SHORT);
-//                toast.show();
-                Log.e("XXX", "保存成功");
-            } else {
-                radioGroup.setVisibility(View.VISIBLE);
-//                toast = Toast.makeText(DescernActivity.this, R.string.save_faile, Toast.LENGTH_SHORT);
-//                toast.show();
-                Log.e("XXX", "保存失败");
-            }
-        } else {
-            System.out.println("bitmap is NULL!");
-        }
-    }
-
-    private void stopScreenCapture() {
-        if (mVirtualDisplay != null) {
-            mVirtualDisplay.release();
-            mVirtualDisplay = null;
-        }
-    }
-
 
     //录屏部分
     private void startCaptureVideo(MediaProjection mediaProjection) {
@@ -523,6 +464,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
             }
         }
     };
+
     private void stopRecordingAndOpenFile() {
         stopRecorder();
         StrictMode.VmPolicy vmPolicy = StrictMode.getVmPolicy();
