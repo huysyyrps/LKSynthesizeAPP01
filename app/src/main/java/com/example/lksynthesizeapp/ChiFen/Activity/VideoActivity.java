@@ -66,6 +66,7 @@ public class VideoActivity extends BaseActivity implements VideoContract.View {
     private int lastNum = 9;
     private int allNum;
     List<File> fileList;
+    String tag = "";
     private VideoPresenter videoPresenter;
     private String project = "", workName = "", workCode = "",compName = "",device = "";
 
@@ -78,6 +79,7 @@ public class VideoActivity extends BaseActivity implements VideoContract.View {
         sharePreferencesUtils = new SharePreferencesUtils();
         compName = "鲁科检测";
         device = "磁探机";
+        tag = getIntent().getStringExtra("tag");
         project = sharePreferencesUtils.getString(VideoActivity.this,"project","");
         workName = sharePreferencesUtils.getString(VideoActivity.this,"workName","");
         workCode = sharePreferencesUtils.getString(VideoActivity.this,"workCode","");
@@ -158,13 +160,17 @@ public class VideoActivity extends BaseActivity implements VideoContract.View {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKEVideo/"+project+"/"+"设备/"+workName+"/"+workCode+"/");
+                if (tag.equals("Local")){
+                    getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKEVideo/"+project+"/"+workName+"/"+workCode+"/");
+                }else {
+                    getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKEDescVideo/"+project+"/"+workName+"/"+workCode+"/");
+                }
             }
         }).start();
     }
 
     public void getFilesAllName(String path) {
-        fileList = listFileSortByModifyTime(Environment.getExternalStorageDirectory() + "/LUKEVideo/"+project+"/"+"设备/"+workName+"/"+workCode+"/");
+        fileList = listFileSortByModifyTime(path);
         Collections.reverse(fileList);
         if (fileList.size()!=0){
             allNum = fileList.size();

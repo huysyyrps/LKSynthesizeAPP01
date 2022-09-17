@@ -122,18 +122,23 @@ public class SendSelectActivity extends AppCompatActivity {
             Toast.makeText(this, "设备MAX地址错误", Toast.LENGTH_SHORT).show();
         }
 
-        alertDialogUtil.showWifiSetting(SendSelectActivity.this, "office", passWord, new DialogCallBack() {
-            @Override
-            public void confirm(String data, Dialog dialog) {
-                //Intent intent = new Intent(Settings.ACTION_AIRPLANE_MODE_SETTINGS);
-                //startActivity(intent);
-            }
+        if (camer.equals("0")) {
+            Toast.makeText(this, "当前设备不具备摄像头功能", Toast.LENGTH_SHORT).show();
+            return;
+        }else {
+            alertDialogUtil.showWifiSetting(SendSelectActivity.this, "office", passWord, new DialogCallBack() {
+                @Override
+                public void confirm(String data, Dialog dialog) {
+                    //Intent intent = new Intent(Settings.ACTION_AIRPLANE_MODE_SETTINGS);
+                    //startActivity(intent);
+                }
 
-            @Override
-            public void cancel() {
+                @Override
+                public void cancel() {
 
-            }
-        });
+                }
+            });
+        }
     }
 
     @OnClick({R.id.linLocak, R.id.linSocket, R.id.linDiscern, R.id.linRobot, R.id.tvConfim})

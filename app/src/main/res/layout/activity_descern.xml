@@ -12,14 +12,12 @@
         android:scaleType="fitXY" />
 
     <LinearLayout
-        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:orientation="horizontal">
 
         <LinearLayout
-            android:id="@+id/linearLayout1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -91,7 +89,8 @@
         </LinearLayout>
 
     </LinearLayout>
-    <LinearLayout
+    <RadioGroup
+        android:id="@+id/radioGroup"
         android:layout_width="60dp"
         android:layout_height="match_parent"
         android:background="@color/translucent_color1"
@@ -99,11 +98,15 @@
         android:layout_gravity="right|center">
         <RadioButton
             android:id="@+id/rbCamera"
+            android:layout_height="50dp"
+            android:layout_width="45dp"
             style="@style/MainRadionButton"
             android:background="@drawable/button_select"
             android:drawableLeft="@drawable/ic_camera" />
         <RadioButton
             android:id="@+id/rbVideo"
+            android:layout_height="50dp"
+            android:layout_width="45dp"
             style="@style/MainRadionButton"
             android:background="@drawable/button_select"
             android:drawableLeft="@drawable/ic_video1" />
@@ -122,7 +125,24 @@
             style="@style/MainRadionButton"
             android:background="@drawable/button_select"
             android:drawableStart="@drawable/ic_finish" />
-    </LinearLayout>
+    </RadioGroup>
+    <LinearLayout
+        android:id="@+id/linearLayoutStop"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|top"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="15dp"
+        android:orientation="vertical"
+        android:visibility="gone">
 
+        <ImageView
+            android:id="@+id/ivTimer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/ic_tirme" />
+
+    </LinearLayout>
 
 </FrameLayout>

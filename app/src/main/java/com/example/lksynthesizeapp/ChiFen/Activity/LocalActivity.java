@@ -21,6 +21,7 @@ import android.os.Message;
 import android.os.StrictMode;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.WebSettings;
@@ -127,12 +128,18 @@ public class LocalActivity extends AppCompatActivity implements EasyPermissions.
 
         setWorkData();
         mWindowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
-        mWindowWidth = mWindowManager.getDefaultDisplay().getWidth();
-        mWindowHeight = mWindowManager.getDefaultDisplay().getHeight();
+//        mWindowWidth = mWindowManager.getDefaultDisplay().getWidth();
+//        mWindowHeight = mWindowManager.getDefaultDisplay().getHeight();
         DisplayMetrics displayMetrics = new DisplayMetrics();
-        mWindowManager.getDefaultDisplay().getMetrics(displayMetrics);
+        mWindowManager.getDefaultDisplay().getRealMetrics(displayMetrics);
+        mWindowHeight = displayMetrics.heightPixels;
+        mWindowWidth = displayMetrics.widthPixels;
         mScreenDensity = displayMetrics.densityDpi;
-        mImageReader = ImageReader.newInstance(mWindowWidth, mWindowHeight, 0x1, 2);
+
+        Display display = getWindowManager().getDefaultDisplay();
+        Log.e("XXXXX", "width-display :" + display.getWidth() + "heigth-display :" + display.getHeight());
+        mImageReader = ImageReader.newInstance(display.getWidth(), display.getHeight(), 0x1, 2);
+
         frameLayout.setBackgroundColor(getResources().getColor(R.color.black));
         mMediaProjectionManager = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
         mNotifications = new Notifications(getApplicationContext());
@@ -161,10 +168,10 @@ public class LocalActivity extends AppCompatActivity implements EasyPermissions.
         webView.setBackgroundColor(getColor(R.color.black));
 
         address = getIntent().getStringExtra("address");
-        if (address!=null){
+        if (address != null) {
             address = "http://" + address + ":8080";
             webView.loadUrl(address);
-        }else {
+        } else {
             Toast.makeText(mNotifications, "IP为空,请等待连接", Toast.LENGTH_SHORT).show();
             finish();
         }
@@ -194,27 +201,55 @@ public class LocalActivity extends AppCompatActivity implements EasyPermissions.
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.rbCamera:
-                SelectTag = "Camera";
-                if (mMediaProjection == null) {
-                    requestMediaProjection();
-                } else {
-                    radioGroup.setVisibility(View.GONE);
-                    if (toast != null) {
-                        toast.cancel();
-                    }
-                    if (mMediaProjection != null) {
-                        setUpVirtualDisplay();
-                        Handler handler = new Handler();
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                startCapture();
-                            }
-                        }, 200);
-                    }
+//                SelectTag = "Camera";
+//                if (mMediaProjection == null) {
+//                    requestMediaProjection();
+//                } else {
+//                    radioGroup.setVisibility(View.GONE);
+//                    if (toast != null) {
+//                        toast.cancel();
+//                    }
+//                    if (mMediaProjection != null) {
+//                        setUpVirtualDisplay();
+//                        Handler handler = new Handler();
+//                        handler.postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                startCapture();
+//                            }
+//                        }, 200);
+//                    }
+//                }
+                if (toast!=null){
+                    toast.cancel();
                 }
+                radioGroup.setVisibility(View.GONE);
+                View view1 = frameLayout;
+                view1.setDrawingCacheEnabled(true);
+                view1.buildDrawingCache();
+                Bitmap bitmap = Bitmap.createBitmap(view1.getDrawingCache());
+                if (bitmap != null) {
+                    boolean backstate = new ImageSave().saveBitmap("/LUKEImage/", project, workName, workCode, this, bitmap);
+                    if (backstate) {
+                        radioGroup.setVisibility(View.VISIBLE);
+                        toast = Toast.makeText(LocalActivity.this, R.string.save_success, Toast.LENGTH_SHORT);
+                        toast.show();
+                        Log.e("XXX", "保存成功");
+                    } else {
+                        radioGroup.setVisibility(View.VISIBLE);
+                        toast = Toast.makeText(LocalActivity.this, R.string.save_faile, Toast.LENGTH_SHORT);
+                        toast.show();
+                        Log.e("XXX", "保存失败");
+                    }
+                } else {
+                    System.out.println("bitmap is NULL!");
+                }
+//                boolean backstate = new ImageSave().saveBitmap("/LUKEImage/", project, workName, workCode, this, bitmap);
                 break;
             case R.id.rbSound:
+                if (toast!=null){
+                    toast.cancel();
+                }
                 SelectTag = "Sound";
                 if (mMediaProjection == null) {
                     requestMediaProjection();
@@ -236,7 +271,7 @@ public class LocalActivity extends AppCompatActivity implements EasyPermissions.
                 }
                 break;
             case R.id.rbAlbum:
-                new MainUI().showPopupMenu(rbAlbum, this);
+                new MainUI().showPopupMenu(rbAlbum, "Local", this);
                 break;
             case R.id.rbRefresh:
 //                ShowDialog("/etc/init.d/mjpg-streamer restart");
@@ -277,12 +312,14 @@ public class LocalActivity extends AppCompatActivity implements EasyPermissions.
             boolean backstate = new ImageSave().saveBitmap("/LUKEImage/", project, workName, workCode, this, mBitmap);
             if (backstate) {
                 radioGroup.setVisibility(View.VISIBLE);
-                toast = Toast.makeText(LocalActivity.this, R.string.save_success, Toast.LENGTH_SHORT);
-                toast.show();
+//                toast = Toast.makeText(DescernActivity.this, R.string.save_success, Toast.LENGTH_SHORT);
+//                toast.show();
+                Log.e("XXX", "保存成功");
             } else {
                 radioGroup.setVisibility(View.VISIBLE);
-                toast = Toast.makeText(LocalActivity.this, R.string.save_faile, Toast.LENGTH_SHORT);
-                toast.show();
+//                toast = Toast.makeText(DescernActivity.this, R.string.save_faile, Toast.LENGTH_SHORT);
+//                toast.show();
+                Log.e("XXX", "保存失败");
             }
         } else {
             System.out.println("bitmap is NULL!");
@@ -336,7 +373,7 @@ public class LocalActivity extends AppCompatActivity implements EasyPermissions.
                             Toast.makeText(LocalActivity.this, "Create ScreenRecorder failure", Toast.LENGTH_SHORT).show();
                             return;
                         }
-                        File dir = new File(Environment.getExternalStorageDirectory() + "/LUKEVideo/" + project + "/" + "设备/" + workName + "/" + workCode + "/");
+                        File dir = new File(Environment.getExternalStorageDirectory() + "/LUKEVideo/" + project + "/" + workName + "/" + workCode + "/");
                         if (!dir.exists()) {
                             dir.mkdirs();
                         }
@@ -512,6 +549,12 @@ public class LocalActivity extends AppCompatActivity implements EasyPermissions.
         }
     }
 
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        new BottomUI().hideBottomUIMenu(this.getWindow());
+    }
 
     Handler handlerSetting = new Handler() {
         @Override

@@ -6,16 +6,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.PopupMenu;
 
-import com.example.lksynthesizeapp.ChiFen.Activity.LocalActivity;
 import com.example.lksynthesizeapp.ChiFen.Activity.PhotoActivity;
 import com.example.lksynthesizeapp.ChiFen.Activity.VideoActivity;
 import com.example.lksynthesizeapp.ChiFen.Modbus.ModbusCallBack;
 import com.example.lksynthesizeapp.R;
 
 public class MainUI {
-    public void showPopupMenu(View view, LocalActivity mainActivity) {
+    public void showPopupMenu(View view,String tag, Context context) {
         // View当前PopupMenu显示的相对View的位置
-        PopupMenu popupMenu = new PopupMenu(mainActivity, view);
+        PopupMenu popupMenu = new PopupMenu(context, view);
         // menu布局
         popupMenu.getMenuInflater().inflate(R.menu.dialog, popupMenu.getMenu());
         // menu的item点击事件
@@ -23,12 +22,15 @@ public class MainUI {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 if (item.getTitle().equals("图片")){
-                    Intent intent = new Intent(mainActivity, PhotoActivity.class);
-                    intent.putExtra("tag","Local");
-                    mainActivity.startActivity(intent);
+                    Intent intent = new Intent(context, PhotoActivity.class);
+                    intent.putExtra("tag",tag);
+                    context.startActivity(intent);
                 }else if (item.getTitle().equals("视频")){
-                    Intent intent = new Intent(mainActivity, VideoActivity.class);
-                    mainActivity.startActivity(intent);
+                    Intent intent = new Intent(context, VideoActivity.class);
+                    intent.putExtra("tag",tag);
+                    context.startActivity(intent);
+//                    Intent intent = new Intent(context, VideoActivity.class);
+//                    context.startActivity(intent);
                 }
                 return false;
             }

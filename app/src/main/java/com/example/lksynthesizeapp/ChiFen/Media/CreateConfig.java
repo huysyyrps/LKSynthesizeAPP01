@@ -20,7 +20,7 @@ public class CreateConfig {
     public VideoEncodeConfig createVideoConfig() {
         final String codec = "c2.android.avc.encoder";
         int height = 1080;
-        int width = 1920;
+        int width = 2400;
         int framerate = 25;
         int iframe = 1;
         int bitrate = 800000;

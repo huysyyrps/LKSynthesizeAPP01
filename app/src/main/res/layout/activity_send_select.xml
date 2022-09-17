@@ -148,7 +148,7 @@
             android:id="@+id/tvConfim"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_marginLeft="10dp"
+            android:layout_margin="10dp"
             android:gravity="center"
             android:background="@drawable/linelayout_color_bigradion"
             android:text="@string/title_tips_confim"

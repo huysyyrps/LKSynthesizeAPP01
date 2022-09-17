@@ -167,9 +167,9 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
             @Override
             public void run() {
                 if (tag.equals("Local")){
-                    getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKEImage/"+project+"/"+"设备/"+workName+"/"+workCode+"/");
+                    getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKEImage/"+project+"/"+workName+"/"+workCode+"/");
                 }else {
-                    getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKEDecsImage/"+project+"/"+"设备/"+workName+"/"+workCode+"/");
+                    getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKEDecsImage/"+project+"/"+workName+"/"+workCode+"/");
                 }
             }
         }).start();

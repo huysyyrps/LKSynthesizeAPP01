@@ -21,8 +21,8 @@ public class ImageSave {
     public boolean saveBitmap(String local, String project, String workName, String workCode, Context context, Bitmap bitmap) {
         getNowDate();
         try {
-            String dir = Environment.getExternalStorageDirectory() + local + project + "/" + "设备/" + workName + "/" + workCode + "/";//图片保存的文件夹名
-            File file = new File(Environment.getExternalStorageDirectory() + local + project + "/" + "设备/" + workName + "/" + workCode + "/");
+            String dir = Environment.getExternalStorageDirectory() + local + project + "/" + workName + "/" + workCode + "/";//图片保存的文件夹名
+            File file = new File(Environment.getExternalStorageDirectory() + local + project + "/" + workName + "/" + workCode + "/");
             //如果不存在  就mkdirs()创建此文件夹
             if (!file.exists()) {
                 file.mkdirs();
