@@ -8,6 +8,7 @@ import android.media.projection.MediaProjection;
 import java.io.File;
 
 public class GetRecorder {
+    //VirtualDisplay对应虚拟Display，主要用来进行屏幕录制等相关功能；
     public VirtualDisplay mVirtualDisplay;
     public ScreenRecorder newRecorder(MediaProjection mediaProjection, VideoEncodeConfig video, AudioEncodeConfig audio, File output, MediaCallBack mediaCallBack) {
         final VirtualDisplay display = getOrCreateVirtualDisplay(mediaProjection, video);
