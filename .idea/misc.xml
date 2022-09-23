@@ -17,6 +17,7 @@
         <entry key="..\:/LKSynthesizeAPP/app/src/main/res/drawable/progressloading.xml" value="0.1605" />
         <entry key="..\:/LKSynthesizeAPP/app/src/main/res/drawable/pxqbutton_select.xml" value="0.2905" />
         <entry key="..\:/LKSynthesizeAPP/app/src/main/res/layout/activity_appdetection.xml" value="0.35052083333333334" />
+        <entry key="..\:/LKSynthesizeAPP/app/src/main/res/layout/activity_audio.xml" value="0.35052083333333334" />
         <entry key="..\:/LKSynthesizeAPP/app/src/main/res/layout/activity_broadcast.xml" value="0.240625" />
         <entry key="..\:/LKSynthesizeAPP/app/src/main/res/layout/activity_broadcast_mediacodec.xml" value="0.3515625" />
         <entry key="..\:/LKSynthesizeAPP/app/src/main/res/layout/activity_defined.xml" value="0.24375" />
@@ -31,18 +32,21 @@
         <entry key="..\:/LKSynthesizeAPP/app/src/main/res/layout/activity_robot_havedevice.xml" value="0.3333333333333333" />
         <entry key="..\:/LKSynthesizeAPP/app/src/main/res/layout/activity_see_image_or_video.xml" value="0.30104166666666665" />
         <entry key="..\:/LKSynthesizeAPP/app/src/main/res/layout/activity_send_select.xml" value="0.26510416666666664" />
+        <entry key="..\:/LKSynthesizeAPP/app/src/main/res/layout/activity_setting.xml" value="0.34427083333333336" />
         <entry key="..\:/LKSynthesizeAPP/app/src/main/res/layout/activity_surface.xml" value="0.22083333333333333" />
         <entry key="..\:/LKSynthesizeAPP/app/src/main/res/layout/activity_test.xml" value="0.26510416666666664" />
         <entry key="..\:/LKSynthesizeAPP/app/src/main/res/layout/activity_test1.xml" value="0.20052083333333334" />
         <entry key="..\:/LKSynthesizeAPP/app/src/main/res/layout/activity_video.xml" value="0.240625" />
         <entry key="..\:/LKSynthesizeAPP/app/src/main/res/layout/activity_welcome.xml" value="0.29270833333333335" />
         <entry key="..\:/LKSynthesizeAPP/app/src/main/res/layout/album_item.xml" value="0.3515625" />
+        <entry key="..\:/LKSynthesizeAPP/app/src/main/res/layout/audio_item.xml" value="0.3359375" />
         <entry key="..\:/LKSynthesizeAPP/app/src/main/res/layout/dialog_with_show.xml" value="0.358695652173913" />
         <entry key="..\:/LKSynthesizeAPP/app/src/main/res/layout/dialog_with_wifisetting.xml" value="0.240625" />
         <entry key="..\:/LKSynthesizeAPP/app/src/main/res/layout/dialog_with_write.xml" value="0.35052083333333334" />
         <entry key="..\:/LKSynthesizeAPP/app/src/main/res/layout/item_circle_menu.xml" value="0.2864583333333333" />
         <entry key="..\:/LKSynthesizeAPP/app/src/main/res/layout/loading.xml" value="0.24375" />
         <entry key="..\:/LKSynthesizeAPP/app/src/main/res/layout/mainitem_layout.xml" value="0.2864583333333333" />
+        <entry key="..\:/LKSynthesizeAPP/app/src/main/res/layout/setting_item.xml" value="0.3296875" />
         <entry key="..\:/LKSynthesizeAPP/app/src/main/res/menu/dialog.xml" value="0.240625" />
         <entry key="..\:/LKSynthesizeAPP/app/src/main/res/menu/menu.xml" value="0.240625" />
         <entry key="..\:/LKSynthesizeAPP/app/src/main/res/menu/menu_main.xml" value="0.36614583333333334" />

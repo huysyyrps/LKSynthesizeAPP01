@@ -140,6 +140,11 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
         rb.setVisibility(View.GONE);
         return this;
     }
+    public BaseViewHolder setGoneImage(int viewId) {
+        ImageView rb = getView(viewId);
+        rb.setVisibility(View.GONE);
+        return this;
+    }
 
     public BaseViewHolder setGoneLinearLayout(int viewId) {
         LinearLayout ll = getView(viewId);
@@ -257,6 +262,12 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
                 .skipMemoryCache(true)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(iv);
+        return this;
+    }
+
+    public BaseViewHolder setImage (Context context,int viewId, int path) {
+        ImageView iv = getView(viewId);
+        iv.setImageResource(path);
         return this;
     }
 

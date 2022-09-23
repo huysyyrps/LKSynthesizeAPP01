@@ -120,6 +120,13 @@
             android:background="@drawable/button_select"
             android:drawableStart="@drawable/ic_folder" />
         <RadioButton
+            android:id="@+id/rbSetting"
+            android:layout_height="50dp"
+            android:layout_width="45dp"
+            style="@style/MainRadionButton"
+            android:background="@drawable/button_select"
+            android:drawableStart="@drawable/ic_client_setting" />
+        <RadioButton
             android:id="@+id/rbBack"
             android:layout_height="50dp"
             android:layout_width="45dp"

@@ -63,33 +63,44 @@ public class getIp {
         ipScanner.startScan();
     }
 
-    public String getConnectIp() throws Exception {
+    public void getConnectIp(GetIpCallBack getIpCallBack) {
         ArrayList<String> connectIpList = new ArrayList<String>();
         Runtime runtime = Runtime.getRuntime();
-        Process proc = runtime.exec("ip neigh show");
-        proc.waitFor();
-        BufferedReader br = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+        Process proc = null;
+        try {
+            proc = runtime.exec("ip neigh show");
+            proc.waitFor();
+            BufferedReader br = new BufferedReader(new InputStreamReader(proc.getInputStream()));
 //        BufferedReader br = new BufferedReader(new FileReader("/proc/net/arp"));
-        String line;
-        while ((line = br.readLine()) != null) {
-            String[] splitted = line.split(" +");
-            if (splitted != null && splitted.length >= 4) {
-                String ip = splitted[0];
-                String newString = ip.toString().replace(".","=");
-                String[] strs = newString.split("=");
-                if (strs.length>3&&strs[2].equals("43")){
-                    connectIpList.add(ip);
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] splitted = line.split(" +");
+                if (splitted != null && splitted.length >= 4) {
+                    String ip = splitted[0];
+                    String newString = ip.toString().replace(".","=");
+                    String[] strs = newString.split("=");
+                    if (strs.length>3&&strs[2].equals("43")){
+                        connectIpList.add(ip);
+                    }
                 }
             }
+            for (int i=0;i<connectIpList.size();i++){
+                String ip = connectIpList.get(i);
+                Log.e("XXXXX",ip);
+                ip = ip.replace(".",",");
+                String[] all=ip.split(",");
+                if (all[2].equals("43"));
+                address = connectIpList.get(i);
+            }
+            if (address!=null){
+                getIpCallBack.success(address);
+            }else {
+                getIpCallBack.faile();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-        for (int i=0;i<connectIpList.size();i++){
-            String ip = connectIpList.get(i);
-            Log.e("XXXXX",ip);
-            ip = ip.replace(".",",");
-            String[] all=ip.split(",");
-            if (all[2].equals("43"));
-            address = connectIpList.get(i);
-        }
-        return address;
     }
 }

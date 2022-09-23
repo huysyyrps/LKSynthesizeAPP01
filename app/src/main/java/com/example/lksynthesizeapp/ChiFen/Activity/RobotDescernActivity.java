@@ -44,6 +44,7 @@ import com.example.lksynthesizeapp.ChiFen.Robot.View.CircleMenuAdapter;
 import com.example.lksynthesizeapp.ChiFen.bean.ItemInfo;
 import com.example.lksynthesizeapp.Constant.Base.AlertDialogUtil;
 import com.example.lksynthesizeapp.R;
+import com.example.lksynthesizeapp.SharePreferencesUtils;
 import com.example.lksynthesizeapp.YoloV5Ncnn;
 import com.zgkxzx.modbus4And.requset.ModbusParam;
 import com.zgkxzx.modbus4And.requset.ModbusReq;
@@ -137,7 +138,7 @@ public class RobotDescernActivity extends AppCompatActivity {
         new BottomUI().hideBottomUIMenu(this.getWindow());
         setContentView(R.layout.activity_robot_descern);
         ButterKnife.bind(this);
-        mediaPlayer = MediaPlayer.create(RobotDescernActivity.this, R.raw.fengming);
+//        mediaPlayer = MediaPlayer.create(RobotDescernActivity.this, R.raw.fengming);
         paint = new Paint();
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(2);
@@ -703,5 +704,42 @@ public class RobotDescernActivity extends AppCompatActivity {
     protected void onRestart() {
         super.onRestart();
         new BottomUI().hideBottomUIMenu(this.getWindow());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        String audio = new SharePreferencesUtils().getString(this,"audio","");
+        if (audio.equals("fengming")){
+            mediaPlayer = MediaPlayer.create(RobotDescernActivity.this, R.raw.fengming);
+        }
+        if (audio.equals("nv")){
+            mediaPlayer = MediaPlayer.create(RobotDescernActivity.this, R.raw.nv);
+        }
+        if (audio.equals("nan")){
+            mediaPlayer = MediaPlayer.create(RobotDescernActivity.this, R.raw.nan);
+        }
+        if (audio.equals("ami")){
+            mediaPlayer = MediaPlayer.create(RobotDescernActivity.this, R.raw.ami);
+        }
+        if (audio.equals("dzy1")){
+            mediaPlayer = MediaPlayer.create(RobotDescernActivity.this, R.raw.dzy1);
+        }
+        if (audio.equals("dzy2")){
+            mediaPlayer = MediaPlayer.create(RobotDescernActivity.this, R.raw.dzy2);
+        }
+        if (audio.equals("jsq1")){
+            mediaPlayer = MediaPlayer.create(RobotDescernActivity.this, R.raw.jsq1);
+        }
+        if (audio.equals("jsq2")){
+            mediaPlayer = MediaPlayer.create(RobotDescernActivity.this, R.raw.jsq2);
+        }
+        if (audio.equals("db")){
+            mediaPlayer = MediaPlayer.create(RobotDescernActivity.this, R.raw.db);
+        }
+        if (audio.equals("dh")){
+            mediaPlayer = MediaPlayer.create(RobotDescernActivity.this, R.raw.dh);
+        }
+        Log.e("XXXXX","onResume");
     }
 }

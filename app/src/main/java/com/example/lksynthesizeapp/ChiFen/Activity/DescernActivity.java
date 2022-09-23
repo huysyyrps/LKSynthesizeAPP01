@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.PowerManager;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.Display;
@@ -51,6 +52,7 @@ import com.example.lksynthesizeapp.ChiFen.Media.ScreenRecorder;
 import com.example.lksynthesizeapp.ChiFen.Media.VideoEncodeConfig;
 import com.example.lksynthesizeapp.Constant.Base.Constant;
 import com.example.lksynthesizeapp.R;
+import com.example.lksynthesizeapp.SharePreferencesUtils;
 import com.example.lksynthesizeapp.YoloV5Ncnn;
 
 import java.io.File;
@@ -89,6 +91,8 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
     LinearLayout linearLayoutStop;
     @BindView(R.id.frameLayout)
     FrameLayout frameLayout;
+    @BindView(R.id.rbSetting)
+    RadioButton rbSetting;
     private String url;
     private Bitmap bmp = null;
     private Thread mythread;
@@ -111,6 +115,8 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
     private Notifications mNotifications;
     //创建一个虚屏VirtualDisplay，内含一个真实的Display对象
     private VirtualDisplay mVirtualDisplay;
+    //获取电源锁
+    PowerManager.WakeLock wakeLock = null;
     private MediaProjection mMediaProjection;
     private MyWindowManager myWindowManager;
     private MediaProjectionManager mMediaProjectionManager;
@@ -118,6 +124,8 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
     String[] PERMS = {Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.FOREGROUND_SERVICE};
+
+    String plAudio = "fengming";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,6 +138,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         new BottomUI().hideBottomUIMenu(this.getWindow());
         setContentView(R.layout.activity_descern);
         ButterKnife.bind(this);
+
         display = getWindowManager().getDefaultDisplay();
         myWindowManager = new MyWindowManager(this);
         mNotifications = new Notifications(getApplicationContext());
@@ -137,7 +146,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         //ImageReader允许应用程序直接获取渲染到surface的图形数据，并转换为图片，这里我用
         Log.e("XXXXX", "width-display :" + display.getWidth() + "heigth-display :" + display.getHeight());
         mImageReader = ImageReader.newInstance(display.getWidth(), display.getHeight(), 0x1, 2);
-        mediaPlayer = MediaPlayer.create(DescernActivity.this, R.raw.fengming);
+        Log.e("XXXXX", "onCreat");
         boolean ret_init = yolov5ncnn.Init(getAssets());
         if (!ret_init) {
             Toast.makeText(this, "yolov5ncnn Init failed", Toast.LENGTH_SHORT).show();
@@ -269,7 +278,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         runing = false;
     }
 
-    @OnClick({R.id.rbCamera, R.id.rbVideo, R.id.rbAlbum, R.id.rbBack, R.id.linearLayoutStop})
+    @OnClick({R.id.rbCamera, R.id.rbVideo, R.id.rbAlbum, R.id.rbBack, R.id.linearLayoutStop, R.id.rbSetting})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.rbCamera:
@@ -297,7 +306,6 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                 } else {
                     System.out.println("bitmap is NULL!");
                 }
-
                 break;
             case R.id.rbVideo:
                 SelectTag = "Sound";
@@ -326,6 +334,12 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
 //                startActivity(intent);
                 new MainUI().showPopupMenu(rbAlbum, "Desc", this);
                 break;
+            case R.id.rbSetting:
+                Intent intent = new Intent(this, SettingActivity.class);
+                intent.putExtra("address",address);
+                intent.putExtra("tag","desc");
+                startActivity(intent);
+                break;
             case R.id.rbBack:
                 if (mythread != null) {
                     mythread.interrupt();
@@ -351,7 +365,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                     new BottomUI().hideBottomUIMenu(this.getWindow());
                     mMediaProjection = mMediaProjectionManager.getMediaProjection(resultCode, backdata);
                     if (mMediaProjection != null) {
-                       if (SelectTag.equals("Sound")) {
+                        if (SelectTag.equals("Sound")) {
                             if (EasyPermissions.hasPermissions(this, PERMS)) {
                                 new TirenSet().checkTirem(ivTimer);
                                 startCaptureVideo(mMediaProjection);
@@ -365,6 +379,11 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                     finish();
                 }
                 break;
+            case Constant.TAG_TWO:
+                if (resultCode == Activity.RESULT_OK) {
+                    String position = backdata.getStringExtra("position");
+                }
+
         }
     }
 
@@ -432,7 +451,8 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
 
     // 实现“onRequestPermissionsResult”函数接收校验权限结果。
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         // 将结果转发给 EasyPermissions
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
@@ -492,5 +512,50 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
     protected void onRestart() {
         super.onRestart();
         new BottomUI().hideBottomUIMenu(this.getWindow());
+        Log.e("XXXXX","restart");
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        String audio = new SharePreferencesUtils().getString(this,"audio","");
+        if (audio.equals("fengming")){
+            mediaPlayer = MediaPlayer.create(DescernActivity.this, R.raw.fengming);
+        }
+        if (audio.equals("nv")){
+            mediaPlayer = MediaPlayer.create(DescernActivity.this, R.raw.nv);
+        }
+        if (audio.equals("nan")){
+            mediaPlayer = MediaPlayer.create(DescernActivity.this, R.raw.nan);
+        }
+        if (audio.equals("ami")){
+            mediaPlayer = MediaPlayer.create(DescernActivity.this, R.raw.ami);
+        }
+        if (audio.equals("dzy1")){
+            mediaPlayer = MediaPlayer.create(DescernActivity.this, R.raw.dzy1);
+        }
+        if (audio.equals("dzy2")){
+            mediaPlayer = MediaPlayer.create(DescernActivity.this, R.raw.dzy2);
+        }
+        if (audio.equals("jsq1")){
+            mediaPlayer = MediaPlayer.create(DescernActivity.this, R.raw.jsq1);
+        }
+        if (audio.equals("jsq2")){
+            mediaPlayer = MediaPlayer.create(DescernActivity.this, R.raw.jsq2);
+        }
+        if (audio.equals("db")){
+            mediaPlayer = MediaPlayer.create(DescernActivity.this, R.raw.db);
+        }
+        if (audio.equals("dh")){
+            mediaPlayer = MediaPlayer.create(DescernActivity.this, R.raw.dh);
+        }
+        Log.e("XXXXX","onResume");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.e("info", "stop");
+    }
+
 }

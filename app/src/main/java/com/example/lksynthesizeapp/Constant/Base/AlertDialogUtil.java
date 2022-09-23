@@ -59,7 +59,7 @@ public class AlertDialogUtil {
     public void showWifiSetting(Context context,String ssid,String pwd,final DialogCallBack dialogCallBack) {
         if (dialog == null || !dialog.isShowing()) {
             dialog = new Dialog(context);
-            dialog.setCancelable(false);
+            dialog.setCancelable(true);
             dialog.setCanceledOnTouchOutside(false);
             dialog.show();
             LayoutInflater inflater = LayoutInflater.from(context);
@@ -144,4 +144,5 @@ public class AlertDialogUtil {
             dialog.getWindow().setContentView(view);
         }
     }
+    
 }

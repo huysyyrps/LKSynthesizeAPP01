@@ -208,24 +208,22 @@ public class SendSelectActivity extends AppCompatActivity {
             runnable = new Runnable() {
                 @Override
                 public void run() {
-                    new getIp().cleanARP(new GetIpCallBack() {
+                    new getIp().getConnectIp(new GetIpCallBack() {
                         @Override
-                        public void success(String backAdress) {
-                            Log.e("XXXXXX11", backAdress);
-                            if (backAdress != null && !backAdress.equals("")) {
-                                address = backAdress;
-                                if (handler != null) {
-                                    connect(tag);
-                                }
+                        public void success(String backAddress) {
+                            address = backAddress;
+                            Log.e("XXXXXX",address);
+                            if (handler != null) {
+                                connect(tag);
                             }
                         }
 
                         @Override
                         public void faile() {
-                            Log.e("XXXXXX11", "11111");
+
                         }
                     });
-                    handler.postDelayed(this, 1000);
+//                    handler.postDelayed(this, 1000);
                 }
             };
             handler.postDelayed(runnable, 1000);
@@ -271,31 +269,6 @@ public class SendSelectActivity extends AppCompatActivity {
             startActivity(intent);
         }
 
-
-
-        if (tag.equals("本地存储")) {
-            sharePreferencesUtils.setString(SendSelectActivity.this, "sendSelect", "本地存储");
-//            intent = new Intent(SendSelectActivity.this, LocalActivity.class);
-            intent = new Intent(SendSelectActivity.this, RobotDescernActivity.class);
-            intent.putExtra("project", etProject.getText().toString().trim());
-            intent.putExtra("etWorkName", etWorkName.getText().toString().trim());
-            intent.putExtra("etWorkCode", etWorkCode.getText().toString().trim());
-            intent.putExtra("address", address + "");
-            startActivity(intent);
-        } else if (tag.equals("在线检测")) {
-            sharePreferencesUtils.setString(SendSelectActivity.this, "sendSelect", "在线检测");
-            intent = new Intent(SendSelectActivity.this, DescernActivity.class);
-            intent.putExtra("project", etProject.getText().toString().trim());
-            intent.putExtra("etWorkName", etWorkName.getText().toString().trim());
-            intent.putExtra("etWorkCode", etWorkCode.getText().toString().trim());
-            intent.putExtra("address", address + "");
-            startActivity(intent);
-        } else if (tag.equals("机器人")) {
-            sharePreferencesUtils.setString(SendSelectActivity.this, "sendSelect", "机器人");
-            intent = new Intent(SendSelectActivity.this, RobotActivity.class);
-            intent.putExtra("address", address + "");
-            startActivity(intent);
-        }
     }
 
 }

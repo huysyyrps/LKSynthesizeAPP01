@@ -252,7 +252,11 @@ public class LocalActivity extends AppCompatActivity implements EasyPermissions.
                 break;
             case R.id.rbRefresh:
 //                ShowDialog("/etc/init.d/mjpg-streamer restart");
-                ShowDialog("uci set mjpg-streamer.core.fps=30", "uci commit", "/etc/init.d/mjpg-streamer restart");
+//                ShowDialog("uci set mjpg-streamer.core.fps=30", "uci commit", "/etc/init.d/mjpg-streamer restart");
+                Intent intent = new Intent(this, SettingActivity.class);
+                intent.putExtra("address",address);
+                intent.putExtra("tag","local");
+                startActivity(intent);
                 break;
             case R.id.rbBack:
                 finish();

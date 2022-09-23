@@ -4,7 +4,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:background="@color/color_bg_selected"
-    android:layout_height="45dp">
+    android:layout_height="40dp">
     <TextView
         android:id="@+id/tv_tittle"
         android:textColor="@android:color/white"
