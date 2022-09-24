@@ -5,12 +5,49 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.example.lksynthesizeapp.Constant.View.Header
-        android:id="@+id/header"
-        style="@style/Header"
-        app:header_title="图库"
-        app:header_title_right="@string/delet">
-    </com.example.lksynthesizeapp.Constant.View.Header>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="35dp">
+        <com.example.lksynthesizeapp.Constant.View.Header
+            android:id="@+id/header"
+            style="@style/Header"
+            app:header_title="图库">
+        </com.example.lksynthesizeapp.Constant.View.Header>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_gravity="right">
+            <TextView
+                android:id="@+id/tvSend"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginRight="20dp"
+                android:text="上传"
+                android:gravity="center"
+                android:background="@drawable/linelayout_color_radion"
+                android:textColor="@color/whith"/>
+            <TextView
+                android:id="@+id/tvDelect"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginRight="20dp"
+                android:text="删除"
+                android:gravity="center"
+                android:background="@drawable/linelayout_color_radion"
+                android:textColor="@color/whith"/>
+        </LinearLayout>
+    </FrameLayout>
+
+
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="35dp"-->
+<!--        android:orientation="horizontal">-->
+<!--        <ImageView-->
+<!--            android:layout_width=""-->
+<!--            android:layout_height=""-->
+<!--    </LinearLayout>-->
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -30,14 +67,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
         </com.scwang.smart.refresh.layout.SmartRefreshLayout>
-
-        <ImageView
-            android:id="@+id/ivSend"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right|bottom"
-            android:layout_margin="20dp"
-            android:src="@drawable/ic_send" />
     </FrameLayout>
 
 </LinearLayout>

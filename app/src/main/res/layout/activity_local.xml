@@ -21,37 +21,53 @@
         android:layout_height="match_parent"
         android:layout_gravity="right"
         android:layout_marginLeft="6dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@color/header_color">
 
         <RadioButton
             android:id="@+id/rbCamera"
             style="@style/MainRadionButton"
             android:background="@drawable/button_select"
-            android:drawableLeft="@drawable/ic_camera" />
+            android:drawableTop="@drawable/ic_camera"
+            android:text="截图"
+            android:textSize="12dp"
+            android:textColor="@color/whith"/>
 
         <RadioButton
             android:id="@+id/rbSound"
             style="@style/MainRadionButton"
             android:background="@drawable/button_select"
-            android:drawableLeft="@drawable/ic_video1" />
+            android:drawableTop="@drawable/ic_video"
+            android:text="录像"
+            android:textSize="12dp"
+            android:textColor="@color/whith"/>
 
         <RadioButton
             android:id="@+id/rbAlbum"
             style="@style/MainRadionButton"
             android:background="@drawable/button_select"
-            android:drawableLeft="@drawable/ic_folder" />
+            android:drawableTop="@drawable/ic_file"
+            android:text="文件夹"
+            android:textSize="12dp"
+            android:textColor="@color/whith"/>
 
         <RadioButton
             android:id="@+id/rbRefresh"
             style="@style/MainRadionButton"
             android:background="@drawable/button_select"
-            android:drawableLeft="@drawable/ic_refresh" />
+            android:drawableTop="@drawable/ic_client_setting"
+            android:text="设置"
+            android:textSize="12dp"
+            android:textColor="@color/whith"/>
 
         <RadioButton
             android:id="@+id/rbBack"
             style="@style/MainRadionButton"
             android:background="@drawable/button_select"
-            android:drawableLeft="@drawable/ic_finish" />
+            android:drawableTop="@drawable/ic_finish"
+            android:text="返回"
+            android:textSize="12dp"
+            android:textColor="@color/whith"/>
 
     </RadioGroup>
     <LinearLayout
@@ -70,14 +86,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:gravity="center"
-                android:text="工程名称:"
+                android:text="工程名称\t:\t"
                 android:textColor="@color/red"
                 android:textSize="14dp" />
             <TextView
                 android:id="@+id/tvCompName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
                 android:gravity="center"
                 android:maxLength="15"
                 android:textColor="@color/red"
@@ -93,14 +108,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:gravity="center"
-                android:text="工件名称:"
+                android:text="工件名称\t:\t"
                 android:textColor="@color/red"
                 android:textSize="14dp" />
             <TextView
                 android:id="@+id/tvWorkName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
                 android:gravity="center"
                 android:maxLength="15"
                 android:textColor="@color/red"
@@ -116,7 +130,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:gravity="center"
-                android:text="工件编号:"
+                android:text="工件编号\t:\t"
                 android:textColor="@color/red"
                 android:textSize="14dp" />
 
@@ -124,7 +138,6 @@
                 android:id="@+id/tvWorkCode"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
                 android:gravity="center"
                 android:maxLength="15"
                 android:textColor="@color/red"

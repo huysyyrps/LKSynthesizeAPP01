@@ -7,7 +7,7 @@
 
     <style name="Header">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">45dp</item>
+        <item name="android:layout_height">35dp</item>
         <item name="background">@color/color_selected</item>
     </style>
     <!--自定义header属性-->
@@ -103,11 +103,9 @@
     <!-- 自定义CheckBox 样式 -->
     <style name="CustomCheckboxTheme" parent="@android:style/Widget.CompoundButton.CheckBox">
         <item name="android:button">@drawable/custom_checkbox_selector</item>
-        <item name="android:layout_width">50dp</item>
-        <item name="android:layout_height">50dp</item>
+        <item name="android:layout_width">30dp</item>
+        <item name="android:layout_height">30dp</item>
         <item name="android:layout_gravity">right|top</item>
-        <item name="android:layout_marginRight">5dp</item>
-        <item name="android:layout_marginTop">5dp</item>
     </style>
 
     <style name="ButtonStyle" parent="Widget.AppCompat.Button.Borderless">
@@ -123,8 +121,10 @@
         <item name="android:layout_weight">1</item>
         <item name="android:gravity">center|left</item>
         <item name="android:background">@null</item>
-        <item name="android:textSize">14dp</item>
-        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:textSize">13dp</item>
+        <item name="android:layout_marginLeft">2dp</item>
+        <item name="android:paddingLeft">2dp</item>
+        <item name="android:layout_marginRight">2dp</item>
         <item name="android:textColor">@color/red</item>
     </style>
     <!--自定义TextView-->

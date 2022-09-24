@@ -4,17 +4,15 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -58,15 +56,17 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
     RecyclerView recyclerView;
     @BindView(R.id.smartRefreshLayout)
     SmartRefreshLayout smartRefreshLayout;
-    @BindView(R.id.ivSend)
-    ImageView ivSend;
+    @BindView(R.id.tvSend)
+    TextView tvSend;
+    @BindView(R.id.tvDelect)
+    TextView tvDelect;
 
     List<String> imagePaths = new ArrayList<>();
     List<String> selectList = new ArrayList<>();
     BaseRecyclerAdapter baseRecyclerAdapter;
     SharePreferencesUtils sharePreferencesUtils;
     private PhotoPresenter photoPresenter;
-    private String project = "", workName = "", workCode = "",compName = "",device = "";
+    private String project = "", workName = "", workCode = "", compName = "", device = "";
     private int startNum = 0;
     private int lastNum = 24;
     private int allNum;
@@ -81,19 +81,19 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
         sharePreferencesUtils = new SharePreferencesUtils();
         compName = "鲁科检测";
         device = "磁探机";
-        project = sharePreferencesUtils.getString(PhotoActivity.this,"project","");
-        workName = sharePreferencesUtils.getString(PhotoActivity.this,"workName","");
-        workCode = sharePreferencesUtils.getString(PhotoActivity.this,"workCode","");
+        project = sharePreferencesUtils.getString(PhotoActivity.this, "project", "");
+        workName = sharePreferencesUtils.getString(PhotoActivity.this, "workName", "");
+        workCode = sharePreferencesUtils.getString(PhotoActivity.this, "workCode", "");
         String tag = getIntent().getStringExtra("tag");
         header.setTvTitle("图库");
-        photoPresenter = new PhotoPresenter(this,this);
+        photoPresenter = new PhotoPresenter(this, this);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(PhotoActivity.this, 3);
         recyclerView.setLayoutManager(gridLayoutManager);
         baseRecyclerAdapter = new BaseRecyclerAdapter<String>(PhotoActivity.this, R.layout.album_item, imagePaths) {
             @Override
             public void convert(BaseViewHolder holder, final String o) {
                 holder.setImage(PhotoActivity.this, R.id.imageView, o);
-                holder.setText( R.id.tvName, getFileName(o));
+                holder.setText(R.id.tvName, getFileName(o));
                 holder.setOnClickListener(R.id.imageView, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -109,25 +109,25 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
                     public void onClick(View v) {
                         if (selectList.contains(o)) {
                             selectList.remove(o);
-                            if (selectList.size()==0){
+                            if (selectList.size() == 0) {
                                 header.setTvTitle("图库");
-                            }else {
-                                header.setTvTitle("图库"+"("+selectList.size()+"/9)");
+                            } else {
+                                header.setTvTitle("图库" + "(" + selectList.size() + "/9)");
                             }
                         } else {
                             if (selectList.size() >= 9) {
-                                holder.setCheckBoxFalse( R.id.cbSelect);
+                                holder.setCheckBoxFalse(R.id.cbSelect);
                                 Toast.makeText(PhotoActivity.this, "最多只能选择9张图片", Toast.LENGTH_SHORT).show();
                             } else {
                                 selectList.add(o);
                                 String[] strarray = o.split("/");
                                 int leng = strarray.length;
-                                compName = strarray[leng-5];
-                                project = strarray[leng-4];
-                                device = strarray[leng-3];
-                                workName = strarray[leng-2];
-                                header.setTvTitle("图库"+"("+selectList.size()+"/9)");
-                                holder.setCheckBoxTrue( R.id.cbSelect);
+                                compName = strarray[leng - 5];
+                                project = strarray[leng - 4];
+                                device = strarray[leng - 3];
+                                workName = strarray[leng - 2];
+                                header.setTvTitle("图库" + "(" + selectList.size() + "/9)");
+                                holder.setCheckBoxTrue(R.id.cbSelect);
                             }
                         }
                     }
@@ -149,27 +149,31 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
         smartRefreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore(RefreshLayout refreshlayout) {
-                if (allNum == lastNum){
+                if (allNum == lastNum) {
                     Toast.makeText(PhotoActivity.this, "暂无更多数据", Toast.LENGTH_SHORT).show();
                     smartRefreshLayout.finishLoadMore();//结束加载
-                }else if (lastNum < allNum){
+                } else if (lastNum < allNum) {
                     startNum = lastNum;
-                    lastNum+=24;
-                    if (lastNum>=allNum){
+                    lastNum += 24;
+                    if (lastNum >= allNum) {
                         lastNum = allNum;
                     }
                     setData(fileListData);
                 }
             }
         });
-        ProgressDialogUtil.startLoad(this,"加载中...");
+        ProgressDialogUtil.startLoad(this, "加载中...");
         new Thread(new Runnable() {
             @Override
             public void run() {
-                if (tag.equals("Local")){
-                    getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKEImage/"+project+"/"+workName+"/"+workCode+"/");
-                }else {
-                    getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKEDecsImage/"+project+"/"+workName+"/"+workCode+"/");
+                if (tag.equals("Local")) {
+                    getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKEImage/" + project + "/" + workName + "/" + workCode + "/");
+                } else if (tag.equals("Desc")){
+                    getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKEDescImage/" + project + "/" + workName + "/" + workCode + "/");
+                }else if (tag.equals("RobotDesc")){
+                    getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKERobotDescImage/"+ project + "/" + workName + "/" + workCode + "/");
+                }else if (tag.equals("Robot")){
+                    getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKERobotImage/"+ project + "/" + workName + "/" + workCode + "/");
                 }
             }
         }).start();
@@ -179,7 +183,7 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
         imagePaths.clear();
         fileListData = listFileSortByModifyTime(path);
         Collections.reverse(fileListData);
-        if (fileListData.size()!=0){
+        if (fileListData.size() != 0) {
             allNum = fileListData.size();
             setData(fileListData);
         } else {
@@ -187,7 +191,7 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
         }
     }
 
-    private void setData(List<File> fileListData){
+    private void setData(List<File> fileListData) {
         try {
             if (allNum > 24) {
                 for (int i = startNum; i < lastNum; i++) {
@@ -201,7 +205,7 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
                         Bitmap bitmap = null;
                         bitmap = BitmapFactory.decodeFile(fileListData.get(i).getPath());
                         if (bitmap != null) {
-                            Log.e("XXX",fileListData.get(i).getPath());
+                            Log.e("XXX", fileListData.get(i).getPath());
                             imagePaths.add(fileListData.get(i).getPath());
                         }
                     }
@@ -299,40 +303,55 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
         return isImageFile;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    @OnClick(R.id.ivSend)
-    public void onClick() {
-//        if (sharePreferencesUtils.getString(this,"userName","").equals("")){
-//            startActivity(new Intent(this, LoginActivity.class));
-//        }else {
-            if (selectList.size() == 0) {
-                Toast.makeText(PhotoActivity.this, "您还未选择图片", Toast.LENGTH_SHORT).show();
-            } else {
-                String base = "";
-                String imageName = "";
-                for (int i = 0; i < selectList.size(); i++) {
-                    if (i == 0) {
-                        base = new StringBase().bitmapToString(selectList.get(0));
-                        imageName = getFileName(selectList.get(0));
-                    } else {
-                        base = base + "---" + new StringBase().bitmapToString(selectList.get(i));
-                        imageName = imageName + "---" + getFileName(selectList.get(i));
+
+    @OnClick({R.id.tvSend, R.id.tvDelect})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.tvSend:
+                if (selectList.size() == 0) {
+                    Toast.makeText(PhotoActivity.this, "您还未选择图片", Toast.LENGTH_SHORT).show();
+                } else {
+                    String base = "";
+                    String imageName = "";
+                    for (int i = 0; i < selectList.size(); i++) {
+                        if (i == 0) {
+                            base = new StringBase().bitmapToString(selectList.get(0));
+                            imageName = getFileName(selectList.get(0));
+                        } else {
+                            base = base + "---" + new StringBase().bitmapToString(selectList.get(i));
+                            imageName = imageName + "---" + getFileName(selectList.get(i));
+                        }
                     }
+                    HashMap<String, String> map = new HashMap<String, String>();
+                    map.put("company", compName);
+                    map.put("project", project);
+                    map.put("device", device);
+                    map.put("workpiece", workName);
+                    map.put("workpiecenum", workCode);
+                    map.put("name", imageName);
+                    map.put("pic", base);
+                    Gson gson = new Gson();
+                    String s = gson.toJson(map);
+                    RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), gson.toJson(map));
+                    photoPresenter.getPhoto(requestBody);
                 }
-                HashMap<String, String> map = new HashMap<String, String>();
-                map.put("company", compName);
-                map.put("project", project);
-                map.put("device", device);
-                map.put("workpiece", workName);
-                map.put("workpiecenum", workCode);
-                map.put("name", imageName);
-                map.put("pic", base);
-                Gson gson = new Gson();
-                String s = gson.toJson(map);
-                RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), gson.toJson(map));
-                photoPresenter.getPhoto(requestBody);
-            }
-//        }
+                break;
+            case R.id.tvDelect:
+                if (selectList.size() == 0) {
+                    Toast.makeText(this, "请先选择想要删除的文件", Toast.LENGTH_SHORT).show();
+                } else {
+                    for (String path : selectList) {
+                        imagePaths.remove(path);
+                        File file = new File(path);
+                        file.delete();
+                    }
+                    selectList.clear();
+                    header.setTvTitle("图库");
+                    recyclerView.setAdapter(null);
+                    recyclerView.setAdapter(baseRecyclerAdapter);
+                }
+                break;
+        }
     }
 
     @Override
@@ -347,19 +366,7 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
 
     @Override
     protected void rightClient() {
-        if (selectList.size()==0){
-            Toast.makeText(this, "请先选择想要删除的文件", Toast.LENGTH_SHORT).show();
-        }else {
-            for (String path : selectList){
-                imagePaths.remove(path);
-                File file = new File(path);
-                file.delete();
-            }
-            selectList.clear();
-            header.setTvTitle("图库");
-            recyclerView.setAdapter(null);
-            recyclerView.setAdapter(baseRecyclerAdapter);
-        }
+
     }
 
 
@@ -386,15 +393,16 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
 
     /**
      * 从路径中提取文件名
+     *
      * @param pathandname
      * @return
      */
-    public String getFileName(String pathandname){
-        int start=pathandname.lastIndexOf("/");
-        int end=pathandname.length();
-        if(start!=-1 && end!=-1){
-            return pathandname.substring(start+1,end);
-        }else{
+    public String getFileName(String pathandname) {
+        int start = pathandname.lastIndexOf("/");
+        int end = pathandname.length();
+        if (start != -1 && end != -1) {
+            return pathandname.substring(start + 1, end);
+        } else {
             return "null";
         }
 

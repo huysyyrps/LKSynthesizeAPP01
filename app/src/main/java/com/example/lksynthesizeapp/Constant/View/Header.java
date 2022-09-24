@@ -120,7 +120,7 @@ public class Header extends LinearLayout {
                 tvLeft = typedArray.getString(R.styleable.Header_header_title_left);
                 tvTitle = typedArray.getString(R.styleable.Header_header_title);
                 tvRight = typedArray.getString(R.styleable.Header_header_title_right);
-                ivleft = typedArray.getResourceId(R.styleable.Header_header_image_left,R.drawable.ic_back);
+                ivleft = typedArray.getResourceId(R.styleable.Header_header_image_left,R.drawable.ic_headerback);
                 ivRight = typedArray.getResourceId(R.styleable.Header_header_image_right,R.drawable.ic_search);
                 isleftIv=typedArray.getBoolean(R.styleable.Header_header_is_left_iv_visiable,true);
                 isleftTv=typedArray.getBoolean(R.styleable.Header_header_is_left_tv_visiable,false);

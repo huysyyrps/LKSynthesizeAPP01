@@ -26,7 +26,7 @@ public abstract  class BaseActivity extends AppCompatActivity implements BaseVie
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(provideContentViewId());
-        new StatusBarUtils().setWindowStatusBarColor(BaseActivity.this, R.color.color_bg_selected);
+        new StatusBarUtils().setWindowStatusBarColor(BaseActivity.this, R.color.header_color);
         if(isHasHeader()){
             Header header=(Header)this.findViewById(R.id.header);
             header.setClickLister(this);

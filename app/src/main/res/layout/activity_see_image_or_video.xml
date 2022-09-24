@@ -26,34 +26,4 @@
             android:layout_height="wrap_content"/>
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@color/tmgray"
-        android:layout_gravity="center"
-        android:orientation="vertical">
-
-
-        <ImageView
-            android:visibility="gone"
-            android:id="@+id/ivStart"
-            style="@style/ButtonStyle"
-            android:layout_width="55dp"
-            android:layout_height="55dp"
-            android:layout_weight="1"
-            android:src="@drawable/ic_start" />
-
-        <ImageView
-            android:id="@+id/ivPause"
-            android:visibility="gone"
-            style="@style/ButtonStyle"
-            android:layout_width="55dp"
-            android:layout_height="55dp"
-            android:layout_weight="1"
-            android:src="@drawable/ic_pause" />
-
-
-    </LinearLayout>
-
-
 </FrameLayout>

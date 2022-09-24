@@ -1,7 +1,6 @@
 package com.example.lksynthesizeapp.Constant.activity;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 
@@ -20,6 +19,7 @@ public class WelcomeActivity extends AppCompatActivity {
     CircleTextProgressbar tvProgress;
     private Handler mHandler;
 
+//    @SuppressLint("ResourceAsColor")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,7 +27,7 @@ public class WelcomeActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         mHandler = new Handler();
         //设置状态栏颜色
-        new StatusBarUtils().setWindowStatusBarColor(WelcomeActivity.this, R.color.white);
+        new StatusBarUtils().setWindowStatusBarColor(WelcomeActivity.this, R.color.black);
         mHandler.postDelayed(new Runnable() {
             public void run() {
                 //你需要跳转的地方的代码
@@ -39,10 +39,10 @@ public class WelcomeActivity extends AppCompatActivity {
 
         // 模拟网易新闻跳过。
         tvProgress = (CircleTextProgressbar) findViewById(R.id.tvProgress);
-        tvProgress.setOutLineColor(Color.TRANSPARENT);
-        tvProgress.setInCircleColor(Color.parseColor("#AAC6C6C6"));
-        tvProgress.setProgressColor(Color.BLUE);
-        tvProgress.setProgressLineWidth(3);
+//        tvProgress.setOutLineColor(R.color.company_color);
+//        tvProgress.setInCircleColor(R.color.black);
+//        tvProgress.setProgressColor(R.color.company_color);
+        tvProgress.setProgressLineWidth(4);
         tvProgress.reStart();
     }
 

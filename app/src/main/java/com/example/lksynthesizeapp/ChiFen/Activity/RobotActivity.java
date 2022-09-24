@@ -12,7 +12,17 @@ import static com.example.lksynthesizeapp.Constant.Base.Constant.TAG_SEVEN;
 import static com.example.lksynthesizeapp.Constant.Base.Constant.TAG_THERE;
 import static com.example.lksynthesizeapp.Constant.Base.Constant.TAG_TWO;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.hardware.display.DisplayManager;
+import android.hardware.display.VirtualDisplay;
+import android.media.MediaRecorder;
+import android.media.projection.MediaProjection;
+import android.media.projection.MediaProjectionManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -21,14 +31,20 @@ import android.view.View;
 import android.view.WindowManager;
 import android.webkit.WebSettings;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.lksynthesizeapp.ChiFen.Base.BottomUI;
 import com.example.lksynthesizeapp.ChiFen.Base.ByteUtil;
+import com.example.lksynthesizeapp.ChiFen.Base.ImageSave;
 import com.example.lksynthesizeapp.ChiFen.Base.MainUI;
+import com.example.lksynthesizeapp.ChiFen.Base.MyMediaRecorder;
+import com.example.lksynthesizeapp.ChiFen.Base.TirenSet;
 import com.example.lksynthesizeapp.ChiFen.Modbus.ModbusCallBack;
 import com.example.lksynthesizeapp.ChiFen.Modbus.ModbusContion;
 import com.example.lksynthesizeapp.ChiFen.Modbus.ModbusFloatCallBack;
@@ -38,6 +54,7 @@ import com.example.lksynthesizeapp.ChiFen.View.MyWebView;
 import com.example.lksynthesizeapp.ChiFen.bean.ItemInfo;
 import com.example.lksynthesizeapp.Constant.Base.AlertDialogUtil;
 import com.example.lksynthesizeapp.Constant.Base.BaseActivity;
+import com.example.lksynthesizeapp.Constant.Base.Constant;
 import com.example.lksynthesizeapp.R;
 import com.zgkxzx.modbus4And.requset.ModbusParam;
 import com.zgkxzx.modbus4And.requset.ModbusReq;
@@ -49,21 +66,18 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import pub.devrel.easypermissions.EasyPermissions;
 
 public class RobotActivity extends BaseActivity {
 
     @BindView(R.id.webView)
     MyWebView webView;
-    @BindView(R.id.ivVisition)
-    ImageView ivVisition;
     @BindView(R.id.tvSpeed)
     TextView tvSpeed;
     @BindView(R.id.tvDistance)
     TextView tvDistance;
     @BindView(R.id.tvCHTime)
     TextView tvCHTime;
-    @BindView(R.id.tvActualDistance)
-    TextView tvActualDistance;
     @BindView(R.id.tvCEControl)
     TextView tvCEControl;
     @BindView(R.id.tvLightSelect)
@@ -72,20 +86,9 @@ public class RobotActivity extends BaseActivity {
     TextView tvSearchlightControl;
     @BindView(R.id.tvCHControl)
     TextView tvCHControl;
-    @BindView(R.id.linSetting)
-    LinearLayout linSetting;
-    @BindView(R.id.btnCEControl)
-    Button btnCEControl;
-    @BindView(R.id.btnCHControl)
-    Button btnCHControl;
-    @BindView(R.id.btnSearchlightControl)
-    Button btnSearchlightControl;
-    @BindView(R.id.btnLightSelect)
     Button btnLightSelect;
     @BindView(R.id.linearLayout)
     LinearLayout linearLayout;
-    @BindView(R.id.ivGone)
-    ImageView ivGone;
     @BindView(R.id.cm_main)
     CircleMenu cmMain;
     @BindView(R.id.btnStop)
@@ -93,8 +96,20 @@ public class RobotActivity extends BaseActivity {
     String address = null;
     Message message;
     List<ItemInfo> data = new ArrayList<>();
-    @BindView(R.id.linBtn)
-    LinearLayout linBtn;
+    @BindView(R.id.rbCamera)
+    RadioButton rbCamera;
+    @BindView(R.id.rbVideo)
+    RadioButton rbVideo;
+    @BindView(R.id.rbAlbum)
+    RadioButton rbAlbum;
+    @BindView(R.id.radioGroup)
+    RadioGroup radioGroup;
+    @BindView(R.id.ivTimer)
+    ImageView ivTimer;
+    @BindView(R.id.linearLayoutStop)
+    LinearLayout linearLayoutStop;
+    @BindView(R.id.frameLayout)
+    FrameLayout frameLayout;
     private CircleMenuAdapter circleMenuAdapternew;
     private boolean isConnect = false;
     private int TIME = 2000;
@@ -102,6 +117,15 @@ public class RobotActivity extends BaseActivity {
     Handler handlerConfigure = new Handler();
     public static String TAG = "RobotActivitytest";
     private Handler handlerData = new Handler();
+    private Toast toast;
+    public static String project = "", workName = "", workCode = "";
+    private VirtualDisplay mVirtualDisplay;
+    private MediaProjection mMediaProjection;
+    private MediaProjectionManager mMediaProjectionManager;
+    String[] PERMS = {Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.FOREGROUND_SERVICE};
+    private MediaRecorder mediaRecorder;
 
 
     @Override
@@ -114,7 +138,11 @@ public class RobotActivity extends BaseActivity {
         //隐藏底部按钮
         new BottomUI().hideBottomUIMenu(this.getWindow());
         ButterKnife.bind(this);
-
+        mMediaProjectionManager = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
+        Intent intent = getIntent();
+        project = intent.getStringExtra("project");
+        workName = intent.getStringExtra("etWorkName");
+        workCode = intent.getStringExtra("etWorkCode");
         webView.setBackgroundColor(Color.BLACK);
         WebSettings WebSet = webView.getSettings();    //获取webview设置
         WebSet.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);   //自适应屏幕
@@ -122,23 +150,11 @@ public class RobotActivity extends BaseActivity {
         webView.setScrollContainer(false);
         webView.setVerticalScrollBarEnabled(false);
         webView.setHorizontalScrollBarEnabled(false);
-//        try {
-//            address = new getIp().getConnectIp();
-//            if (address != null) {
-//                address = "http://" + address + ":8080";
-//                webView.loadUrl(address);
-//            } else {
-//                Toast.makeText(RobotActivity.this, "获取IP失败", Toast.LENGTH_SHORT).show();
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-
         address = getIntent().getStringExtra("address");
-        if (address!=null){
+        if (address != null) {
             address = "http://" + address + ":8080";
             webView.loadUrl(address);
-        }else {
+        } else {
             Toast.makeText(this, "IP为空,请等待连接", Toast.LENGTH_SHORT).show();
             finish();
         }
@@ -279,21 +295,11 @@ public class RobotActivity extends BaseActivity {
         });
     }
 
-    @OnClick({R.id.ivVisition, R.id.ivGone, R.id.btnStop, R.id.tvSpeed, R.id.tvDistance, R.id.tvCHTime,
+    @OnClick({R.id.btnStop, R.id.tvSpeed, R.id.tvDistance, R.id.tvCHTime,
             R.id.tvCEControl, R.id.tvLightSelect, R.id.tvSearchlightControl, R.id.tvCHControl,
-            R.id.btnCEControl, R.id.btnCHControl, R.id.btnSearchlightControl, R.id.btnLightSelect})
+            R.id.rbCamera, R.id.rbVideo, R.id.rbAlbum, R.id.linearLayoutStop})
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.ivVisition:
-                linSetting.setVisibility(View.VISIBLE);
-                ivVisition.setVisibility(View.GONE);
-                ivGone.setVisibility(View.VISIBLE);
-                break;
-            case R.id.ivGone:
-                linSetting.setVisibility(View.GONE);
-                ivVisition.setVisibility(View.VISIBLE);
-                ivGone.setVisibility(View.GONE);
-                break;
             case R.id.btnStop:
                 modbusContion.writeRegisterClickEvent(MODBUS_CODE, 4, TAG_SEVEN);
                 break;
@@ -325,22 +331,112 @@ public class RobotActivity extends BaseActivity {
                 CHControl(tvCHControl);
                 //磁化控制
                 break;
-            case R.id.btnCEControl:
-                //磁轭控制
-                CEControl(btnCEControl);
+            case R.id.rbCamera:
+                if (toast != null) {
+                    toast.cancel();
+                }
+                radioGroup.setVisibility(View.GONE);
+                View view1 = frameLayout;
+                view1.setDrawingCacheEnabled(true);
+                view1.buildDrawingCache();
+                Bitmap bitmap = Bitmap.createBitmap(view1.getDrawingCache());
+                if (bitmap != null) {
+                    boolean backstate = new ImageSave().saveBitmap("/LUKERobotImage/", project, workName, workCode, this, bitmap);
+                    if (backstate) {
+                        radioGroup.setVisibility(View.VISIBLE);
+                        toast = Toast.makeText(RobotActivity.this, R.string.save_success, Toast.LENGTH_SHORT);
+                        toast.show();
+                        Log.e("XXX", "保存成功");
+                    } else {
+                        radioGroup.setVisibility(View.VISIBLE);
+                        toast = Toast.makeText(RobotActivity.this, R.string.save_faile, Toast.LENGTH_SHORT);
+                        toast.show();
+                        Log.e("XXX", "保存失败");
+                    }
+                }
                 break;
-            case R.id.btnCHControl:
-                CHControl(btnCHControl);
+            case R.id.rbVideo:
+                if (toast != null) {
+                    toast.cancel();
+                }
+                radioGroup.setVisibility(View.GONE);
+                linearLayoutStop.setVisibility(View.VISIBLE);
+                if (mMediaProjection == null) {
+                    requestMediaProjection();
+                } else {
+                    if (EasyPermissions.hasPermissions(this, PERMS)) {
+                        new TirenSet().checkTirem(ivTimer);
+                        startMedia();
+                    } else {
+                        // 没有申请过权限，现在去申请
+                        EasyPermissions.requestPermissions(this, "PERMISSION_STORAGE_MSG", TAG_ONE, PERMS);
+                    }
+                }
                 break;
-            case R.id.btnSearchlightControl:
-                //探  照  灯
-                SearchlightControl(btnSearchlightControl);
+            case R.id.linearLayoutStop:
+                radioGroup.setVisibility(View.VISIBLE);
+                linearLayoutStop.setVisibility(View.GONE);
+                if (mediaRecorder != null) {
+                    stopMedia();
+                }
                 break;
-            case R.id.btnLightSelect:
-                //黑白选择
-                LightSelect(btnLightSelect);
-                break;
+            case R.id.rbAlbum:
+                new MainUI().showPopupMenu(rbAlbum, "Robot", this);
         }
+    }
+
+    //创建申请录屏的 Intent
+    private void requestMediaProjection() {
+        Intent captureIntent = mMediaProjectionManager.createScreenCaptureIntent();
+        startActivityForResult(captureIntent, Constant.TAG_ONE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent backdata) {
+        super.onActivityResult(requestCode, resultCode, backdata);
+        switch (requestCode) {
+            case Constant.TAG_ONE:
+                if (resultCode == Activity.RESULT_OK) {
+                    if (resultCode == Activity.RESULT_OK) {
+                        new BottomUI().hideBottomUIMenu(this.getWindow());
+                        mMediaProjection = mMediaProjectionManager.getMediaProjection(resultCode, backdata);
+                        new TirenSet().checkTirem(ivTimer);
+                        startMedia();
+                    } else {
+                        finish();
+                    }
+                } else {
+                    finish();
+                }
+                break;
+            case Constant.TAG_TWO:
+                if (resultCode == Activity.RESULT_OK) {
+                    String position = backdata.getStringExtra("position");
+                }
+
+        }
+    }
+
+    private void startMedia(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            //获取mediaRecorder
+            mediaRecorder = new MyMediaRecorder().getMediaRecorder(project,workName,workCode,"/LUKERobotVideo/");
+            mVirtualDisplay = mMediaProjection.createVirtualDisplay("你的name",
+                    2400, 1080, 1,
+                    DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
+                    mediaRecorder.getSurface(),
+                    null, null);
+        }
+        //开始录制
+        try {
+            mediaRecorder.start();
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void stopMedia() {
+        mediaRecorder.stop();
     }
 
     /**
@@ -548,23 +644,15 @@ public class RobotActivity extends BaseActivity {
         //磁化
         if (strs[0] != null && strs[0].trim().equals("1")) {
             tvCHControl.setText(R.string.ch_control_open);
-            btnCHControl.setText(R.string.ch_control_open);
-            linBtn.setVisibility(View.VISIBLE);
         } else if (strs[0] != null && strs[0].trim().equals("3")) {
             tvCHControl.setText(R.string.ch_control_close);
-            btnCHControl.setText(R.string.ch_control_close);
-            linBtn.setVisibility(View.VISIBLE);
         }
 
         //磁轭
         if (strs[2] != null && strs[2].trim().equals("1")) {
             tvCEControl.setText(R.string.ce_up);
-            btnCEControl.setText(R.string.ce_up);
-            linBtn.setVisibility(View.VISIBLE);
         } else if (strs[2] != null && strs[2].trim().equals("3")) {
             tvCEControl.setText(R.string.ce_down);
-            btnCEControl.setText(R.string.ce_down);
-            linBtn.setVisibility(View.VISIBLE);
         }
 
         //黑白灯光
@@ -579,22 +667,14 @@ public class RobotActivity extends BaseActivity {
         //探照灯
         if (strs[4] != null && strs[4].trim().equals("1")) {
             tvSearchlightControl.setText(R.string.search_light_open);
-            btnSearchlightControl.setText(R.string.search_light_open);
         } else if (strs[4] != null && strs[4].trim().equals("3")) {
             tvSearchlightControl.setText(R.string.search_light_close);
-            btnSearchlightControl.setText(R.string.search_light_close);
         }
 
     }
 
     //显示Float数据
     private void setFloatData(String[] typeData) {
-        if (typeData[0] != null && typeData[1] != null) {
-            String actualDistanceHex = typeData[1] + typeData[0];
-            int ieee754ActualDistanceHex = Integer.parseInt(actualDistanceHex, 16);
-            float realActualDistanceHex = Float.intBitsToFloat(ieee754ActualDistanceHex);
-            tvActualDistance.setText(realActualDistanceHex + "mm");
-        }
         if (typeData[2] != null && typeData[3] != null) {
             String speenHex = typeData[3] + typeData[2];
             int ieee754Speed = Integer.parseInt(speenHex, 16);
@@ -622,4 +702,5 @@ public class RobotActivity extends BaseActivity {
         String[] strs = data2.split(",");
         return strs;
     }
+
 }

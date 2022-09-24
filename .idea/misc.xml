@@ -9,10 +9,17 @@
         <entry key="..\:/LKSynthesizeAPP/app/src/main/res/drawable/circle.xml" value="0.2905" />
         <entry key="..\:/LKSynthesizeAPP/app/src/main/res/drawable/cloors.xml" value="0.2495" />
         <entry key="..\:/LKSynthesizeAPP/app/src/main/res/drawable/custom_checkbox_selector.xml" value="0.1605" />
+        <entry key="..\:/LKSynthesizeAPP/app/src/main/res/drawable/ic_launcher_background.xml" value="0.195" />
+        <entry key="..\:/LKSynthesizeAPP/app/src/main/res/drawable/linelayout_black_radion.xml" value="0.1945" />
         <entry key="..\:/LKSynthesizeAPP/app/src/main/res/drawable/linelayout_color_bigradion.xml" value="0.1605" />
         <entry key="..\:/LKSynthesizeAPP/app/src/main/res/drawable/linelayout_color_pxqoutradion.xml" value="0.2905" />
         <entry key="..\:/LKSynthesizeAPP/app/src/main/res/drawable/linelayout_color_pxqradion.xml" value="0.2905" />
+        <entry key="..\:/LKSynthesizeAPP/app/src/main/res/drawable/linelayout_color_radion.xml" value="0.1945" />
         <entry key="..\:/LKSynthesizeAPP/app/src/main/res/drawable/linelayout_radion.xml" value="0.1605" />
+        <entry key="..\:/LKSynthesizeAPP/app/src/main/res/drawable/linelayout_tello_pxqradion.xml" value="0.1945" />
+        <entry key="..\:/LKSynthesizeAPP/app/src/main/res/drawable/linelayout_white_bigradion.xml" value="0.1945" />
+        <entry key="..\:/LKSynthesizeAPP/app/src/main/res/drawable/linelayout_with_bigradion.xml" value="0.195" />
+        <entry key="..\:/LKSynthesizeAPP/app/src/main/res/drawable/linelayout_yello_pxqradion.xml" value="0.1945" />
         <entry key="..\:/LKSynthesizeAPP/app/src/main/res/drawable/progress_radion.xml" value="0.1605" />
         <entry key="..\:/LKSynthesizeAPP/app/src/main/res/drawable/progressloading.xml" value="0.1605" />
         <entry key="..\:/LKSynthesizeAPP/app/src/main/res/drawable/pxqbutton_select.xml" value="0.2905" />
@@ -36,6 +43,7 @@
         <entry key="..\:/LKSynthesizeAPP/app/src/main/res/layout/activity_surface.xml" value="0.22083333333333333" />
         <entry key="..\:/LKSynthesizeAPP/app/src/main/res/layout/activity_test.xml" value="0.26510416666666664" />
         <entry key="..\:/LKSynthesizeAPP/app/src/main/res/layout/activity_test1.xml" value="0.20052083333333334" />
+        <entry key="..\:/LKSynthesizeAPP/app/src/main/res/layout/activity_test2.xml" value="0.31302083333333336" />
         <entry key="..\:/LKSynthesizeAPP/app/src/main/res/layout/activity_video.xml" value="0.240625" />
         <entry key="..\:/LKSynthesizeAPP/app/src/main/res/layout/activity_welcome.xml" value="0.29270833333333335" />
         <entry key="..\:/LKSynthesizeAPP/app/src/main/res/layout/album_item.xml" value="0.3515625" />

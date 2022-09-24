@@ -18,7 +18,6 @@ import com.example.lksynthesizeapp.SharePreferencesUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 public class SeeImageOrVideoActivity extends BaseActivity implements View.OnClickListener {
     String fileName = "";
@@ -28,10 +27,6 @@ public class SeeImageOrVideoActivity extends BaseActivity implements View.OnClic
     ImageView imageView;
     @BindView(R.id.videoView)
     CustomerVideoView videoView;
-    @BindView(R.id.ivStart)
-    ImageView ivStart;
-    @BindView(R.id.ivPause)
-    ImageView ivPause;
     AlertDialogUtil alertDialogUtil;
 
 
@@ -83,32 +78,6 @@ public class SeeImageOrVideoActivity extends BaseActivity implements View.OnClic
 
     }
 
-    @OnClick({R.id.ivStart, R.id.ivPause, R.id.videoView})
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.ivStart:
-                videoView.pause();
-                ivStart.setVisibility(View.GONE);
-                ivPause.setVisibility(View.VISIBLE);
-                break;
-            case R.id.ivPause:
-                videoView.start();
-                ivStart.setVisibility(View.GONE);
-                ivPause.setVisibility(View.GONE);
-                break;
-            case R.id.videoView:
-                if (ivPause.getVisibility() == View.VISIBLE) {
-                    ivPause.setVisibility(View.GONE);
-                    ivStart.setVisibility(View.VISIBLE);
-                } else if (ivStart.getVisibility() == View.VISIBLE) {
-                    ivStart.setVisibility(View.GONE);
-                    ivPause.setVisibility(View.VISIBLE);
-                } else {
-                    ivStart.setVisibility(View.VISIBLE);
-                }
-                break;
-        }
-    }
 
     private void setupVideo() {
         videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {

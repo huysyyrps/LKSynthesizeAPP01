@@ -240,7 +240,6 @@
     <color name="mediumblue">#0000cd</color><!--中兰色 -->
     <color name="darkblue">#00008b</color><!--暗蓝色 -->
     <color name="navy">#000080</color><!--海军色 -->
-    <color name="black">#000000</color><!--黑色 -->
     <!-- 上传图片添加的颜色 -->
     <color name="none_color">#00000000</color>
     <color name="plugin_camera_black">#000000</color>
@@ -280,4 +279,9 @@
     <color name="translucent_color">#80000000</color>
     <color name="translucent_color1">#00000000</color>
     <color name="translucent_color2">#4DFFFFFF</color>
+
+    <color name="company_color">#f4b129</color>
+    <color name="header_color">#262626</color>
+<!--    <color name="black">#000000</color>&lt;!&ndash;黑色 &ndash;&gt;-->
+    <color name="black">#262626</color><!--黑色 -->
 </resources>

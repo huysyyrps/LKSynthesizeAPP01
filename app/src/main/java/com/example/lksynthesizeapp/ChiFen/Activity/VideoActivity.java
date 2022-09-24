@@ -11,7 +11,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -52,10 +52,12 @@ public class VideoActivity extends BaseActivity implements VideoContract.View {
 
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
-    @BindView(R.id.ivSend)
-    ImageView ivSend;
     @BindView(R.id.header)
     Header header;
+    @BindView(R.id.tvSend)
+    TextView tvSend;
+    @BindView(R.id.tvDelect)
+    TextView tvDelect;
     @BindView(R.id.smartRefreshLayout)
     SmartRefreshLayout smartRefreshLayout;
     List<VideoLocal> imagePaths = new ArrayList<>();
@@ -68,28 +70,27 @@ public class VideoActivity extends BaseActivity implements VideoContract.View {
     List<File> fileList;
     String tag = "";
     private VideoPresenter videoPresenter;
-    private String project = "", workName = "", workCode = "",compName = "",device = "";
+    private String project = "", workName = "", workCode = "", compName = "", device = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);//横屏
         ButterKnife.bind(this);
-        header.setTvTitle("有声视频");
         sharePreferencesUtils = new SharePreferencesUtils();
         compName = "鲁科检测";
         device = "磁探机";
         tag = getIntent().getStringExtra("tag");
-        project = sharePreferencesUtils.getString(VideoActivity.this,"project","");
-        workName = sharePreferencesUtils.getString(VideoActivity.this,"workName","");
-        workCode = sharePreferencesUtils.getString(VideoActivity.this,"workCode","");
+        project = sharePreferencesUtils.getString(VideoActivity.this, "project", "");
+        workName = sharePreferencesUtils.getString(VideoActivity.this, "workName", "");
+        workCode = sharePreferencesUtils.getString(VideoActivity.this, "workCode", "");
         videoPresenter = new VideoPresenter(this, this);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(VideoActivity.this, 3);
         recyclerView.setLayoutManager(gridLayoutManager);
         baseRecyclerAdapter = new BaseRecyclerAdapter<VideoLocal>(VideoActivity.this, R.layout.album_item, imagePaths) {
             @Override
             public void convert(BaseViewHolder holder, final VideoLocal haveAudio) {
-                if (haveAudio.getFile().getName() + ""!=null){
+                if (haveAudio.getFile().getName() + "" != null) {
                     holder.setBitmap(R.id.imageView, haveAudio.getBitmap());
                     holder.setVisitionTextView(R.id.tvTime);
                     holder.setText(R.id.tvName, haveAudio.getFile().getName() + "");
@@ -110,10 +111,10 @@ public class VideoActivity extends BaseActivity implements VideoContract.View {
                     public void onClick(View v) {
                         if (selectList.contains(haveAudio)) {
                             selectList.remove(haveAudio);
-                            if (selectList.size()==0){
+                            if (selectList.size() == 0) {
                                 header.setTvTitle("有声视频");
-                            }else {
-                                header.setTvTitle("有声视频"+"("+selectList.size()+"/3)");
+                            } else {
+                                header.setTvTitle("有声视频" + "(" + selectList.size() + "/3)");
                             }
                         } else {
                             if (selectList.size() >= 3) {
@@ -121,7 +122,7 @@ public class VideoActivity extends BaseActivity implements VideoContract.View {
                                 Toast.makeText(VideoActivity.this, "最多只能选择3个视频", Toast.LENGTH_SHORT).show();
                             } else {
                                 selectList.add(haveAudio);
-                                header.setTvTitle("有声视频"+"("+selectList.size()+"/3)");
+                                header.setTvTitle("有声视频" + "(" + selectList.size() + "/3)");
                             }
                         }
                     }
@@ -143,27 +144,31 @@ public class VideoActivity extends BaseActivity implements VideoContract.View {
         smartRefreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore(RefreshLayout refreshlayout) {
-                if (allNum == lastNum){
+                if (allNum == lastNum) {
                     Toast.makeText(VideoActivity.this, "暂无更多数据", Toast.LENGTH_SHORT).show();
                     smartRefreshLayout.finishLoadMore();//结束加载
-                }else if (lastNum < allNum){
+                } else if (lastNum < allNum) {
                     startNum = lastNum;
-                    lastNum+=24;
-                    if (lastNum>=allNum){
+                    lastNum += 24;
+                    if (lastNum >= allNum) {
                         lastNum = allNum;
                     }
                     setData(fileList);
                 }
             }
         });
-        ProgressDialogUtil.startLoad(this,"加载中...");
+        ProgressDialogUtil.startLoad(this, "加载中...");
         new Thread(new Runnable() {
             @Override
             public void run() {
-                if (tag.equals("Local")){
-                    getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKEVideo/"+project+"/"+workName+"/"+workCode+"/");
-                }else {
-                    getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKEDescVideo/"+project+"/"+workName+"/"+workCode+"/");
+                if (tag.equals("Local")) {
+                    getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKEVideo/" + project + "/" + workName + "/" + workCode + "/");
+                } else if (tag.equals("Desc")){
+                    getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKEDescVideo/" + project + "/" + workName + "/" + workCode + "/");
+                } else if (tag.equals("RobotDesc")){
+                    getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKERobotDescVideo/" + project + "/" + workName + "/" + workCode + "/");
+                }else if (tag.equals("Robot")){
+                    getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKERobotVideo/" + project + "/" + workName + "/" + workCode + "/");
                 }
             }
         }).start();
@@ -172,7 +177,7 @@ public class VideoActivity extends BaseActivity implements VideoContract.View {
     public void getFilesAllName(String path) {
         fileList = listFileSortByModifyTime(path);
         Collections.reverse(fileList);
-        if (fileList.size()!=0){
+        if (fileList.size() != 0) {
             allNum = fileList.size();
             setData(fileList);
         } else {
@@ -180,7 +185,7 @@ public class VideoActivity extends BaseActivity implements VideoContract.View {
         }
     }
 
-    private void setData( List<File> list) {
+    private void setData(List<File> list) {
         try {
             if (allNum > 9) {
                 for (int i = startNum; i < lastNum; i++) {
@@ -216,6 +221,7 @@ public class VideoActivity extends BaseActivity implements VideoContract.View {
         smartRefreshLayout.finishLoadMore();//结束加载
         handler.sendEmptyMessage(Constant.TAG_ONE);
     }
+
     /**
      * 获取目录下所有文件(按时间排序)
      *
@@ -294,34 +300,48 @@ public class VideoActivity extends BaseActivity implements VideoContract.View {
             haveAudio.setFile(imagePaths.get(i).getFile());
             haveAudio.setTime(imagePaths.get(i).getTime());
             haveAudio.setBitmap(getRingBitmap(imagePaths.get(i).getFile()));
-            imagePaths.set(i,haveAudio);
+            imagePaths.set(i, haveAudio);
         }
         handler.sendEmptyMessage(Constant.TAG_THERE);
     }
 
-    @OnClick(R.id.ivSend)
-    public void onClick() {
-//        if (sharePreferencesUtils.getString(this,"userName","").equals("")){
-//            startActivity(new Intent(this, LoginActivity.class));
-//        }else {
-            if (selectList.size() == 0) {
-                Toast.makeText(VideoActivity.this, "您还未选择有声视频", Toast.LENGTH_SHORT).show();
-            } else {
-                MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM); //表单类型
-                for (int i = 0; i < selectList.size(); i++) {
-                    RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), selectList.get(i).getFile());
-                    builder.addFormDataPart("file" + i, selectList.get(i).getFile().getName(), requestBody);//"imgfile"+i 后台接收图片流的参数名
+    @OnClick({R.id.tvSend, R.id.tvDelect})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.tvSend:
+                if (selectList.size() == 0) {
+                    Toast.makeText(VideoActivity.this, "您还未选择有声视频", Toast.LENGTH_SHORT).show();
+                } else {
+                    MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM); //表单类型
+                    for (int i = 0; i < selectList.size(); i++) {
+                        RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), selectList.get(i).getFile());
+                        builder.addFormDataPart("file" + i, selectList.get(i).getFile().getName(), requestBody);//"imgfile"+i 后台接收图片流的参数名
+                    }
+                    builder.addFormDataPart("company", compName);
+                    builder.addFormDataPart("project", project);
+                    builder.addFormDataPart("device", device);
+                    builder.addFormDataPart("workpiece", workName);
+                    builder.addFormDataPart("workpiecenum", workCode);
+                    builder.addFormDataPart("voice", "audiovideo");
+                    List<MultipartBody.Part> parts = builder.build().parts();
+                    videoPresenter.getHaveVideo(parts);
                 }
-                builder.addFormDataPart("company", compName);
-                builder.addFormDataPart("project", project);
-                builder.addFormDataPart("device", device);
-                builder.addFormDataPart("workpiece", workName);
-                builder.addFormDataPart("workpiecenum", workCode);
-                builder.addFormDataPart("voice", "audiovideo");
-                List<MultipartBody.Part> parts = builder.build().parts();
-                videoPresenter.getHaveVideo(parts);
-            }
-//        }
+                break;
+            case R.id.tvDelect:
+                if (selectList.size() == 0) {
+                    Toast.makeText(this, "请先选择想要删除的文件", Toast.LENGTH_SHORT).show();
+                } else {
+                    for (VideoLocal haveAudio : selectList) {
+                        imagePaths.remove(haveAudio);
+                        haveAudio.getFile().delete();
+                    }
+                    selectList.clear();
+                    header.setTvTitle("有声视频");
+                    recyclerView.setAdapter(null);
+                    recyclerView.setAdapter(baseRecyclerAdapter);
+                }
+                break;
+        }
     }
 
     /**
@@ -352,6 +372,7 @@ public class VideoActivity extends BaseActivity implements VideoContract.View {
 
     /**
      * 获取视频第一帧图片
+     *
      * @param mUri
      * @return
      */
@@ -362,7 +383,7 @@ public class VideoActivity extends BaseActivity implements VideoContract.View {
             if (mUri != null) {
                 mmr.setDataSource(mUri.getAbsolutePath());
                 //获得视频第一帧的Bitmap对象
-                bitmap = mmr.getFrameAtTime(1000*5);
+                bitmap = mmr.getFrameAtTime(1000 * 5);
             }
         } catch (Exception ex) {
             Log.e("XXX", ex.toString());
@@ -402,7 +423,6 @@ public class VideoActivity extends BaseActivity implements VideoContract.View {
     @Override
     public void setHaveVideo(Video HaveVideoUp) {
         Toast.makeText(this, "上传成功", Toast.LENGTH_SHORT).show();
-        header.setTvTitle("有声视频");
         selectList.clear();
         recyclerView.setAdapter(null);
         recyclerView.setAdapter(baseRecyclerAdapter);
@@ -425,17 +445,6 @@ public class VideoActivity extends BaseActivity implements VideoContract.View {
 
     @Override
     protected void rightClient() {
-        if (selectList.size() == 0) {
-            Toast.makeText(this, "请先选择想要删除的文件", Toast.LENGTH_SHORT).show();
-        } else {
-            for (VideoLocal haveAudio : selectList) {
-                imagePaths.remove(haveAudio);
-                haveAudio.getFile().delete();
-            }
-            selectList.clear();
-            header.setTvTitle("有声视频");
-            recyclerView.setAdapter(null);
-            recyclerView.setAdapter(baseRecyclerAdapter);
-        }
     }
+
 }

@@ -15,6 +15,7 @@ import com.example.lksynthesizeapp.Constant.Base.BaseActivity;
 import com.example.lksynthesizeapp.Constant.Base.Constant;
 import com.example.lksynthesizeapp.Constant.Bean.Defined;
 import com.example.lksynthesizeapp.Constant.Module.DefinedContract;
+import com.example.lksynthesizeapp.Constant.Presenter.DefinedPresenter;
 import com.example.lksynthesizeapp.R;
 import com.example.lksynthesizeapp.SharePreferencesUtils;
 import com.huawei.hms.hmsscankit.OnResultCallback;
@@ -27,17 +28,17 @@ import java.util.List;
 import butterknife.ButterKnife;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class DefinedActivity extends BaseActivity implements EasyPermissions.PermissionCallbacks, DefinedContract.View  {
+public class DefinedActivity extends BaseActivity implements EasyPermissions.PermissionCallbacks, DefinedContract.View {
     private FrameLayout frameLayout;
     int mScreenWidth;
     int mScreenHeight;
     String tag = "first";
     private RemoteView remoteView;
-//    DefinedPresenter definedPresenter;
+        DefinedPresenter definedPresenter;
     final int SCAN_FRAME_SIZE = 240;
     String[] PERMS = {Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.RECORD_AUDIO,Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.FOREGROUND_SERVICE,
+            Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.FOREGROUND_SERVICE,
             Manifest.permission.ACCESS_WIFI_STATE};
     SharePreferencesUtils sharePreferencesUtils;
 
@@ -47,19 +48,23 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
         ButterKnife.bind(this);
         // Bind the camera preview screen.
         sharePreferencesUtils = new SharePreferencesUtils();
-//        definedPresenter = new DefinedPresenter(this,this);
+        definedPresenter = new DefinedPresenter(this,this);
         frameLayout = findViewById(R.id.rim);
+        //设置扫码识别区域，您可以按照需求调整参数
         DisplayMetrics dm = getResources().getDisplayMetrics();
         float density = dm.density;
         mScreenWidth = getResources().getDisplayMetrics().widthPixels;
         mScreenHeight = getResources().getDisplayMetrics().heightPixels;
+        //当前demo扫码框的宽高是300dp
+        final int SCAN_FRAME_SIZE = 300;
         int scanFrameSize = (int) (SCAN_FRAME_SIZE * density);
         Rect rect = new Rect();
         rect.left = mScreenWidth / 2 - scanFrameSize / 2;
         rect.right = mScreenWidth / 2 + scanFrameSize / 2;
         rect.top = mScreenHeight / 2 - scanFrameSize / 2;
         rect.bottom = mScreenHeight / 2 + scanFrameSize / 2;
-        remoteView = new RemoteView.Builder().setContext(this).setBoundingBox(rect).setFormat(HmsScan.ALL_SCAN_TYPE).build();
+        //初始化RemoteView，并通过如下方法设置参数:setContext()（必选）传入context、setBoundingBox()设置扫描区域、setFormat()设置识别码制式，设置完毕调用build()方法完成创建
+        remoteView = new RemoteView.Builder().setContext(this).setBoundingBox(rect).setFormat(HmsScan.QRCODE_SCAN_TYPE, HmsScan.DATAMATRIX_SCAN_TYPE).build();
         remoteView.onCreate(savedInstanceState);
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
         frameLayout.addView(remoteView, params);
@@ -82,12 +87,12 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
         remoteView.setOnResultCallback(new OnResultCallback() {
             @Override
             public void onResult(HmsScan[] result) {
-                if (tag.equals("first")){
+                if (tag.equals("first")) {
                     if (result != null && result.length > 0 && result[0] != null) {
-                        if (result[0].getOriginalValue()!=null){
+                        if (result[0].getOriginalValue() != null) {
                             String qrData = result[0].getOriginalValue();
                             String data = decodeToString(qrData);
-                            Log.e("XXXXXX",data);
+                            Log.e("XXXXXX", data);
                             String[] dataArray = data.split("~~");
                             sharePreferencesUtils.setString(DefinedActivity.this, "max", dataArray[0]);
                             sharePreferencesUtils.setString(DefinedActivity.this, "model", dataArray[3]);
@@ -108,10 +113,11 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
 
     /**
      * 字符Base64加密
+     *
      * @param str
      * @return
      */
-    public static String encodeToString(String str){
+    public static String encodeToString(String str) {
         try {
             return Base64.encodeToString(str.getBytes("UTF-8"), Base64.DEFAULT);
         } catch (UnsupportedEncodingException e) {
@@ -119,12 +125,14 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
         }
         return "";
     }
+
     /**
      * 字符Base64解密
+     *
      * @param str
      * @return
      */
-    public static String decodeToString(String str){
+    public static String decodeToString(String str) {
         try {
             return new String(Base64.decode(str.getBytes("UTF-8"), Base64.DEFAULT));
         } catch (UnsupportedEncodingException e) {
@@ -136,6 +144,7 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
 
     /**
      * short数组转byte数组
+     *
      * @param src
      * @return
      */
@@ -216,7 +225,7 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
 
     @Override
     public void setDefined(Defined defined) {
-        if (defined.getResult()==null){
+        if (defined.getResult() == null) {
             Toast.makeText(this, "派工单为空", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -227,7 +236,6 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
         sharePreferencesUtils.setString(DefinedActivity.this, "deviceName", deviceName);
         sharePreferencesUtils.setString(DefinedActivity.this, "deviceCode", deviceCode);
         startActivity(new Intent(this, SendSelectActivity.class));
-        finish();
     }
 
     @Override

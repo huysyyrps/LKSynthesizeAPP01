@@ -29,7 +29,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="工程名称:"
+                    android:text="工程名称\t:\t"
                     android:gravity="center"
                     android:textSize="14dp"
                     android:layout_marginLeft="10dp"
@@ -51,7 +51,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="工件名称:"
+                    android:text="工件名称\t:\t"
                     android:gravity="center"
                     android:textSize="14dp"
                     android:layout_marginLeft="10dp"
@@ -73,7 +73,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="工件编号:"
+                    android:text="工件编号\t:\t"
                     android:gravity="center"
                     android:textSize="14dp"
                     android:layout_marginLeft="10dp"
@@ -90,49 +90,61 @@
         </LinearLayout>
 
     </LinearLayout>
+
     <RadioGroup
         android:id="@+id/radioGroup"
-        android:layout_width="60dp"
+        android:layout_width="65dp"
         android:layout_height="match_parent"
-        android:background="@color/translucent_color1"
+        android:layout_gravity="right"
+        android:layout_marginLeft="6dp"
         android:orientation="vertical"
-        android:layout_gravity="right|center">
+        android:background="@color/header_color">
+
         <RadioButton
             android:id="@+id/rbCamera"
-            android:layout_height="50dp"
-            android:layout_width="45dp"
             style="@style/MainRadionButton"
             android:background="@drawable/button_select"
-            android:drawableLeft="@drawable/ic_camera" />
+            android:drawableTop="@drawable/ic_camera"
+            android:text="截图"
+            android:textSize="12dp"
+            android:textColor="@color/whith"/>
+
         <RadioButton
             android:id="@+id/rbVideo"
-            android:layout_height="50dp"
-            android:layout_width="45dp"
             style="@style/MainRadionButton"
             android:background="@drawable/button_select"
-            android:drawableLeft="@drawable/ic_video1" />
+            android:drawableTop="@drawable/ic_video"
+            android:text="录像"
+            android:textSize="12dp"
+            android:textColor="@color/whith"/>
 
         <RadioButton
             android:id="@+id/rbAlbum"
-            android:layout_height="50dp"
-            android:layout_width="45dp"
             style="@style/MainRadionButton"
             android:background="@drawable/button_select"
-            android:drawableStart="@drawable/ic_folder" />
+            android:drawableTop="@drawable/ic_file"
+            android:text="文件夹"
+            android:textSize="12dp"
+            android:textColor="@color/whith"/>
+
         <RadioButton
             android:id="@+id/rbSetting"
-            android:layout_height="50dp"
-            android:layout_width="45dp"
             style="@style/MainRadionButton"
             android:background="@drawable/button_select"
-            android:drawableStart="@drawable/ic_client_setting" />
+            android:drawableTop="@drawable/ic_client_setting"
+            android:text="设置"
+            android:textSize="12dp"
+            android:textColor="@color/whith"/>
+
         <RadioButton
             android:id="@+id/rbBack"
-            android:layout_height="50dp"
-            android:layout_width="45dp"
             style="@style/MainRadionButton"
             android:background="@drawable/button_select"
-            android:drawableStart="@drawable/ic_finish" />
+            android:drawableTop="@drawable/ic_finish"
+            android:text="返回"
+            android:textSize="12dp"
+            android:textColor="@color/whith"/>
+
     </RadioGroup>
     <LinearLayout
         android:id="@+id/linearLayoutStop"

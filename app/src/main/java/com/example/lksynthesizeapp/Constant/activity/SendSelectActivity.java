@@ -12,19 +12,14 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.lksynthesizeapp.ChiFen.Activity.DescernActivity;
-import com.example.lksynthesizeapp.ChiFen.Activity.LocalActivity;
 import com.example.lksynthesizeapp.ChiFen.Activity.RobotActivity;
-import com.example.lksynthesizeapp.ChiFen.Activity.RobotDescernActivity;
 import com.example.lksynthesizeapp.Constant.Base.AlertDialogUtil;
+import com.example.lksynthesizeapp.Constant.Base.BaseActivity;
 import com.example.lksynthesizeapp.Constant.Base.DialogCallBack;
 import com.example.lksynthesizeapp.Constant.Base.EditTextLengClient;
 import com.example.lksynthesizeapp.Constant.Base.ExitApp;
@@ -33,7 +28,6 @@ import com.example.lksynthesizeapp.Constant.Net.GetIpCallBack;
 import com.example.lksynthesizeapp.Constant.Net.getIp;
 import com.example.lksynthesizeapp.R;
 import com.example.lksynthesizeapp.SharePreferencesUtils;
-import com.example.lksynthesizeapp.View.StatusBarUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -42,29 +36,17 @@ import butterknife.OnClick;
 /**
  * 磁粉检测上传方式选择页
  */
-public class SendSelectActivity extends AppCompatActivity {
-    @BindView(R.id.tv_tittle)
-    TextView tvTittle;
+public class SendSelectActivity extends BaseActivity {
     @BindView(R.id.tvConfim)
     TextView tvConfim;
-    @BindView(R.id.relativeLayoutHeader)
-    RelativeLayout relativeLayoutHeader;
     @BindView(R.id.etProject)
     EditText etProject;
     @BindView(R.id.etWorkName)
     EditText etWorkName;
     @BindView(R.id.etWorkCode)
     EditText etWorkCode;
-    @BindView(R.id.linLocak)
-    LinearLayout linLocak;
-    @BindView(R.id.linSocket)
-    LinearLayout linSocket;
-    @BindView(R.id.linDiscern)
-    LinearLayout linDiscern;
     //富有动感的Sheet弹窗
     Intent intent;
-    @BindView(R.id.linRobot)
-    LinearLayout linRobot;
     private String address = "";
     private static AlertDialogUtil alertDialogUtil;
     SharePreferencesUtils sharePreferencesUtils;
@@ -89,7 +71,6 @@ public class SendSelectActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_send_select);
         ButterKnife.bind(this);
         Max =   sharePreferencesUtils.getString(SendSelectActivity.this, "max", "");
         model =  sharePreferencesUtils.getString(SendSelectActivity.this, "model", "");
@@ -110,7 +91,7 @@ public class SendSelectActivity extends AppCompatActivity {
         mWifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         projectionManager = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
         alertDialogUtil = new AlertDialogUtil(this);
-        new StatusBarUtils().setWindowStatusBarColor(SendSelectActivity.this, R.color.color_bg_selected);
+//        new StatusBarUtils().setWindowStatusBarColor(SendSelectActivity.this, R.color.color_bg_selected);
         new EditTextLengClient().textLeng(etProject, this);
         new EditTextLengClient().textLeng(etWorkCode, this);
         new EditTextLengClient().textLeng(etWorkName, this);
@@ -141,30 +122,29 @@ public class SendSelectActivity extends AppCompatActivity {
         }
     }
 
-    @OnClick({R.id.linLocak, R.id.linSocket, R.id.linDiscern, R.id.linRobot, R.id.tvConfim})
+    @OnClick({R.id.tvConfim})
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.linLocak:
-                seSPData();
-                SelectActivity("本地存储");
-                break;
-            case R.id.linSocket:
-                seSPData();
-                SelectActivity("实时上传");
-                break;
-            case R.id.linDiscern:
-                seSPData();
-                SelectActivity("在线检测");
-                break;
-            case R.id.linRobot:
-                seSPData();
-                SelectActivity("机器人");
-                break;
             case R.id.tvConfim:
                 seSPData();
                 SelectActivity("");
                 break;
         }
+    }
+
+    @Override
+    protected int provideContentViewId() {
+        return R.layout.activity_send_select;
+    }
+
+    @Override
+    protected boolean isHasHeader() {
+        return true;
+    }
+
+    @Override
+    protected void rightClient() {
+
     }
 
     public void seSPData() {
@@ -240,34 +220,40 @@ public class SendSelectActivity extends AppCompatActivity {
             handler = null;
         }
         ProgressDialogUtil.stopLoad();
-        if (tag.equals("PXQNODESCERN")){
-//            sharePreferencesUtils.setString(SendSelectActivity.this, "sendSelect", "机器人");
-            intent = new Intent(SendSelectActivity.this, RobotActivity.class);
-            intent.putExtra("address", address + "");
-            startActivity(intent);
-        }
-        if (tag.equals("PXQHAVEDESCERN")){
-//            sharePreferencesUtils.setString(SendSelectActivity.this, "sendSelect", "机器人");
-            intent = new Intent(SendSelectActivity.this, RobotDescernActivity.class);
-            intent.putExtra("address", address + "");
-            startActivity(intent);
-        }
-        if (tag.equals("CFTSYNODESCERN")){
-            intent = new Intent(SendSelectActivity.this, LocalActivity.class);
-            intent.putExtra("project", etProject.getText().toString().trim());
-            intent.putExtra("etWorkName", etWorkName.getText().toString().trim());
-            intent.putExtra("etWorkCode", etWorkCode.getText().toString().trim());
-            intent.putExtra("address", address + "");
-            startActivity(intent);
-        }
-        if (tag.equals("CFTSYHAVEDESCERN")){
-            intent = new Intent(SendSelectActivity.this, DescernActivity.class);
-            intent.putExtra("project", etProject.getText().toString().trim());
-            intent.putExtra("etWorkName", etWorkName.getText().toString().trim());
-            intent.putExtra("etWorkCode", etWorkCode.getText().toString().trim());
-            intent.putExtra("address", address + "");
-            startActivity(intent);
-        }
+        intent = new Intent(SendSelectActivity.this, RobotActivity.class);
+        intent.putExtra("project", etProject.getText().toString().trim());
+        intent.putExtra("etWorkName", etWorkName.getText().toString().trim());
+        intent.putExtra("etWorkCode", etWorkCode.getText().toString().trim());
+        intent.putExtra("address", address + "");
+        startActivity(intent);
+//        if (tag.equals("PXQNODESCERN")){
+////            sharePreferencesUtils.setString(SendSelectActivity.this, "sendSelect", "机器人");
+//            intent = new Intent(SendSelectActivity.this, RobotActivity.class);
+//            intent.putExtra("address", address + "");
+//            startActivity(intent);
+//        }
+//        if (tag.equals("PXQHAVEDESCERN")){
+////            sharePreferencesUtils.setString(SendSelectActivity.this, "sendSelect", "机器人");
+//            intent = new Intent(SendSelectActivity.this, RobotDescernActivity.class);
+//            intent.putExtra("address", address + "");
+//            startActivity(intent);
+//        }
+//        if (tag.equals("CFTSYNODESCERN")){
+//            intent = new Intent(SendSelectActivity.this, LocalActivity.class);
+//            intent.putExtra("project", etProject.getText().toString().trim());
+//            intent.putExtra("etWorkName", etWorkName.getText().toString().trim());
+//            intent.putExtra("etWorkCode", etWorkCode.getText().toString().trim());
+//            intent.putExtra("address", address + "");
+//            startActivity(intent);
+//        }
+//        if (tag.equals("CFTSYHAVEDESCERN")){
+//            intent = new Intent(SendSelectActivity.this, DescernActivity.class);
+//            intent.putExtra("project", etProject.getText().toString().trim());
+//            intent.putExtra("etWorkName", etWorkName.getText().toString().trim());
+//            intent.putExtra("etWorkCode", etWorkCode.getText().toString().trim());
+//            intent.putExtra("address", address + "");
+//            startActivity(intent);
+//        }
 
     }
 

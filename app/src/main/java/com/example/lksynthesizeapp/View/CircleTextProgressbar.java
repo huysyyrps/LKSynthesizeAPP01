@@ -1,5 +1,6 @@
 package com.example.lksynthesizeapp.View;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -30,7 +31,7 @@ public class CircleTextProgressbar extends TextView {
     /**
      * 外部轮廓的宽度。
      */
-    private int outLineWidth = 2;
+    private int outLineWidth = 4;
 
     /**
      * 内部圆的颜色。
@@ -44,7 +45,7 @@ public class CircleTextProgressbar extends TextView {
     /**
      * 进度条的颜色。
      */
-    private int progressLineColor = Color.BLUE;
+    private int progressLineColor = getResources().getColor(R.color.company_color);
 
     /**
      * 进度条的宽度。
@@ -303,6 +304,7 @@ public class CircleTextProgressbar extends TextView {
         removeCallbacks(progressChangeTask);
     }
 
+    @SuppressLint("ResourceAsColor")
     @Override
     protected void onDraw(Canvas canvas) {
         //获取view的边界
@@ -320,12 +322,12 @@ public class CircleTextProgressbar extends TextView {
         //画边框圆
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeWidth(outLineWidth);
-        mPaint.setColor(outLineColor);
+        mPaint.setColor(R.color.company_color);
         canvas.drawCircle(bounds.centerX(), bounds.centerY(), outerRadius - outLineWidth / 2, mPaint);
 
         //画字
         Paint paint = getPaint();
-        paint.setColor(getCurrentTextColor());
+        paint.setColor(progressLineColor);
         paint.setAntiAlias(true);
         paint.setTextAlign(Paint.Align.CENTER);
         float textY = bounds.centerY() - (paint.descent() + paint.ascent()) / 2;
