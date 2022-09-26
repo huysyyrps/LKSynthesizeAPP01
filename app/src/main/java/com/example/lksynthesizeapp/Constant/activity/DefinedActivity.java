@@ -92,17 +92,22 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
                         if (result[0].getOriginalValue() != null) {
                             String qrData = result[0].getOriginalValue();
                             String data = decodeToString(qrData);
-                            Log.e("XXXXXX", data);
-                            String[] dataArray = data.split("~~");
-                            sharePreferencesUtils.setString(DefinedActivity.this, "max", dataArray[0]);
-                            sharePreferencesUtils.setString(DefinedActivity.this, "model", dataArray[3]);
-                            sharePreferencesUtils.setString(DefinedActivity.this, "havaCamer", dataArray[4]);
-                            sharePreferencesUtils.setString(DefinedActivity.this, "haveDescern", dataArray[5]);
+                            if (data.contains("~~")){
+                                Log.e("XXXXXX", data);
+                                String[] dataArray = data.split("~~");
+                                sharePreferencesUtils.setString(DefinedActivity.this, "max", dataArray[0]);
+                                sharePreferencesUtils.setString(DefinedActivity.this, "model", dataArray[3]);
+                                sharePreferencesUtils.setString(DefinedActivity.this, "havaCamer", dataArray[4]);
+                                sharePreferencesUtils.setString(DefinedActivity.this, "haveDescern", dataArray[5]);
 //                            definedPresenter.getDefined(data[0]);
-                            startActivity(new Intent(DefinedActivity.this, SendSelectActivity.class));
-                            finish();
-                            tag = "second";
-                            return;
+                                startActivity(new Intent(DefinedActivity.this, SendSelectActivity.class));
+                                finish();
+                                tag = "second";
+                                return;
+                            }else {
+                                Toast.makeText(DefinedActivity.this, "二维码数据错误", Toast.LENGTH_SHORT).show();
+                            }
+
                         }
                     }
                 }

@@ -103,4 +103,5 @@ dependencies {
     implementation 'com.github.fanhua1994:FastVideoPlayer:1.0.6'
     //SerialHelper
     implementation 'tp.xmaihh:serialport:2.1'
+    implementation 'com.github.Tornaco:SystemRecApi:v1.3'
 }

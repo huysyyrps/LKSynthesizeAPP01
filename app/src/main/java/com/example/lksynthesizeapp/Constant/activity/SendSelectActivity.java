@@ -17,7 +17,7 @@ import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 
-import com.example.lksynthesizeapp.ChiFen.Activity.RobotActivity;
+import com.example.lksynthesizeapp.ChiFen.Activity.DescernActivity;
 import com.example.lksynthesizeapp.Constant.Base.AlertDialogUtil;
 import com.example.lksynthesizeapp.Constant.Base.BaseActivity;
 import com.example.lksynthesizeapp.Constant.Base.DialogCallBack;
@@ -220,7 +220,7 @@ public class SendSelectActivity extends BaseActivity {
             handler = null;
         }
         ProgressDialogUtil.stopLoad();
-        intent = new Intent(SendSelectActivity.this, RobotActivity.class);
+        intent = new Intent(SendSelectActivity.this, DescernActivity.class);
         intent.putExtra("project", etProject.getText().toString().trim());
         intent.putExtra("etWorkName", etWorkName.getText().toString().trim());
         intent.putExtra("etWorkCode", etWorkCode.getText().toString().trim());

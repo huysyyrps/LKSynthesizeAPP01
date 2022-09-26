@@ -91,7 +91,7 @@ import com.example.lksynthesizeapp.R;
                 // 创建对话
                 dialog = new AlertDialog.Builder(context, R.style.dialog).create();
                 // 设置返回键点击消失对话框
-                dialog.setCancelable(false);
+                dialog.setCancelable(true);
                 // 设置点击返回框外边不消失
                 dialog.setCanceledOnTouchOutside(false);
                 // 给该对话框增加系统权限
