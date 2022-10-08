@@ -171,7 +171,9 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
             inputstream = conn.getInputStream();
             //创建出一个bitmap
             bmp = BitmapFactory.decodeStream(inputstream);
+            Log.e("XXXXXXXX", "1111111111");
             YoloV5Ncnn.Obj[] objects = yolov5ncnn.Detect(bmp, false);
+            Log.e("XXXXXXXX", "2222222222");
             showObjects(objects);
             //关闭HttpURLConnection连接
             conn.disconnect();
@@ -182,6 +184,15 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
     }
 
     private void showObjects(YoloV5Ncnn.Obj[] objects) {
+//        Date curDate = new Date(System.currentTimeMillis()); //获取当前时间
+//        Log.e("XXXXXX",simpleDateFormat.format(curDate));
+//        runOnUiThread(new Runnable() {
+//            public void run() {
+//                Toast.makeText(DescernActivity.this, "111", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+
+
         if (objects == null) {
             imageView.setImageBitmap(bmp);
             return;
@@ -209,6 +220,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                 canvas.drawText(text, x, y - new MyPaint().getTextpaint().ascent(), new MyPaint().getTextpaint());
             }
         }
+        Log.e("XXXXXXXX", "3333333333");
         if (objects.length != 0) {
             mediaPlayer.start();
             if (isFirst) {
@@ -276,7 +288,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                 }
                 break;
             case R.id.rbVideo:
-                if (toast!=null){
+                if (toast != null) {
                     toast.cancel();
                 }
                 radioGroup.setVisibility(View.GONE);
@@ -308,8 +320,8 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                 break;
             case R.id.rbSetting:
                 Intent intent = new Intent(this, SettingActivity.class);
-                intent.putExtra("address",address);
-                intent.putExtra("tag","desc");
+                intent.putExtra("address", address);
+                intent.putExtra("tag", "desc");
                 startActivity(intent);
                 break;
             case R.id.rbBack:
@@ -322,10 +334,10 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         }
     }
 
-    private void startMedia(){
+    private void startMedia() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             //获取mediaRecorder
-            mediaRecorder = new MyMediaRecorder().getMediaRecorder(project,workName,workCode,"/LUKEDescVideo/");
+            mediaRecorder = new MyMediaRecorder().getMediaRecorder(project, workName, workCode, "/LUKEDescVideo/");
             mVirtualDisplay = mMediaProjection.createVirtualDisplay("你的name",
                     2400, 1080, 1,
                     DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
@@ -399,44 +411,45 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
     protected void onRestart() {
         super.onRestart();
         new BottomUI().hideBottomUIMenu(this.getWindow());
-        Log.e("XXXXX","restart");
+        Log.e("XXXXX", "restart");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        String audio = new SharePreferencesUtils().getString(this,"audio","");
-        if (audio.equals("fengming")){
+        String audio = new SharePreferencesUtils().getString(this, "audio", "");
+        mediaPlayer = MediaPlayer.create(DescernActivity.this, R.raw.fengming);
+        if (audio.equals("fengming")) {
             mediaPlayer = MediaPlayer.create(DescernActivity.this, R.raw.fengming);
         }
-        if (audio.equals("nv")){
+        if (audio.equals("nv")) {
             mediaPlayer = MediaPlayer.create(DescernActivity.this, R.raw.nv);
         }
-        if (audio.equals("nan")){
+        if (audio.equals("nan")) {
             mediaPlayer = MediaPlayer.create(DescernActivity.this, R.raw.nan);
         }
-        if (audio.equals("ami")){
+        if (audio.equals("ami")) {
             mediaPlayer = MediaPlayer.create(DescernActivity.this, R.raw.ami);
         }
-        if (audio.equals("dzy1")){
+        if (audio.equals("dzy1")) {
             mediaPlayer = MediaPlayer.create(DescernActivity.this, R.raw.dzy1);
         }
-        if (audio.equals("dzy2")){
+        if (audio.equals("dzy2")) {
             mediaPlayer = MediaPlayer.create(DescernActivity.this, R.raw.dzy2);
         }
-        if (audio.equals("jsq1")){
+        if (audio.equals("jsq1")) {
             mediaPlayer = MediaPlayer.create(DescernActivity.this, R.raw.jsq1);
         }
-        if (audio.equals("jsq2")){
+        if (audio.equals("jsq2")) {
             mediaPlayer = MediaPlayer.create(DescernActivity.this, R.raw.jsq2);
         }
-        if (audio.equals("db")){
+        if (audio.equals("db")) {
             mediaPlayer = MediaPlayer.create(DescernActivity.this, R.raw.db);
         }
-        if (audio.equals("dh")){
+        if (audio.equals("dh")) {
             mediaPlayer = MediaPlayer.create(DescernActivity.this, R.raw.dh);
         }
-        Log.e("XXXXX","onResume");
+        Log.e("XXXXX", "onResume");
     }
 
     @Override

@@ -203,7 +203,9 @@ public class SendSelectActivity extends BaseActivity {
 
                         }
                     });
-//                    handler.postDelayed(this, 1000);
+                    if (handler!=null){
+                        handler.postDelayed(this, 1000);
+                    }
                 }
             };
             handler.postDelayed(runnable, 1000);

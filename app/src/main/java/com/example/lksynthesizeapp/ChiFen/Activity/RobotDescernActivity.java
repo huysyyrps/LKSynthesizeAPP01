@@ -802,6 +802,7 @@ public class RobotDescernActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         String audio = new SharePreferencesUtils().getString(this, "audio", "");
+        mediaPlayer = MediaPlayer.create(RobotDescernActivity.this, R.raw.fengming);
         if (audio.equals("fengming")) {
             mediaPlayer = MediaPlayer.create(RobotDescernActivity.this, R.raw.fengming);
         }
