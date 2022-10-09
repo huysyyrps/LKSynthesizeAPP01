@@ -37,6 +37,7 @@ import com.example.lksynthesizeapp.ChiFen.Base.MyMediaRecorder;
 import com.example.lksynthesizeapp.ChiFen.Base.MyPaint;
 import com.example.lksynthesizeapp.ChiFen.Base.TirenSet;
 import com.example.lksynthesizeapp.ChiFen.Media.Notifications;
+import com.example.lksynthesizeapp.ChiFen.service.WhiteService;
 import com.example.lksynthesizeapp.Constant.Base.Constant;
 import com.example.lksynthesizeapp.R;
 import com.example.lksynthesizeapp.SharePreferencesUtils;
@@ -153,6 +154,15 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         }
 
         new BottomUI().hideBottomUIMenu(this.getWindow());
+        if (new SharePreferencesUtils().getString(this,"keep","").equals("true")){
+            //开启前台服务
+            intent = new Intent(DescernActivity.this, WhiteService.class);
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {//8.0以上的开启方式不同
+                startForegroundService(intent);
+            } else {
+                startService(intent);
+            }
+        }
     }
 
     private void draw() {

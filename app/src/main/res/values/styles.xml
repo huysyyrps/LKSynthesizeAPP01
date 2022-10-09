@@ -10,6 +10,11 @@
         <item name="android:layout_height">35dp</item>
         <item name="background">@color/color_selected</item>
     </style>
+
+    <style name="KeepTheme">
+        <item name="android:windowBackground">@null</item>
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
     <!--自定义header属性-->
     <declare-styleable name="Header">
         <attr name="header_title" format="string" />

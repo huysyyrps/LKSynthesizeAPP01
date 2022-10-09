@@ -24,6 +24,8 @@
     <uses-permission android:name="com.vivo.notification.permission.BADGE_ICON" /> <!-- App 需要使用的部分权限 -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <uses-permission android:name="com.huawei.permission.external_app_settings.USE_COMPONENT"/>
     <uses-permission
         android:name="android.permission.DEVICE_POWER"
         tools:ignore="ProtectedPermissions" />
@@ -49,10 +51,13 @@
         android:supportsRtl="true"
         android:theme="@style/NoAction"
         android:usesCleartextTraffic="true">
+
+        <service android:name=".ChiFen.service.WhiteService"/>
+        <activity android:name=".ChiFen.Activity.KeepActivity"/>
         <activity
             android:name=".TestActivity"
             android:exported="false"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="landscape" />
         <activity
             android:name=".ChiFen.Activity.SettingActivity"
             android:exported="false" />
@@ -110,7 +115,9 @@
             android:screenOrientation="landscape" />
         <activity
             android:name=".ChiFen.Activity.DescernActivity"
-            android:screenOrientation="landscape" />
+            android:excludeFromRecents="true"
+            android:screenOrientation="landscape"
+            android:taskAffinity="com.enjoy" />
     </application>
 
 </manifest>

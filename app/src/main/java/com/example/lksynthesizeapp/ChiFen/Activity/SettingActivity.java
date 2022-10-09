@@ -65,6 +65,10 @@ public class SettingActivity extends BaseActivity {
                         if (setting.getTitle().equals("设备重启")){
                             ShowDialog("uci set mjpg-streamer.core.fps=30", "uci commit", "/etc/init.d/mjpg-streamer restart");
                         }
+                        if (setting.getTitle().equals("程序后台运行")){
+                            startActivity(new Intent(SettingActivity.this,KeepActivity.class));
+                            finish();
+                        }
                     }
                 });
             }
@@ -95,6 +99,11 @@ public class SettingActivity extends BaseActivity {
         setting3.setTitle("版本检测");
         setting3.setImagePath(R.drawable.ic_version);
         settingList.add(setting3);
+
+        Setting setting4 = new Setting();
+        setting4.setTitle("程序后台运行");
+        setting4.setImagePath(R.drawable.ic_version);
+        settingList.add(setting4);
     }
 
     @Override
