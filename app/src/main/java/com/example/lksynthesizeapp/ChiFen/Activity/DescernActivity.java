@@ -253,7 +253,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
     }
 
     public static void saveImageToGallery(Context context, Bitmap bmp) {
-        boolean backstate = new ImageSave().saveBitmap("/LUKEDecsImage/", project, workName, workCode, context, bmp);
+        boolean backstate = new ImageSave().saveBitmap("/LUKEDescImage/", project, workName, workCode, context, bmp);
         if (backstate) {
             Log.e("XXX", "保存成功");
         } else {

@@ -1,14 +1,20 @@
 package com.example.lksynthesizeapp.Constant.activity;
 
+import static com.huawei.hms.hmsscankit.RemoteView.REQUEST_CODE_PHOTO;
+
 import android.Manifest;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.Toast;
 
 import com.example.lksynthesizeapp.Constant.Base.BaseActivity;
@@ -20,27 +26,39 @@ import com.example.lksynthesizeapp.R;
 import com.example.lksynthesizeapp.SharePreferencesUtils;
 import com.huawei.hms.hmsscankit.OnResultCallback;
 import com.huawei.hms.hmsscankit.RemoteView;
+import com.huawei.hms.hmsscankit.ScanUtil;
 import com.huawei.hms.ml.scan.HmsScan;
+import com.huawei.hms.ml.scan.HmsScanAnalyzerOptions;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class DefinedActivity extends BaseActivity implements EasyPermissions.PermissionCallbacks, DefinedContract.View {
+    @BindView(R.id.rbLightClose)
+    RadioButton rbLightClose;
+    @BindView(R.id.rbLightOpen)
+    RadioButton rbLightOpen;
+    @BindView(R.id.rbPhoto)
+    RadioButton rbPhoto;
     private FrameLayout frameLayout;
     int mScreenWidth;
     int mScreenHeight;
     String tag = "first";
     private RemoteView remoteView;
-        DefinedPresenter definedPresenter;
+    DefinedPresenter definedPresenter;
     final int SCAN_FRAME_SIZE = 240;
     String[] PERMS = {Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.FOREGROUND_SERVICE,
             Manifest.permission.ACCESS_WIFI_STATE};
     SharePreferencesUtils sharePreferencesUtils;
+    private int[] img = {R.drawable.ic_light_close, R.drawable.ic_light_open};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +66,7 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
         ButterKnife.bind(this);
         // Bind the camera preview screen.
         sharePreferencesUtils = new SharePreferencesUtils();
-        definedPresenter = new DefinedPresenter(this,this);
+        definedPresenter = new DefinedPresenter(this, this);
         frameLayout = findViewById(R.id.rim);
         //设置扫码识别区域，您可以按照需求调整参数
         DisplayMetrics dm = getResources().getDisplayMetrics();
@@ -92,7 +110,7 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
                         if (result[0].getOriginalValue() != null) {
                             String qrData = result[0].getOriginalValue();
                             String data = decodeToString(qrData);
-                            if (data.contains("~~")){
+                            if (data.contains("~~")) {
                                 Log.e("XXXXXX", data);
                                 String[] dataArray = data.split("~~");
                                 sharePreferencesUtils.setString(DefinedActivity.this, "max", dataArray[0]);
@@ -104,7 +122,7 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
                                 finish();
                                 tag = "second";
                                 return;
-                            }else {
+                            } else {
                                 Toast.makeText(DefinedActivity.this, "二维码数据错误", Toast.LENGTH_SHORT).show();
                             }
 
@@ -246,5 +264,71 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
     @Override
     public void setDefinedMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    @OnClick({R.id.rbLightClose, R.id.rbLightOpen, R.id.rbPhoto})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.rbLightClose:
+                if (!remoteView.getLightStatus()) {
+                    remoteView.switchLight();
+                    rbLightClose.setVisibility(View.GONE);
+                    rbLightOpen.setVisibility(View.VISIBLE);
+                }
+                break;
+            case R.id.rbLightOpen:
+                if (remoteView.getLightStatus()) {
+                    remoteView.switchLight();
+                    rbLightClose.setVisibility(View.VISIBLE);
+                    rbLightOpen.setVisibility(View.GONE);
+                }
+                break;
+            case R.id.rbPhoto:
+                Intent pickIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+                DefinedActivity.this.startActivityForResult(pickIntent, REQUEST_CODE_PHOTO);
+                break;
+        }
+    }
+
+    /**
+     * Handle the return results from the album.
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent dataBack) {
+        super.onActivityResult(requestCode, resultCode, dataBack);
+        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_PHOTO) {
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), dataBack.getData());
+                HmsScan[] result = ScanUtil.decodeWithBitmap(DefinedActivity.this, bitmap, new HmsScanAnalyzerOptions.Creator().setPhotoMode(true).create());
+                // 处理扫码结果
+                if (result != null && result.length > 0) {
+                    if (result != null && result.length > 0 && result[0] != null) {
+                        if (result[0].getOriginalValue() != null) {
+                            String qrData = result[0].getOriginalValue();
+                            String data = decodeToString(qrData);
+                            if (data.contains("~~")) {
+                                Log.e("XXXXXX", data);
+                                String[] dataArray = data.split("~~");
+                                sharePreferencesUtils.setString(DefinedActivity.this, "max", dataArray[0]);
+                                sharePreferencesUtils.setString(DefinedActivity.this, "model", dataArray[3]);
+                                sharePreferencesUtils.setString(DefinedActivity.this, "havaCamer", dataArray[4]);
+                                sharePreferencesUtils.setString(DefinedActivity.this, "haveDescern", dataArray[5]);
+//                            definedPresenter.getDefined(data[0]);
+                                startActivity(new Intent(DefinedActivity.this, SendSelectActivity.class));
+                                finish();
+                                tag = "second";
+                                return;
+                            } else {
+                                Toast.makeText(DefinedActivity.this, "二维码数据错误", Toast.LENGTH_SHORT).show();
+                            }
+
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

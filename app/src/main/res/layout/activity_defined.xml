@@ -11,67 +11,97 @@
     </FrameLayout>
 
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-        <LinearLayout
+        android:layout_height="match_parent">
+
+        <ImageView
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="@color/black"/>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="261dp"
-            android:orientation="horizontal">
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:background="@color/black"/>
-            <LinearLayout
-                android:layout_width="260dp"
-                android:layout_height="261dp"
-                android:orientation="vertical"
-                android:layout_gravity="center">
-                <ImageView
-                    android:id="@+id/scan_area"
-                    android:layout_width="260dp"
-                    android:layout_height="260dp"
-                    android:layout_centerInParent="true"
-                    android:layout_centerHorizontal="true"
-                    android:background="@drawable/cloors" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:background="@color/black"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="2"
-            android:background="@color/black">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:text="将二维码放置到取景框内"
-                android:textColor="@color/company_color"
-                android:gravity="center"
-                android:textSize="16dp"/>
-        </LinearLayout>
-    </LinearLayout>
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:layout_centerHorizontal="true"
+            android:background="#FF000000"
+            android:alpha="0.1" />
+
+
+        <ImageView
+            android:id="@+id/scan_area"
+            android:layout_width="240dp"
+            android:layout_height="240dp"
+            android:layout_marginTop="180dp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/cloors" />
+        <TextView
+            android:layout_below="@id/scan_area"
+            android:layout_marginTop="10dp"
+            android:layout_centerHorizontal="true"
+            android:text="@string/viewfinderview_status_text1"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_height="20dp"
+            android:layout_width="220dp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:orientation="horizontal"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="40dp">
+        <RadioButton
+            android:id="@+id/rbLightClose"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:button="@null"
+            android:background="@drawable/radionbutton_select"
+            android:drawableTop="@drawable/ic_light_close"
+            android:layout_marginLeft="50dp"
+            android:padding="5dp"
+            android:text="截图"
+            android:gravity="center"
+            android:textSize="12dp"
+            android:textColor="@color/whith"/>
+        <RadioButton
+            android:id="@+id/rbLightOpen"
+            android:visibility="gone"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:button="@null"
+            android:background="@drawable/radionbutton_select"
+            android:drawableTop="@drawable/ic_light_open"
+            android:layout_marginLeft="50dp"
+            android:padding="5dp"
+            android:text="截图"
+            android:gravity="center"
+            android:textSize="12dp"
+            android:textColor="@color/red"/>
+        <RadioButton
+            android:id="@+id/rbPhoto"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:button="@null"
+            android:background="@drawable/radionbutton_select"
+            android:drawableTop="@drawable/ic_photo"
+            android:text="截图"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="50dp"
+            android:padding="5dp"
+            android:gravity="center"
+            android:textSize="12dp"
+            android:textColor="@color/whith"/>
+
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical">
-
         <com.example.lksynthesizeapp.Constant.View.Header
             android:id="@+id/header"
             style="@style/Header"
-            android:background="@color/header_color"
-            my_view:header_title="@string/QR_code" />
+            my_view:header_title="@string/QR_code"/>
     </RelativeLayout>
 </FrameLayout>

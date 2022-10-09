@@ -1,6 +1,8 @@
 package com.example.lksynthesizeapp.ChiFen.Activity;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -51,8 +53,13 @@ public class SettingActivity extends BaseActivity {
             @Override
             public void convert(BaseViewHolder holder, final Setting setting) {
                 holder.setText( R.id.tvTitle, setting.getTitle());
-                if (setting.getTitle().equals("软件版本")){
-                    holder.setGoneImage( R.id.ivGo);
+                if (setting.getTitle().equals("当前版本：")){
+                    try {
+                        holder.setText( R.id.tvTitle, setting.getTitle()+getVersionName());
+                        holder.setGoneImage( R.id.ivGo);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
                 holder.setImage( SettingActivity.this, R.id.imageView,setting.getImagePath());
                 holder.setOnClickListener(R.id.linearLayout, new View.OnClickListener() {
@@ -65,10 +72,6 @@ public class SettingActivity extends BaseActivity {
                         if (setting.getTitle().equals("设备重启")){
                             ShowDialog("uci set mjpg-streamer.core.fps=30", "uci commit", "/etc/init.d/mjpg-streamer restart");
                         }
-                        if (setting.getTitle().equals("程序后台运行")){
-                            startActivity(new Intent(SettingActivity.this,KeepActivity.class));
-                            finish();
-                        }
                     }
                 });
             }
@@ -76,9 +79,19 @@ public class SettingActivity extends BaseActivity {
         recyclerView.setAdapter(baseRecyclerAdapter);
     }
 
+    //获取当前应用的版本号
+    private String getVersionName() throws Exception {
+        // 获取packagemanager的实例
+        PackageManager packageManager = getPackageManager();
+        // getPackageName()是你当前类的包名，0代表是获取版本信息
+        PackageInfo packInfo = packageManager.getPackageInfo(getPackageName(),0);
+        String version = packInfo.versionName;
+        return version;
+    }
+
     private void setData() {
         Setting setting = new Setting();
-        setting.setTitle("软件版本");
+        setting.setTitle("当前版本：");
         setting.setImagePath(R.drawable.ic_appversion);
         settingList.add(setting);
 
@@ -100,10 +113,6 @@ public class SettingActivity extends BaseActivity {
         setting3.setImagePath(R.drawable.ic_version);
         settingList.add(setting3);
 
-        Setting setting4 = new Setting();
-        setting4.setTitle("程序后台运行");
-        setting4.setImagePath(R.drawable.ic_version);
-        settingList.add(setting4);
     }
 
     @Override
@@ -181,7 +190,7 @@ public class SettingActivity extends BaseActivity {
                 case Constant.TAG_ONE:
                     Toast.makeText(SettingActivity.this, "重启成功", Toast.LENGTH_SHORT).show();
                     ProgressDialogUtil.stopLoad();
-                    address = "http://" + address + ":8080";
+                    finish();
                     break;
                 case Constant.TAG_TWO:
                     Toast.makeText(SettingActivity.this, toastData, Toast.LENGTH_LONG).show();
