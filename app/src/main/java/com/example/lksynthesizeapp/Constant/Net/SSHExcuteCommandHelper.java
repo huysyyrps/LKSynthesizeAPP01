@@ -34,6 +34,7 @@ public class SSHExcuteCommandHelper {
     public SSHExcuteCommandHelper(String host, SSHCallBack sSHCallBack) {
         JSch jsch = new JSch();
         try {
+            //名称  主机IP  端口
             session = jsch.getSession("root", host, 22);
             java.util.Properties config = new java.util.Properties();
             config.put("StrictHostKeyChecking", "no");

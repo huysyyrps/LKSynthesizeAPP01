@@ -18,6 +18,9 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 
 import com.example.lksynthesizeapp.ChiFen.Activity.DescernActivity;
+import com.example.lksynthesizeapp.ChiFen.Activity.LocalActivity;
+import com.example.lksynthesizeapp.ChiFen.Activity.RobotActivity;
+import com.example.lksynthesizeapp.ChiFen.Activity.RobotDescernActivity;
 import com.example.lksynthesizeapp.Constant.Base.AlertDialogUtil;
 import com.example.lksynthesizeapp.Constant.Base.BaseActivity;
 import com.example.lksynthesizeapp.Constant.Base.DialogCallBack;
@@ -76,22 +79,9 @@ public class SendSelectActivity extends BaseActivity {
         model =  sharePreferencesUtils.getString(SendSelectActivity.this, "model", "");
         camer = sharePreferencesUtils.getString(SendSelectActivity.this, "havaCamer", "");
         descern =  sharePreferencesUtils.getString(SendSelectActivity.this, "haveDescern", "");
-//        new getIp().cleanARP(new GetIpCallBack() {
-//            @Override
-//            public void success(String backAdress) {
-//                Log.e("XXXXXX11", backAdress);
-//                address = backAdress;
-//            }
-//
-//            @Override
-//            public void faile() {
-//                Log.e("XXXXXX11", "11111");
-//            }
-//        });
         mWifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         projectionManager = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
         alertDialogUtil = new AlertDialogUtil(this);
-//        new StatusBarUtils().setWindowStatusBarColor(SendSelectActivity.this, R.color.color_bg_selected);
         new EditTextLengClient().textLeng(etProject, this);
         new EditTextLengClient().textLeng(etWorkCode, this);
         new EditTextLengClient().textLeng(etWorkName, this);
@@ -155,7 +145,7 @@ public class SendSelectActivity extends BaseActivity {
 
     public void SelectActivity(String data) {
         if (address != null) {
-            if (camer.equals("0")) {
+            if (camer.equals("否")) {
                 Toast.makeText(this, "当前设备不具备摄像头功能", Toast.LENGTH_SHORT).show();
                 return;
             }else if (etProject.getText().toString().trim().equals("")) {
@@ -168,13 +158,13 @@ public class SendSelectActivity extends BaseActivity {
                 Toast.makeText(SendSelectActivity.this, "请输入工件编号", Toast.LENGTH_SHORT).show();
                 return;
             } else {
-                if (model.equals("LKMT-A6")&&descern.equals("0")) {
+                if (model.equals("爬行器")&&descern.equals("否")) {
                     haveAddress("PXQNODESCERN");
-                } else if (model.equals("LKMT-A6-QX")&&descern.equals("1")) {
+                } else if (model.equals("爬行器")&&descern.equals("是")) {
                     haveAddress("PXQHAVEDESCERN");
-                } else if (descern.equals("1")) {
+                } else if (model.equals("磁探机")&&descern.equals("是")) {
                     haveAddress("CFTSYHAVEDESCERN");
-                }else if (descern.equals("0")) {
+                }else if (model.equals("磁探机")&&descern.equals("否")) {
                     haveAddress("CFTSYNODESCERN");
                 }
             }
@@ -192,7 +182,7 @@ public class SendSelectActivity extends BaseActivity {
                         @Override
                         public void success(String backAddress) {
                             address = backAddress;
-                            Log.e("XXXXXX",address);
+                            Log.e("ip",address);
                             if (handler != null) {
                                 connect(tag);
                             }
@@ -222,40 +212,40 @@ public class SendSelectActivity extends BaseActivity {
             handler = null;
         }
         ProgressDialogUtil.stopLoad();
-        intent = new Intent(SendSelectActivity.this, DescernActivity.class);
-        intent.putExtra("project", etProject.getText().toString().trim());
-        intent.putExtra("etWorkName", etWorkName.getText().toString().trim());
-        intent.putExtra("etWorkCode", etWorkCode.getText().toString().trim());
-        intent.putExtra("address", address + "");
-        startActivity(intent);
-//        if (tag.equals("PXQNODESCERN")){
-////            sharePreferencesUtils.setString(SendSelectActivity.this, "sendSelect", "机器人");
-//            intent = new Intent(SendSelectActivity.this, RobotActivity.class);
-//            intent.putExtra("address", address + "");
-//            startActivity(intent);
-//        }
-//        if (tag.equals("PXQHAVEDESCERN")){
-////            sharePreferencesUtils.setString(SendSelectActivity.this, "sendSelect", "机器人");
-//            intent = new Intent(SendSelectActivity.this, RobotDescernActivity.class);
-//            intent.putExtra("address", address + "");
-//            startActivity(intent);
-//        }
-//        if (tag.equals("CFTSYNODESCERN")){
-//            intent = new Intent(SendSelectActivity.this, LocalActivity.class);
-//            intent.putExtra("project", etProject.getText().toString().trim());
-//            intent.putExtra("etWorkName", etWorkName.getText().toString().trim());
-//            intent.putExtra("etWorkCode", etWorkCode.getText().toString().trim());
-//            intent.putExtra("address", address + "");
-//            startActivity(intent);
-//        }
-//        if (tag.equals("CFTSYHAVEDESCERN")){
-//            intent = new Intent(SendSelectActivity.this, DescernActivity.class);
-//            intent.putExtra("project", etProject.getText().toString().trim());
-//            intent.putExtra("etWorkName", etWorkName.getText().toString().trim());
-//            intent.putExtra("etWorkCode", etWorkCode.getText().toString().trim());
-//            intent.putExtra("address", address + "");
-//            startActivity(intent);
-//        }
+        if (tag.equals("PXQNODESCERN")){
+//            sharePreferencesUtils.setString(SendSelectActivity.this, "sendSelect", "机器人");
+            intent = new Intent(SendSelectActivity.this, RobotActivity.class);
+            intent.putExtra("project", etProject.getText().toString().trim());
+            intent.putExtra("etWorkName", etWorkName.getText().toString().trim());
+            intent.putExtra("etWorkCode", etWorkCode.getText().toString().trim());
+            intent.putExtra("address", address + "");
+            startActivity(intent);
+        }
+        if (tag.equals("PXQHAVEDESCERN")){
+//            sharePreferencesUtils.setString(SendSelectActivity.this, "sendSelect", "机器人");
+            intent = new Intent(SendSelectActivity.this, RobotDescernActivity.class);
+            intent.putExtra("project", etProject.getText().toString().trim());
+            intent.putExtra("etWorkName", etWorkName.getText().toString().trim());
+            intent.putExtra("etWorkCode", etWorkCode.getText().toString().trim());
+            intent.putExtra("address", address + "");
+            startActivity(intent);
+        }
+        if (tag.equals("CFTSYNODESCERN")){
+            intent = new Intent(SendSelectActivity.this, LocalActivity.class);
+            intent.putExtra("project", etProject.getText().toString().trim());
+            intent.putExtra("etWorkName", etWorkName.getText().toString().trim());
+            intent.putExtra("etWorkCode", etWorkCode.getText().toString().trim());
+            intent.putExtra("address", address + "");
+            startActivity(intent);
+        }
+        if (tag.equals("CFTSYHAVEDESCERN")){
+            intent = new Intent(SendSelectActivity.this, DescernActivity.class);
+            intent.putExtra("project", etProject.getText().toString().trim());
+            intent.putExtra("etWorkName", etWorkName.getText().toString().trim());
+            intent.putExtra("etWorkCode", etWorkCode.getText().toString().trim());
+            intent.putExtra("address", address + "");
+            startActivity(intent);
+        }
 
     }
 

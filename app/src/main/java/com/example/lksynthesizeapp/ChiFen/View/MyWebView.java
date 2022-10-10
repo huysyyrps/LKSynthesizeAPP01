@@ -61,5 +61,7 @@ public class MyWebView extends WebView {
         webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         //全屏设置
         webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
+        // 支持缩放
+        webSettings.setSupportZoom(true);
     }
 }

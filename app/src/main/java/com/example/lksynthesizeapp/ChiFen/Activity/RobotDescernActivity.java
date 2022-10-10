@@ -14,12 +14,11 @@ import static com.example.lksynthesizeapp.Constant.Base.Constant.TAG_TWO;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
 import android.media.MediaPlayer;
@@ -29,6 +28,7 @@ import android.media.projection.MediaProjectionManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
@@ -49,6 +49,7 @@ import com.example.lksynthesizeapp.ChiFen.Base.ByteUtil;
 import com.example.lksynthesizeapp.ChiFen.Base.ImageSave;
 import com.example.lksynthesizeapp.ChiFen.Base.MainUI;
 import com.example.lksynthesizeapp.ChiFen.Base.MyMediaRecorder;
+import com.example.lksynthesizeapp.ChiFen.Base.MyPaint;
 import com.example.lksynthesizeapp.ChiFen.Base.TirenSet;
 import com.example.lksynthesizeapp.ChiFen.Modbus.ModbusCallBack;
 import com.example.lksynthesizeapp.ChiFen.Modbus.ModbusContion;
@@ -57,7 +58,6 @@ import com.example.lksynthesizeapp.ChiFen.Robot.View.CircleMenu;
 import com.example.lksynthesizeapp.ChiFen.Robot.View.CircleMenuAdapter;
 import com.example.lksynthesizeapp.ChiFen.bean.ItemInfo;
 import com.example.lksynthesizeapp.Constant.Base.AlertDialogUtil;
-import com.example.lksynthesizeapp.Constant.Base.Constant;
 import com.example.lksynthesizeapp.R;
 import com.example.lksynthesizeapp.SharePreferencesUtils;
 import com.example.lksynthesizeapp.YoloV5Ncnn;
@@ -113,15 +113,14 @@ public class RobotDescernActivity extends AppCompatActivity {
     ImageView ivTimer;
     @BindView(R.id.linearLayoutStop)
     LinearLayout linearLayoutStop;
+    @BindView(R.id.rbSetting)
+    RadioButton rbSetting;
     private String url;
     private Bitmap bmp = null;
     private Thread mythread;
     private YoloV5Ncnn yolov5ncnn = new YoloV5Ncnn();
     URL videoUrl;
     HttpURLConnection conn;
-    Paint paint;
-    Paint textbgpaint;
-    Paint textpaint;
     private Toast toast;
     private MediaPlayer mediaPlayer;
     long currentTme = 0, currentTme1 = 0;
@@ -146,6 +145,8 @@ public class RobotDescernActivity extends AppCompatActivity {
             Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.FOREGROUND_SERVICE};
     private MediaRecorder mediaRecorder;
+    public long saveTime = 0;
+    public long currentTmeTime = 0;
 
 
     @Override
@@ -164,19 +165,6 @@ public class RobotDescernActivity extends AppCompatActivity {
         project = intent.getStringExtra("project");
         workName = intent.getStringExtra("etWorkName");
         workCode = intent.getStringExtra("etWorkCode");
-        paint = new Paint();
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(2);
-        paint.setColor(Color.GREEN);
-
-        textbgpaint = new Paint();
-        textbgpaint.setColor(Color.WHITE);
-        textbgpaint.setStyle(Paint.Style.FILL);
-
-        textpaint = new Paint();
-        textpaint.setColor(Color.GREEN);
-        textpaint.setTextSize(13);
-        textpaint.setTextAlign(Paint.Align.LEFT);
         boolean ret_init = yolov5ncnn.Init(getAssets());
         if (!ret_init) {
             Log.e("MainActivity", "yolov5ncnn Init failed");
@@ -327,7 +315,7 @@ public class RobotDescernActivity extends AppCompatActivity {
 
     @OnClick({R.id.btnStop, R.id.tvSpeed, R.id.tvDistance, R.id.tvCHTime,
             R.id.tvCEControl, R.id.tvLightSelect, R.id.tvSearchlightControl,
-            R.id.tvCHControl, R.id.rbCamera, R.id.rbVideo, R.id.rbAlbum, R.id.linearLayoutStop})
+            R.id.tvCHControl, R.id.rbCamera, R.id.rbVideo, R.id.rbAlbum, R.id.linearLayoutStop, R.id.rbSetting})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btnStop:
@@ -413,20 +401,26 @@ public class RobotDescernActivity extends AppCompatActivity {
             case R.id.rbAlbum:
                 new MainUI().showPopupMenu(rbAlbum, "RobotDesc", this);
                 break;
+            case R.id.rbSetting:
+                Intent intent = new Intent(this, SettingActivity.class);
+                intent.putExtra("address",address);
+                intent.putExtra("tag","local");
+                startActivity(intent);
+                break;
         }
     }
 
     //创建申请录屏的 Intent
     private void requestMediaProjection() {
         Intent captureIntent = mMediaProjectionManager.createScreenCaptureIntent();
-        startActivityForResult(captureIntent, Constant.TAG_ONE);
+        startActivityForResult(captureIntent, TAG_ONE);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent backdata) {
         super.onActivityResult(requestCode, resultCode, backdata);
         switch (requestCode) {
-            case Constant.TAG_ONE:
+            case TAG_ONE:
                 if (resultCode == Activity.RESULT_OK) {
                     if (resultCode == Activity.RESULT_OK) {
                         new BottomUI().hideBottomUIMenu(this.getWindow());
@@ -440,7 +434,7 @@ public class RobotDescernActivity extends AppCompatActivity {
                     finish();
                 }
                 break;
-            case Constant.TAG_TWO:
+            case TAG_TWO:
                 if (resultCode == Activity.RESULT_OK) {
                     String position = backdata.getStringExtra("position");
                 }
@@ -448,10 +442,10 @@ public class RobotDescernActivity extends AppCompatActivity {
         }
     }
 
-    private void startMedia(){
+    private void startMedia() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             //获取mediaRecorder
-            mediaRecorder = new MyMediaRecorder().getMediaRecorder(project,workName,workCode,"/LUKERobotDescVideo/");
+            mediaRecorder = new MyMediaRecorder().getMediaRecorder(project, workName, workCode, "/LUKERobotDescVideo/");
             mVirtualDisplay = mMediaProjection.createVirtualDisplay("你的name",
                     2400, 1080, 1,
                     DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
@@ -755,13 +749,13 @@ public class RobotDescernActivity extends AppCompatActivity {
         Bitmap rgba = bmp.copy(Bitmap.Config.ARGB_8888, true);
         Canvas canvas = new Canvas(rgba);
         for (int i = 0; i < objects.length; i++) {
-            canvas.drawRect(objects[i].x, objects[i].y, objects[i].x + objects[i].w, objects[i].y + objects[i].h, paint);
+            canvas.drawRect(objects[i].x, objects[i].y, objects[i].x + objects[i].w, objects[i].y + objects[i].h, new MyPaint().getLinePaint());
             // draw filled text inside image
             {
                 String text = objects[i].label + " = " + String.format("%.1f", objects[i].prob * 100) + "%";
 
-                float text_width = textpaint.measureText(text) + 10;
-                float text_height = -textpaint.ascent() + textpaint.descent() + 10;
+                float text_width = new MyPaint().getTextpaint().measureText(text) + 10;
+                float text_height = -new MyPaint().getTextpaint().ascent() + new MyPaint().getTextpaint().descent() + 10;
 
                 float x = objects[i].x;
                 float y = objects[i].y - text_height;
@@ -770,15 +764,42 @@ public class RobotDescernActivity extends AppCompatActivity {
                 if (x + text_width > rgba.getWidth())
                     x = rgba.getWidth() - text_width;
 //                canvas.drawRect(x, y, x + text_width, y + text_height, textbgpaint);
-                canvas.drawText(text, x, y - textpaint.ascent(), textpaint);
+                canvas.drawText(text, x, y - new MyPaint().getTextpaint().ascent(), new MyPaint().getTextpaint());
             }
         }
         if (objects.length != 0) {
             mediaPlayer.start();
         }
+        Log.e("XXXXXXXX", "3333333333");
+        if (objects.length != 0) {
+            mediaPlayer.start();
+            if (isFirst) {
+                saveImageToGallery(RobotDescernActivity.this, rgba);
+                saveTime = System.currentTimeMillis();
+                isFirst = false;
+            } else {
+                if (handler == null) {
+                    handler = new Handler(Looper.getMainLooper());
+                } else {
+                    currentTmeTime = System.currentTimeMillis();
+                    if (currentTmeTime - saveTime > 3000) {
+                        saveImageToGallery(RobotDescernActivity.this, rgba);
+                        saveTime = currentTmeTime;
+                    }
+                }
+            }
+        }
         imageView.setImageBitmap(rgba);
     }
 
+    public static void saveImageToGallery(Context context, Bitmap bmp) {
+        boolean backstate = new ImageSave().saveBitmap("/LUKERobotDescImage/", project, workName, workCode, context, bmp);
+        if (backstate) {
+            Log.e("XXX", "保存成功");
+        } else {
+            Log.e("XXX", "保存失败");
+        }
+    }
 
     @Override
     protected void onDestroy() {
@@ -835,5 +856,4 @@ public class RobotDescernActivity extends AppCompatActivity {
         }
         Log.e("XXXXX", "onResume");
     }
-
 }

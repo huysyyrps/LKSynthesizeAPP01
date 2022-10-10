@@ -12,6 +12,8 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.lksynthesizeapp.ChiFen.Base.MyCallBack;
+import com.example.lksynthesizeapp.ChiFen.Base.RegionalChooseUtil;
 import com.example.lksynthesizeapp.ChiFen.bean.Setting;
 import com.example.lksynthesizeapp.Constant.Base.BaseActivity;
 import com.example.lksynthesizeapp.Constant.Base.BaseRecyclerAdapter;
@@ -70,7 +72,30 @@ public class SettingActivity extends BaseActivity {
                             finish();
                         }
                         if (setting.getTitle().equals("设备重启")){
-                            ShowDialog("uci set mjpg-streamer.core.fps=30", "uci commit", "/etc/init.d/mjpg-streamer restart");
+                            ShowDialog("/etc/init.d/mjpg-streamer restart","重启中");
+//                            ShowDialog("uci set mjpg-streamer.core.fps=30", "uci commit", "/etc/init.d/mjpg-streamer restart");
+                        }
+
+                        if (setting.getTitle().equals("帧数设置")){
+                            RegionalChooseUtil.initJsonData(SettingActivity.this,"frames");
+                            RegionalChooseUtil.showPickerView(SettingActivity.this, new MyCallBack() {
+                                @Override
+                                public void callBack(Object object) {
+                                    ShowDialog("uci set mjpg-streamer.core.fps=" + object.toString(), "uci commit", "/etc/init.d/mjpg-streamer restart");
+                                    new SharePreferencesUtils().setString(SettingActivity.this, "frames", object.toString());
+                                }
+                            });
+                        }
+
+                        if (setting.getTitle().equals("像素设置")){
+                            RegionalChooseUtil.initJsonData(SettingActivity.this,"resolving");
+                            RegionalChooseUtil.showPickerView(SettingActivity.this, new MyCallBack() {
+                                @Override
+                                public void callBack(Object object) {
+                                    ShowDialog("uci set mjpg-streamer.core.resolution=" + object.toString(), "uci commit", "/etc/init.d/mjpg-streamer restart");
+                                    new SharePreferencesUtils().setString(SettingActivity.this, "resolving", object.toString());
+                                }
+                            });
                         }
                     }
                 });
@@ -103,15 +128,26 @@ public class SettingActivity extends BaseActivity {
             settingList.add(setting1);
         }
 
-        Setting setting2 = new Setting();
-        setting2.setTitle("设备重启");
-        setting2.setImagePath(R.drawable.ic_restart);
-        settingList.add(setting2);
 
         Setting setting3 = new Setting();
         setting3.setTitle("版本检测");
         setting3.setImagePath(R.drawable.ic_version);
         settingList.add(setting3);
+
+        Setting setting2 = new Setting();
+        setting2.setTitle("设备重启");
+        setting2.setImagePath(R.drawable.ic_restart);
+        settingList.add(setting2);
+
+        Setting setting4 = new Setting();
+        setting4.setTitle("帧数设置");
+        setting4.setImagePath(R.drawable.ic_fps);
+        settingList.add(setting4);
+
+        Setting setting5 = new Setting();
+        setting5.setTitle("像素设置");
+        setting5.setImagePath(R.drawable.ic_pixel);
+        settingList.add(setting5);
 
     }
 
@@ -135,9 +171,34 @@ public class SettingActivity extends BaseActivity {
      *
      * @param data1
      */
+    private void ShowDialog(String data1, String title) {
+        try {
+            ProgressDialogUtil.startLoad(this, title);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    SSHExcuteCommandHelper.writeBefor(address, data1, new SSHCallBack() {
+                        @Override
+                        public void confirm(String data) {
+                            handlerSetting.sendEmptyMessage(Constant.TAG_ONE);
+                        }
+
+                        @Override
+                        public void error(String s) {
+                            toastData = s;
+                            handlerSetting.sendEmptyMessage(Constant.TAG_TWO);
+                        }
+                    });
+                }
+            }).start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    //设置帧数  像素
     private void ShowDialog(String data1, String data2, String data3) {
         try {
-            ProgressDialogUtil.startLoad(this, "重启中");
+            ProgressDialogUtil.startLoad(this, "设置中");
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -181,6 +242,7 @@ public class SettingActivity extends BaseActivity {
             e.printStackTrace();
         }
     }
+
 
 
     Handler handlerSetting = new Handler() {

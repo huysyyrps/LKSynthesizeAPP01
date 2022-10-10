@@ -1,0 +1,23 @@
+/*手机端操作流程：*/
+1.建立ssh链接：ssh root@192.168.xxx.xxx  密码：root
+2.指令读取设备信息
+
+
+
+/*指令说明*/
+	
+	/*读取id*/	
+	uci show system.id
+	/*写入id*/
+	uci set system.id=xxxxxxxx
+
+	/*时间指令*/
+	/*读取时间指令*/
+	date
+	/*设置时间指令*/
+	hwclock -w
+	
+	/*读取mac*/
+	ifconfig | grep apcli0 | awk '{ print $5 }'
+
+	

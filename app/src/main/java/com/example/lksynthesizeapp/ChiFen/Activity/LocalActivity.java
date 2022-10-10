@@ -12,10 +12,8 @@ import android.media.projection.MediaProjectionManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
-import android.webkit.WebSettings;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -85,7 +83,6 @@ public class LocalActivity extends AppCompatActivity implements EasyPermissions.
     String[] PERMS = {Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.FOREGROUND_SERVICE};
-    String SelectTag = "";
     private MediaRecorder mediaRecorder;
 
     @Override
@@ -101,9 +98,6 @@ public class LocalActivity extends AppCompatActivity implements EasyPermissions.
         ButterKnife.bind(this);
 
         setWorkData();
-
-        Display display = getWindowManager().getDefaultDisplay();
-        Log.e("XXXXX", "width-display :" + display.getWidth() + "heigth-display :" + display.getHeight());
 
         frameLayout.setBackgroundColor(getResources().getColor(R.color.black));
         mMediaProjectionManager = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
@@ -125,17 +119,17 @@ public class LocalActivity extends AppCompatActivity implements EasyPermissions.
             tvWorkCode.setText(workCode);
         }
 
-        WebSettings WebSet = webView.getSettings();    //获取webview设置
-        WebSet.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);   //自适应屏幕
-        webView.setScrollContainer(false);
-        webView.setVerticalScrollBarEnabled(false);
-        webView.setHorizontalScrollBarEnabled(false);
+//        WebSettings WebSet = webView.getSettings();    //获取webview设置
+//        WebSet.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);   //自适应屏幕
+//        webView.setScrollContainer(false);
+//        webView.setVerticalScrollBarEnabled(false);
+//        webView.setHorizontalScrollBarEnabled(false);
         webView.setBackgroundColor(getColor(R.color.black));
 
         address = getIntent().getStringExtra("address");
         if (address != null) {
-            address = "http://" + address + ":8080";
-            webView.loadUrl(address);
+//            address = "http://" + address + ":8080";
+            webView.loadUrl("http://" + address + ":8080");
         } else {
             Toast.makeText(mNotifications, "IP为空,请等待连接", Toast.LENGTH_SHORT).show();
             finish();
@@ -303,5 +297,14 @@ public class LocalActivity extends AppCompatActivity implements EasyPermissions.
     protected void onRestart() {
         super.onRestart();
         new BottomUI().hideBottomUIMenu(this.getWindow());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (address != null) {
+//            address = "http://" + address + ":8080";
+            webView.loadUrl("http://" + address + ":8080");
+        }
     }
 }

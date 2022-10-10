@@ -254,6 +254,16 @@
                 android:text="文件夹"
                 android:textSize="12dp"
                 android:textColor="@color/whith"/>
+
+            <RadioButton
+                android:id="@+id/rbSetting"
+                style="@style/MainRadionButton"
+                android:layout_height="60dp"
+                android:background="@drawable/button_select"
+                android:drawableTop="@drawable/ic_client_setting"
+                android:text="设置"
+                android:textSize="12dp"
+                android:textColor="@color/whith"/>
         </RadioGroup>
         <LinearLayout
             android:id="@+id/linearLayoutStop"

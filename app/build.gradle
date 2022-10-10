@@ -104,4 +104,7 @@ dependencies {
     //SerialHelper
     implementation 'tp.xmaihh:serialport:2.1'
     implementation 'com.github.Tornaco:SystemRecApi:v1.3'
+    //滚轮选择器的滚轮控件
+    implementation 'com.github.gzu-liyujiang.AndroidPicker:WheelView:4.0.1'
+    implementation 'com.contrarywind:Android-PickerView:4.1.9'
 }

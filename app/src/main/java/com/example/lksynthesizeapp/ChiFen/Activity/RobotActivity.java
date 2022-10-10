@@ -54,7 +54,6 @@ import com.example.lksynthesizeapp.ChiFen.View.MyWebView;
 import com.example.lksynthesizeapp.ChiFen.bean.ItemInfo;
 import com.example.lksynthesizeapp.Constant.Base.AlertDialogUtil;
 import com.example.lksynthesizeapp.Constant.Base.BaseActivity;
-import com.example.lksynthesizeapp.Constant.Base.Constant;
 import com.example.lksynthesizeapp.R;
 import com.zgkxzx.modbus4And.requset.ModbusParam;
 import com.zgkxzx.modbus4And.requset.ModbusReq;
@@ -110,6 +109,8 @@ public class RobotActivity extends BaseActivity {
     LinearLayout linearLayoutStop;
     @BindView(R.id.frameLayout)
     FrameLayout frameLayout;
+    @BindView(R.id.rbSetting)
+    RadioButton rbSetting;
     private CircleMenuAdapter circleMenuAdapternew;
     private boolean isConnect = false;
     private int TIME = 2000;
@@ -152,8 +153,8 @@ public class RobotActivity extends BaseActivity {
         webView.setHorizontalScrollBarEnabled(false);
         address = getIntent().getStringExtra("address");
         if (address != null) {
-            address = "http://" + address + ":8080";
-            webView.loadUrl(address);
+//            address = "http://" + address + ":8080";
+            webView.loadUrl("http://" + address + ":8080");
         } else {
             Toast.makeText(this, "IP为空,请等待连接", Toast.LENGTH_SHORT).show();
             finish();
@@ -297,7 +298,7 @@ public class RobotActivity extends BaseActivity {
 
     @OnClick({R.id.btnStop, R.id.tvSpeed, R.id.tvDistance, R.id.tvCHTime,
             R.id.tvCEControl, R.id.tvLightSelect, R.id.tvSearchlightControl, R.id.tvCHControl,
-            R.id.rbCamera, R.id.rbVideo, R.id.rbAlbum, R.id.linearLayoutStop})
+            R.id.rbCamera, R.id.rbVideo, R.id.rbAlbum, R.id.linearLayoutStop, R.id.rbSetting})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btnStop:
@@ -382,20 +383,27 @@ public class RobotActivity extends BaseActivity {
                 break;
             case R.id.rbAlbum:
                 new MainUI().showPopupMenu(rbAlbum, "Robot", this);
+                break;
+            case R.id.rbSetting:
+                Intent intent = new Intent(this, SettingActivity.class);
+                intent.putExtra("address",address);
+                intent.putExtra("tag","local");
+                startActivity(intent);
+                break;
         }
     }
 
     //创建申请录屏的 Intent
     private void requestMediaProjection() {
         Intent captureIntent = mMediaProjectionManager.createScreenCaptureIntent();
-        startActivityForResult(captureIntent, Constant.TAG_ONE);
+        startActivityForResult(captureIntent, TAG_ONE);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent backdata) {
         super.onActivityResult(requestCode, resultCode, backdata);
         switch (requestCode) {
-            case Constant.TAG_ONE:
+            case TAG_ONE:
                 if (resultCode == Activity.RESULT_OK) {
                     if (resultCode == Activity.RESULT_OK) {
                         new BottomUI().hideBottomUIMenu(this.getWindow());
@@ -409,7 +417,7 @@ public class RobotActivity extends BaseActivity {
                     finish();
                 }
                 break;
-            case Constant.TAG_TWO:
+            case TAG_TWO:
                 if (resultCode == Activity.RESULT_OK) {
                     String position = backdata.getStringExtra("position");
                 }
@@ -417,10 +425,10 @@ public class RobotActivity extends BaseActivity {
         }
     }
 
-    private void startMedia(){
+    private void startMedia() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             //获取mediaRecorder
-            mediaRecorder = new MyMediaRecorder().getMediaRecorder(project,workName,workCode,"/LUKERobotVideo/");
+            mediaRecorder = new MyMediaRecorder().getMediaRecorder(project, workName, workCode, "/LUKERobotVideo/");
             mVirtualDisplay = mMediaProjection.createVirtualDisplay("你的name",
                     2400, 1080, 1,
                     DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
@@ -701,6 +709,15 @@ public class RobotActivity extends BaseActivity {
         String data2 = data1.substring(0, data1.length() - 1);
         String[] strs = data2.split(",");
         return strs;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (address != null) {
+//            address = "http://" + address + ":8080";
+            webView.loadUrl("http://" + address + ":8080");
+        }
     }
 
 }
