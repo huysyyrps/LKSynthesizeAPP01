@@ -1,6 +1,7 @@
 package com.example.lksynthesizeapp;
 
 import com.example.lksynthesizeapp.ChiFen.bean.PhotoUp;
+import com.example.lksynthesizeapp.ChiFen.bean.VersionInfo;
 import com.example.lksynthesizeapp.ChiFen.bean.Video;
 import com.example.lksynthesizeapp.Constant.Bean.Defined;
 
@@ -58,6 +59,14 @@ public interface AllApi {
     @Multipart
     @POST(ApiAddress.havevideoup)
     Observable<Video> getHaveVideoUp(@Part List<MultipartBody.Part> partList);
+
+
+    /**
+     * 查询版本信息
+     */
+    @POST(ApiAddress.versioninfo)
+    @Headers({"Content-Type:application/json; charset=UTF-8"})
+    Observable<VersionInfo> getVersionInfo(@Body RequestBody body);
 //
 //    /**
 //     * 日志上传

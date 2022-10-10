@@ -12,7 +12,7 @@ android {
         minSdk 26
         targetSdk 28
         versionCode 1
-        versionName "1.0.0"
+        versionName "1.0.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 //        externalNativeBuild {
 //            cmake {
@@ -107,4 +107,7 @@ dependencies {
     //滚轮选择器的滚轮控件
     implementation 'com.github.gzu-liyujiang.AndroidPicker:WheelView:4.0.1'
     implementation 'com.contrarywind:Android-PickerView:4.1.9'
+    //app自动更新组件
+    implementation(fileTree("libs"));
+    implementation 'com.lzy.net:okgo:3.0.4'
 }

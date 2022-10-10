@@ -12,6 +12,7 @@ import android.util.Log;
 
 import com.igexin.sdk.IUserLoggerInterface;
 import com.igexin.sdk.PushManager;
+import com.message.update.UpdateApkHelper;
 
 /**
  * @author: Allen.
@@ -49,6 +50,8 @@ public class MyApplication extends Application {
                 Log.e("PUSH_LOG",s);
             }
         });
+        //app更新组件初始化
+        UpdateApkHelper.getInstance().init(this);
 //        //初始化线程池管理器
 //        initThreadPool();
     }

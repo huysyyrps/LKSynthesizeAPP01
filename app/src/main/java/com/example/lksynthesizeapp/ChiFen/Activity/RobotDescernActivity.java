@@ -404,7 +404,7 @@ public class RobotDescernActivity extends AppCompatActivity {
             case R.id.rbSetting:
                 Intent intent = new Intent(this, SettingActivity.class);
                 intent.putExtra("address",address);
-                intent.putExtra("tag","local");
+                intent.putExtra("tag","desc");
                 startActivity(intent);
                 break;
         }

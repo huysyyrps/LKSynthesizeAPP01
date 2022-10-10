@@ -9,8 +9,8 @@ package com.example.lksynthesizeapp;
 public class ApiAddress {
 
     //生成环境
-    public final static String  api = "https://www.944414275.top:6060/";
-//    public final static String  api = "https://172.16.18.73:5001/";
+//    public final static String  api = "https://www.944414275.top:6060/";
+    public final static String  api = "http://172.16.18.74:9123/";
  
 
     /**************************************个人中心************************************************/
@@ -34,4 +34,6 @@ public class ApiAddress {
     public final static String daily = "api/UploadLog/UploadLog";
     //根据派工单获取信息
     public final static String defined = "api/GetDeviceInfo/GetDeviceInfo";
+    //版本信息
+    public final static String versioninfo = "app-api/client/init";
 }

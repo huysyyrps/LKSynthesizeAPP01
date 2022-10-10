@@ -128,26 +128,20 @@ public class SettingActivity extends BaseActivity {
             settingList.add(setting1);
         }
 
-
-        Setting setting3 = new Setting();
-        setting3.setTitle("版本检测");
-        setting3.setImagePath(R.drawable.ic_version);
-        settingList.add(setting3);
-
         Setting setting2 = new Setting();
         setting2.setTitle("设备重启");
         setting2.setImagePath(R.drawable.ic_restart);
         settingList.add(setting2);
 
-        Setting setting4 = new Setting();
-        setting4.setTitle("帧数设置");
-        setting4.setImagePath(R.drawable.ic_fps);
-        settingList.add(setting4);
+        Setting setting3 = new Setting();
+        setting3.setTitle("帧数设置");
+        setting3.setImagePath(R.drawable.ic_fps);
+        settingList.add(setting3);
 
-        Setting setting5 = new Setting();
-        setting5.setTitle("像素设置");
-        setting5.setImagePath(R.drawable.ic_pixel);
-        settingList.add(setting5);
+        Setting setting4 = new Setting();
+        setting4.setTitle("像素设置");
+        setting4.setImagePath(R.drawable.ic_pixel);
+        settingList.add(setting4);
 
     }
 
