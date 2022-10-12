@@ -33,9 +33,10 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <TextView
-            android:id="@+id/yes"
-            android:text="@string/title_tips_confim"
+            android:id="@+id/no"
+            android:text="@string/title_tips_cancel"
             android:textColor="@color/color_forget_button"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
@@ -44,15 +45,13 @@
             android:layout_width="0px"
             android:layout_weight="1"
             android:layout_height="match_parent" />
-
         <ImageView
             android:layout_width="1px"
             android:layout_height="match_parent"
             android:background="@color/divider"/>
-
         <TextView
-            android:id="@+id/no"
-            android:text="@string/title_tips_cancel"
+            android:id="@+id/yes"
+            android:text="@string/title_tips_confim"
             android:textColor="@color/color_forget_button"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"

@@ -25,7 +25,8 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
-    <uses-permission android:name="com.huawei.permission.external_app_settings.USE_COMPONENT"/>
+    <uses-permission android:name="com.huawei.permission.external_app_settings.USE_COMPONENT" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
     <uses-permission
         android:name="android.permission.DEVICE_POWER"
         tools:ignore="ProtectedPermissions" />
@@ -36,7 +37,9 @@
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" /> <!-- 个推适配 android11及以上 -->
     <uses-permission android:name="android.permission.FLASHLIGHT" />
+
     <uses-feature android:name="android.hardware.camera.flash" />
+
     <queries>
         <intent>
             <action android:name="com.getui.sdk.action" />
@@ -54,8 +57,9 @@
         android:theme="@style/NoAction"
         android:usesCleartextTraffic="true">
 
-        <service android:name=".ChiFen.service.WhiteService"/>
-        <activity android:name=".ChiFen.Activity.KeepActivity"/>
+        <service android:name=".ChiFen.service.WhiteService" />
+
+        <activity android:name=".ChiFen.Activity.KeepActivity" />
         <activity
             android:name=".TestActivity"
             android:exported="false"

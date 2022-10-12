@@ -10,7 +10,7 @@ public class ApiAddress {
 
     //生成环境
 //    public final static String  api = "https://www.944414275.top:6060/";
-    public final static String  api = "http://172.16.18.74:9123/";
+    public final static String  api = "http://192.168.1.18:9123/";
  
 
     /**************************************个人中心************************************************/

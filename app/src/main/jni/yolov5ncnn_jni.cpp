@@ -568,6 +568,7 @@ Java_com_example_lksynthesizeapp_YoloV5Ncnn_Detect(JNIEnv *env, jobject thiz, jo
     // yolov5
     std::vector<Object> objects;
     {
+        //置信度prob_threshold
         const float prob_threshold = 0.45f;
         const float nms_threshold = 0.45f;
 

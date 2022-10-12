@@ -51,19 +51,20 @@
         android:orientation="horizontal"
         android:layout_gravity="bottom"
         android:layout_marginBottom="40dp">
+
         <RadioButton
             android:id="@+id/rbLightClose"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:button="@null"
-            android:background="@drawable/radionbutton_select"
-            android:drawableTop="@drawable/ic_light_close"
             android:layout_marginLeft="50dp"
-            android:padding="5dp"
-            android:text="截图"
+            android:background="@drawable/radionbutton_select"
+            android:button="@null"
+            android:drawableTop="@drawable/ic_light_close"
             android:gravity="center"
-            android:textSize="12dp"
-            android:textColor="@color/whith"/>
+            android:padding="5dp"
+            android:text="灯光"
+            android:textColor="@color/whith"
+            android:textSize="12dp" />
         <RadioButton
             android:id="@+id/rbLightOpen"
             android:visibility="gone"
@@ -74,7 +75,7 @@
             android:drawableTop="@drawable/ic_light_open"
             android:layout_marginLeft="50dp"
             android:padding="5dp"
-            android:text="截图"
+            android:text="相册"
             android:gravity="center"
             android:textSize="12dp"
             android:textColor="@color/red"/>

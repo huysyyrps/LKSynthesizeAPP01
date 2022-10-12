@@ -6,6 +6,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
@@ -17,6 +18,8 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
+import com.example.lksynthesizeapp.Constant.Base.AlertDialogCallBack;
+import com.example.lksynthesizeapp.Constant.Base.AlertDialogUtil;
 import com.example.lksynthesizeapp.Constant.Base.BaseActivity;
 import com.example.lksynthesizeapp.Constant.Base.Constant;
 import com.example.lksynthesizeapp.Constant.Bean.Defined;
@@ -214,9 +217,55 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
 
     @Override
     public void onPermissionsDenied(int requestCode, List<String> list) {
-        // 请求权限被拒
-        Toast.makeText(DefinedActivity.this, "权限被拒绝", Toast.LENGTH_SHORT).show();
-        finish();
+        new AlertDialogUtil(DefinedActivity.this).showDialog("为了您正常使用此程序，请您 "
+                + "\n"
+                + "到设置界面手动开启程序所需权限。", new AlertDialogCallBack() {
+            @Override
+            public void confirm(String name) {
+                Intent intent = new Intent();
+                intent.setAction(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                intent.setData(Uri.parse("package:" + DefinedActivity.this.getPackageName()));
+                startActivityForResult(intent,Constant.TAG_ONE);
+                finish();
+            }
+
+            @Override
+            public void cancel() {
+
+            }
+
+            @Override
+            public void save(String name) {
+
+            }
+
+            @Override
+            public void checkName(String name) {
+
+            }
+        });
+//        // 请求权限被拒
+//        DialogUpdate dialogUpdate = new DialogUpdate(DefinedActivity.this);
+//        dialogUpdate.setButtonText("确定","取消");
+//        dialogUpdate.setMessage("为了您正常使用此程序，请您 "
+//                + "\n"
+//                + "到设置界面手动开启程序所需权限。");
+//        dialogUpdate.show();
+//        dialogUpdate.setOnDialogUpdateOkListener(new DialogUpdate.OnDialogUpdateOkListener() {
+//            @Override
+//            public void onDialogUpdateOk() {
+//                Intent intent = new Intent();
+//                intent.setAction(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+//                intent.setData(Uri.parse("package:" + DefinedActivity.this.getPackageName()));
+//                startActivityForResult(intent,Constant.TAG_ONE);
+//                finish();
+//            }
+//
+//            @Override
+//            public void onDialogUpdateCancel() {
+//                finish();
+//            }
+//        });
     }
 
     /**
@@ -311,7 +360,7 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
                                 Log.e("XXXXXX", data);
                                 String[] dataArray = data.split("~~");
                                 sharePreferencesUtils.setString(DefinedActivity.this, "max", dataArray[0]);
-                                sharePreferencesUtils.setString(DefinedActivity.this, "model", dataArray[3]);
+                                sharePreferencesUtils.setString(DefinedActivity.this, "model", dataArray[2]);
                                 sharePreferencesUtils.setString(DefinedActivity.this, "havaCamer", dataArray[4]);
                                 sharePreferencesUtils.setString(DefinedActivity.this, "haveDescern", dataArray[5]);
 //                            definedPresenter.getDefined(data[0]);
