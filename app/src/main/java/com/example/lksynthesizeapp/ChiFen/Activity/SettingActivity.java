@@ -1,20 +1,30 @@
 package com.example.lksynthesizeapp.ChiFen.Activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.PowerManager;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.lksynthesizeapp.ChiFen.Base.MobileButlerUtil;
 import com.example.lksynthesizeapp.ChiFen.Base.MyCallBack;
 import com.example.lksynthesizeapp.ChiFen.Base.RegionalChooseUtil;
 import com.example.lksynthesizeapp.ChiFen.bean.Setting;
+import com.example.lksynthesizeapp.Constant.Base.AlertDialogCallBack;
+import com.example.lksynthesizeapp.Constant.Base.AlertDialogUtil;
 import com.example.lksynthesizeapp.Constant.Base.BaseActivity;
 import com.example.lksynthesizeapp.Constant.Base.BaseRecyclerAdapter;
 import com.example.lksynthesizeapp.Constant.Base.BaseViewHolder;
@@ -22,6 +32,7 @@ import com.example.lksynthesizeapp.Constant.Base.Constant;
 import com.example.lksynthesizeapp.Constant.Base.ProgressDialogUtil;
 import com.example.lksynthesizeapp.Constant.Net.SSHCallBack;
 import com.example.lksynthesizeapp.Constant.Net.SSHExcuteCommandHelper;
+import com.example.lksynthesizeapp.Constant.activity.SendSelectActivity;
 import com.example.lksynthesizeapp.R;
 import com.example.lksynthesizeapp.SharePreferencesUtils;
 
@@ -67,12 +78,42 @@ public class SettingActivity extends BaseActivity {
                 holder.setOnClickListener(R.id.linearLayout, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        if (setting.getTitle().equals("息屏运行")){
+                            requestIgnoreBatteryOptimizations();
+                        }
                         if (setting.getTitle().equals("报警音设置")){
                             startActivity(new Intent(SettingActivity.this,AudioActivity.class));
                             finish();
                         }
-                        if (setting.getTitle().equals("设备重启")){
+                        //重启视频服务
+                        if (setting.getTitle().equals("服务重启")){
                             ShowDialog("/etc/init.d/mjpg-streamer restart","重启中");
+//                            ShowDialog("uci set mjpg-streamer.core.fps=30", "uci commit", "/etc/init.d/mjpg-streamer restart");
+                        }
+
+                        //重启设备
+                        if (setting.getTitle().equals("设备重启")){
+                            new AlertDialogUtil(SettingActivity.this).showDialog("您确定要重启设备吗？", new AlertDialogCallBack() {
+                                @Override
+                                public void confirm(String name) {
+                                    ShowDialog("reboot","设备重启中");
+                                }
+
+                                @Override
+                                public void cancel() {
+
+                                }
+
+                                @Override
+                                public void save(String name) {
+
+                                }
+
+                                @Override
+                                public void checkName(String name) {
+
+                                }
+                            });
 //                            ShowDialog("uci set mjpg-streamer.core.fps=30", "uci commit", "/etc/init.d/mjpg-streamer restart");
                         }
 
@@ -129,19 +170,29 @@ public class SettingActivity extends BaseActivity {
         }
 
         Setting setting2 = new Setting();
-        setting2.setTitle("设备重启");
+        setting2.setTitle("服务重启");
         setting2.setImagePath(R.drawable.ic_restart);
         settingList.add(setting2);
 
         Setting setting3 = new Setting();
-        setting3.setTitle("帧数设置");
-        setting3.setImagePath(R.drawable.ic_fps);
+        setting3.setTitle("设备重启");
+        setting3.setImagePath(R.drawable.ic_prorestart);
         settingList.add(setting3);
 
         Setting setting4 = new Setting();
-        setting4.setTitle("像素设置");
-        setting4.setImagePath(R.drawable.ic_pixel);
+        setting4.setTitle("帧数设置");
+        setting4.setImagePath(R.drawable.ic_fps);
         settingList.add(setting4);
+
+        Setting setting5 = new Setting();
+        setting5.setTitle("像素设置");
+        setting5.setImagePath(R.drawable.ic_pixel);
+        settingList.add(setting5);
+
+        Setting setting6 = new Setting();
+        setting6.setTitle("息屏运行");
+        setting6.setImagePath(R.drawable.ic_service);
+        settingList.add(setting6);
 
     }
 
@@ -174,7 +225,11 @@ public class SettingActivity extends BaseActivity {
                     SSHExcuteCommandHelper.writeBefor(address, data1, new SSHCallBack() {
                         @Override
                         public void confirm(String data) {
-                            handlerSetting.sendEmptyMessage(Constant.TAG_ONE);
+                            if (title.equals("设备重启中")){
+                                handlerSetting.sendEmptyMessage(Constant.TAG_THERE);
+                            }else {
+                                handlerSetting.sendEmptyMessage(Constant.TAG_ONE);
+                            }
                         }
 
                         @Override
@@ -237,7 +292,72 @@ public class SettingActivity extends BaseActivity {
         }
     }
 
+    //判断是否再白名单
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private boolean isIgnoringBatteryOptimizations() {
+        boolean isIgnoring = false;
+        PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        if (powerManager != null) {
+            isIgnoring = powerManager.isIgnoringBatteryOptimizations(getPackageName());
+        }
+        return isIgnoring;
+    }
 
+    //如果不在白名单中，可以通过以下代码申请加入白名单
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public void requestIgnoreBatteryOptimizations() {
+        try {
+            Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+            intent.setData(Uri.parse("package:" + getPackageName()));
+            startActivityForResult(intent,Constant.TAG_THERE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Constant.TAG_THERE) {
+            if(isIgnoringBatteryOptimizations()){
+                Toast.makeText(this, "已开启", Toast.LENGTH_SHORT).show();
+                new AlertDialogUtil(SettingActivity.this).showDialog("为了您正常使用此程序，请您 "
+                        + "\n"
+                        + "选择->鲁科检测系统->启动管理->关闭自动管理->开启允许自启动和允许后台活动。", new AlertDialogCallBack() {
+                    @Override
+                    public void confirm(String name) {
+                        Intent powerUsageIntent = new Intent(Intent.ACTION_POWER_USAGE_SUMMARY);
+                        ResolveInfo resolveInfo = getPackageManager().resolveActivity(powerUsageIntent, 0);
+// check that the Battery app exists on this device
+                        if(resolveInfo != null){
+                            startActivity(powerUsageIntent);
+                        }
+                    }
+
+                    @Override
+                    public void cancel() {
+
+                    }
+
+                    @Override
+                    public void save(String name) {
+
+                    }
+
+                    @Override
+                    public void checkName(String name) {
+
+                    }
+                });
+            }
+        }
+    }
+
+    public void checkPermission(){
+        MobileButlerUtil mobileButlerUtil = new MobileButlerUtil(this);
+        mobileButlerUtil.goHuaweiSetting();
+        new SharePreferencesUtils().setString(this,"keep","true");
+    }
 
     Handler handlerSetting = new Handler() {
         @Override
@@ -251,6 +371,11 @@ public class SettingActivity extends BaseActivity {
                 case Constant.TAG_TWO:
                     Toast.makeText(SettingActivity.this, toastData, Toast.LENGTH_LONG).show();
                     ProgressDialogUtil.stopLoad();
+                    break;
+                case Constant.TAG_THERE:
+                    new DescernActivity().intance.finish();
+                    new SendSelectActivity().intance.finish();
+                    System.exit(0);
                     break;
             }
         }

@@ -75,6 +75,7 @@ public class SendSelectActivity extends BaseActivity implements VersionInfoContr
     VersionInfoPresenter versionInfoPresenter;
     private DialogUpdate dialogUpdate;
     String passWord;
+    public static SendSelectActivity intance = null;
 
     //推出程序
     @Override
@@ -91,6 +92,7 @@ public class SendSelectActivity extends BaseActivity implements VersionInfoContr
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
+        intance = this;
         dialogUpdate = new DialogUpdate(this);
         versionInfoPresenter = new VersionInfoPresenter(this,this);
         Max =   sharePreferencesUtils.getString(SendSelectActivity.this, "max", "");

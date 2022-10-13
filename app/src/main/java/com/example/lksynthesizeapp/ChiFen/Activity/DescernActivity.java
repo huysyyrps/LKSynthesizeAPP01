@@ -105,6 +105,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
             Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.FOREGROUND_SERVICE};
     private MediaRecorder mediaRecorder;
+    public static DescernActivity intance = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,6 +119,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         mMediaProjectionManager = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
         setContentView(R.layout.activity_descern);
         ButterKnife.bind(this);
+        intance = this;
         boolean ret_init = yolov5ncnn.Init(getAssets());
         if (!ret_init) {
             Toast.makeText(this, "yolov5ncnn Init failed", Toast.LENGTH_SHORT).show();
