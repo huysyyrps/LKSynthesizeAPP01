@@ -17,6 +17,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -156,7 +157,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         }
 
         new BottomUI().hideBottomUIMenu(this.getWindow());
-        if (new SharePreferencesUtils().getString(this,"keep","").equals("true")){
+        if (new SharePreferencesUtils().getString(this, "keep", "").equals("true")) {
             //开启前台服务
             intent = new Intent(DescernActivity.this, WhiteService.class);
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {//8.0以上的开启方式不同
@@ -177,20 +178,29 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
             conn = (HttpURLConnection) videoUrl.openConnection();
             //设置输入流
             conn.setDoInput(true);
+            conn.setConnectTimeout(1000);
             //连接
             conn.connect();
             //得到网络返回的输入流
             inputstream = conn.getInputStream();
             //创建出一个bitmap
             bmp = BitmapFactory.decodeStream(inputstream);
-            Log.e("XXXXXXXX", "1111111111");
+            if (bmp == null) {
+                Message message = new Message();
+                message.what = Constant.TAG_TWO;
+                message.obj = bmp;
+                handlerLoop.sendMessage(message);
+            }
             YoloV5Ncnn.Obj[] objects = yolov5ncnn.Detect(bmp, false);
-            Log.e("XXXXXXXX", "2222222222");
             showObjects(objects);
             //关闭HttpURLConnection连接
             conn.disconnect();
         } catch (Exception ex) {
-            Log.e("XXX", ex.toString());
+            Message message = new Message();
+            message.what = Constant.TAG_THERE;
+            message.obj = ex.toString();
+            handlerLoop.sendMessage(message);
+            return;
         } finally {
         }
     }
@@ -206,7 +216,11 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
 
 
         if (objects == null) {
-            imageView.setImageBitmap(bmp);
+            Message message = new Message();
+            message.what = Constant.TAG_ONE;
+            message.obj = bmp;
+            handlerLoop.sendMessage(message);
+//            imageView.setImageBitmap(bmp);
             return;
         }
 
@@ -232,7 +246,6 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                 canvas.drawText(text, x, y - new MyPaint().getTextpaint().ascent(), new MyPaint().getTextpaint());
             }
         }
-        Log.e("XXXXXXXX", "3333333333");
         if (objects.length != 0) {
             mediaPlayer.start();
             if (isFirst) {
@@ -251,7 +264,11 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                 }
             }
         }
-        imageView.setImageBitmap(rgba);
+        Message message = new Message();
+        message.what = Constant.TAG_ONE;
+        message.obj = rgba;
+        handlerLoop.sendMessage(message);
+//        imageView.setImageBitmap(rgba);
     }
 
     public static void saveImageToGallery(Context context, Bitmap bmp) {
@@ -341,6 +358,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                     mythread.interrupt();
                 }
                 runing = false;
+                finish();
                 finish();
                 break;
         }
@@ -470,4 +488,28 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         Log.e("info", "stop");
     }
 
+
+    Handler handlerLoop = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case Constant.TAG_ONE:
+                    Bitmap bit = (Bitmap) msg.obj;
+                    imageView.setImageBitmap(bit);
+                    break;
+                case Constant.TAG_TWO:
+                    Intent intent = getIntent();
+                    overridePendingTransition(0, 0);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                    finish();
+                    overridePendingTransition(0, 0);
+                    startActivity(intent);
+                    break;
+                case Constant.TAG_THERE:
+                    Toast.makeText(DescernActivity.this, msg.obj.toString(), Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+    };
 }

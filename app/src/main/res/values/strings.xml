@@ -50,4 +50,8 @@
 
     <string name="ch_control_open">开启磁化</string>
     <string name="ch_control_close">关闭磁化</string>
+
+
+    <string name="dialog_close">设备连接失败，请检查设备是否正常开启</string>
+    <string name="device_connect">设备连接中...</string>
 </resources>
