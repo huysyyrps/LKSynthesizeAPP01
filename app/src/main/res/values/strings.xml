@@ -52,6 +52,7 @@
     <string name="ch_control_close">关闭磁化</string>
 
 
-    <string name="dialog_close">设备连接失败，请检查设备是否正常开启</string>
+    <string name="dialog_close">请检查设备是否正常运行</string>
     <string name="device_connect">设备连接中...</string>
+    <string name="net_error">java.net.ConnectException: Failed to connect</string>
 </resources>

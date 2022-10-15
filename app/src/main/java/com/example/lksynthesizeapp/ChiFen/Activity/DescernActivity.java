@@ -178,7 +178,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
             conn = (HttpURLConnection) videoUrl.openConnection();
             //设置输入流
             conn.setDoInput(true);
-            conn.setConnectTimeout(1000);
+            conn.setConnectTimeout(5000);
             //连接
             conn.connect();
             //得到网络返回的输入流
@@ -507,7 +507,8 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                     startActivity(intent);
                     break;
                 case Constant.TAG_THERE:
-                    Toast.makeText(DescernActivity.this, msg.obj.toString(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DescernActivity.this, getResources().getString(R.string.dialog_close), Toast.LENGTH_SHORT).show();
+                    finish();
                     break;
             }
         }
