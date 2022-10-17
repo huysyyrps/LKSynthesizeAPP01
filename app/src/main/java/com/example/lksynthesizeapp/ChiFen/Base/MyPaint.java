@@ -18,7 +18,7 @@ public class MyPaint {
     public Paint getTextpaint(){
         textpaint = new Paint();
         textpaint.setColor(Color.RED);
-        textpaint.setTextSize(13);
+        textpaint.setTextSize(30);
         textpaint.setTextAlign(Paint.Align.LEFT);
         return textpaint;
     }

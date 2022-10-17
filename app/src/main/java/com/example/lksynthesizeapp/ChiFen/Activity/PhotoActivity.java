@@ -163,6 +163,16 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
                 }
             }
         });
+        loadingDialog = new LoadingDialog(this);
+        loadingDialog.setLoadingText(getResources().getString(R.string.device_connect))
+//                        .setSuccessText("加载成功")//显示加载成功时的文字
+                //.setFailedText("加载失败")
+                .setSize(200)
+                .setShowTime(1)
+                .setInterceptBack(false)
+                .setLoadSpeed(LoadingDialog.Speed.SPEED_ONE)
+                .setRepeatCount(1)
+                .show();
         new Thread(new Runnable() {
             @Override
             public void run() {

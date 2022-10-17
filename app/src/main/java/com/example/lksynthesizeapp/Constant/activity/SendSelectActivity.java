@@ -23,7 +23,6 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 
 import com.example.lksynthesizeapp.ChiFen.Activity.DescernActivity;
-import com.example.lksynthesizeapp.ChiFen.Activity.LocalActivity;
 import com.example.lksynthesizeapp.ChiFen.Activity.RobotActivity;
 import com.example.lksynthesizeapp.ChiFen.Activity.RobotDescernActivity;
 import com.example.lksynthesizeapp.ChiFen.Module.VersionInfoContract;
@@ -295,11 +294,12 @@ public class SendSelectActivity extends BaseActivity implements VersionInfoContr
             startActivity(intent);
         }
         if (tag.equals("CFTSYNODESCERN")) {
-            intent = new Intent(SendSelectActivity.this, LocalActivity.class);
+            intent = new Intent(SendSelectActivity.this, DescernActivity.class);
             intent.putExtra("project", etProject.getText().toString().trim());
             intent.putExtra("etWorkName", etWorkName.getText().toString().trim());
             intent.putExtra("etWorkCode", etWorkCode.getText().toString().trim());
             intent.putExtra("address", address + "");
+            intent.putExtra("useTAG", "CFTSYNODESCERN");
             startActivity(intent);
         }
         if (tag.equals("CFTSYHAVEDESCERN")) {
@@ -308,6 +308,7 @@ public class SendSelectActivity extends BaseActivity implements VersionInfoContr
             intent.putExtra("etWorkName", etWorkName.getText().toString().trim());
             intent.putExtra("etWorkCode", etWorkCode.getText().toString().trim());
             intent.putExtra("address", address + "");
+            intent.putExtra("useTAG", "CFTSYHAVEDESCERN");
             startActivity(intent);
         }
         address = "";

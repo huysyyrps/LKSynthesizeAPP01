@@ -16,7 +16,6 @@ import android.media.projection.MediaProjectionManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
@@ -81,15 +80,20 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
     FrameLayout frameLayout;
     @BindView(R.id.rbSetting)
     RadioButton rbSetting;
+    @BindView(R.id.tvDeviceCode)
+    TextView tvDeviceCode;
+    @BindView(R.id.linlayoutData)
+    LinearLayout linlayoutData;
     private String url;
     private Bitmap bmp = null;
-    private Thread mythread;
+    private Bitmap rgba;
+    private Thread mythread, saveThread;
     private YoloV5Ncnn yolov5ncnn = new YoloV5Ncnn();
     URL videoUrl;
     HttpURLConnection conn;
     private MediaPlayer mediaPlayer;
     public boolean runing = true;
-    public static String project = "", workName = "", workCode = "", address = "";
+    public static String project = "", workName = "", workCode = "", address = "", deviceCode = "";
     public boolean isFirst = true;
     public long saveTime = 0;
     public long currentTmeTime = 0;
@@ -106,6 +110,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
             Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.FOREGROUND_SERVICE};
     private MediaRecorder mediaRecorder;
+    String userTAG;
     public static DescernActivity intance = null;
 
     @Override
@@ -129,6 +134,8 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         project = intent.getStringExtra("project");
         workName = intent.getStringExtra("etWorkName");
         workCode = intent.getStringExtra("etWorkCode");
+        userTAG = intent.getStringExtra("useTAG");
+        deviceCode = new SharePreferencesUtils().getString(DescernActivity.this, "deviceCode", "");
         if (!project.trim().equals("")) {
             tvCompName.setText(project);
         }
@@ -138,13 +145,29 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         if (!workCode.trim().equals("")) {
             tvWorkCode.setText(workCode);
         }
+        tvDeviceCode.setText(deviceCode);
 
         address = getIntent().getStringExtra("address");
+        if (address != null) {
+            url = "http://" + address + ":8080?action=snapshot";
+            mythread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (runing) {
+                        draw();
+                    }
+                }
+            });
+            mythread.start();
+        } else {
+            Toast.makeText(mNotifications, "IP为空,请等待连接", Toast.LENGTH_SHORT).show();
+            finish();
+        }
         new BottomUI().hideBottomUIMenu(this.getWindow());
         if (new SharePreferencesUtils().getString(this, "keep", "").equals("true")) {
             //开启前台服务
             intent = new Intent(DescernActivity.this, WhiteService.class);
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {//8.0以上的开启方式不同
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {//8.0以上的开启方式不同
                 startForegroundService(intent);
             } else {
                 startService(intent);
@@ -175,8 +198,16 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                 message.obj = bmp;
                 handlerLoop.sendMessage(message);
             }
-            YoloV5Ncnn.Obj[] objects = yolov5ncnn.Detect(bmp, false);
-            showObjects(objects);
+            if (userTAG.equals("CFTSYHAVEDESCERN")) {
+                YoloV5Ncnn.Obj[] objects = yolov5ncnn.Detect(bmp, false);
+                showObjects(objects);
+            } else if (userTAG.equals("CFTSYNODESCERN")) {
+                Message message = new Message();
+                message.what = Constant.TAG_ONE;
+                message.obj = bmp;
+                handlerLoop.sendMessage(message);
+            }
+
             //关闭HttpURLConnection连接
             conn.disconnect();
         } catch (Exception ex) {
@@ -199,60 +230,40 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
 //        });
 
 
-        if (objects == null) {
+        if (objects.length == 0) {
             Message message = new Message();
             message.what = Constant.TAG_ONE;
             message.obj = bmp;
             handlerLoop.sendMessage(message);
 //            imageView.setImageBitmap(bmp);
             return;
-        }
+        } else {
+            Bitmap rgba = bmp.copy(Bitmap.Config.ARGB_8888, true);
+            Canvas canvas = new Canvas(rgba);
+            for (int i = 0; i < objects.length; i++) {
+                canvas.drawRect(objects[i].x, objects[i].y, objects[i].x + objects[i].w, objects[i].y + objects[i].h, new MyPaint().getLinePaint());
+                // draw filled text inside image
+                {
+                    String text = objects[i].label + " = " + String.format("%.1f", objects[i].prob * 100) + "%";
 
-        // draw objects on bitmap
-        Bitmap rgba = bmp.copy(Bitmap.Config.ARGB_8888, true);
-        Canvas canvas = new Canvas(rgba);
-        for (int i = 0; i < objects.length; i++) {
-            canvas.drawRect(objects[i].x, objects[i].y, objects[i].x + objects[i].w, objects[i].y + objects[i].h, new MyPaint().getLinePaint());
-            // draw filled text inside image
-            {
-                String text = objects[i].label + " = " + String.format("%.1f", objects[i].prob * 100) + "%";
+                    float text_width = new MyPaint().getTextpaint().measureText(text) + 10;
+                    float text_height = -new MyPaint().getTextpaint().ascent() + new MyPaint().getTextpaint().descent() + 10;
 
-                float text_width = new MyPaint().getTextpaint().measureText(text) + 10;
-                float text_height = -new MyPaint().getTextpaint().ascent() + new MyPaint().getTextpaint().descent() + 10;
-
-                float x = objects[i].x;
-                float y = objects[i].y - text_height;
-                if (y < 0)
-                    y = 0;
-                if (x + text_width > rgba.getWidth())
-                    x = rgba.getWidth() - text_width;
+                    float x = objects[i].x;
+                    float y = objects[i].y - text_height;
+                    if (y < 0)
+                        y = 0;
+                    if (x + text_width > rgba.getWidth())
+                        x = rgba.getWidth() - text_width;
 //                canvas.drawRect(x, y, x + text_width, y + text_height, textbgpaint);
-                canvas.drawText(text, x, y - new MyPaint().getTextpaint().ascent(), new MyPaint().getTextpaint());
-            }
-        }
-        if (objects.length != 0) {
-            mediaPlayer.start();
-            if (isFirst) {
-                saveImageToGallery(DescernActivity.this, rgba);
-                saveTime = System.currentTimeMillis();
-                isFirst = false;
-            } else {
-                if (handler == null) {
-                    handler = new Handler(Looper.getMainLooper());
-                } else {
-                    currentTmeTime = System.currentTimeMillis();
-                    if (currentTmeTime - saveTime > 3000) {
-                        saveImageToGallery(DescernActivity.this, rgba);
-                        saveTime = currentTmeTime;
-                    }
+                    canvas.drawText(text, x, y - new MyPaint().getTextpaint().ascent(), new MyPaint().getTextpaint());
                 }
             }
+            Message message = new Message();
+            message.what = Constant.TAG_FOUR;
+            message.obj = rgba;
+            handlerLoop.sendMessage(message);
         }
-        Message message = new Message();
-        message.what = Constant.TAG_ONE;
-        message.obj = rgba;
-        handlerLoop.sendMessage(message);
-//        imageView.setImageBitmap(rgba);
     }
 
     public static void saveImageToGallery(Context context, Bitmap bmp) {
@@ -277,6 +288,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.rbCamera:
+//                rbCameraDowm();
                 if (toast != null) {
                     toast.cancel();
                 }
@@ -332,10 +344,6 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                 new MainUI().showPopupMenu(rbAlbum, "Desc", this);
                 break;
             case R.id.rbSetting:
-                if (mythread != null) {
-                    mythread.interrupt();
-                }
-                runing = false;
                 Intent intent = new Intent(this, SettingActivity.class);
                 intent.putExtra("address", address);
                 intent.putExtra("tag", "desc");
@@ -350,6 +358,10 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                 finish();
                 break;
         }
+    }
+
+    //截图
+    private void rbCameraDowm() {
     }
 
     private void startMedia() {
@@ -468,22 +480,6 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
             mediaPlayer = MediaPlayer.create(DescernActivity.this, R.raw.dh);
         }
         Log.e("XXXXX", "onResume");
-        runing = true;
-        if (address != null) {
-            url = "http://" + address + ":8080?action=snapshot";
-            mythread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    while (runing) {
-                        draw();
-                    }
-                }
-            });
-            mythread.start();
-        } else {
-            Toast.makeText(mNotifications, "IP为空,请等待连接", Toast.LENGTH_SHORT).show();
-            finish();
-        }
     }
 
     @Override
@@ -511,8 +507,37 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                     startActivity(intent);
                     break;
                 case Constant.TAG_THERE:
-                    Toast.makeText(DescernActivity.this, getResources().getString(R.string.dialog_close), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(DescernActivity.this, getResources().getString(R.string.dialog_close), Toast.LENGTH_SHORT).show();
                     finish();
+                    break;
+                case Constant.TAG_FOUR:
+                    Bitmap bitH = (Bitmap) msg.obj;
+                    imageView.setImageBitmap(bitH);
+                    saveThread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Bitmap rgba1 = bitH.copy(Bitmap.Config.ARGB_8888, true);
+                            Canvas canvas1 = new Canvas(rgba1);
+                            canvas1.drawText("工程名称:" + project, 15, 30, new MyPaint().getTextpaint());
+                            canvas1.drawText("工件名称:" + workName, 15, 70, new MyPaint().getTextpaint());
+                            canvas1.drawText("工件编号:" + workCode, 15, 110, new MyPaint().getTextpaint());
+                            canvas1.drawText("连接设备:" + deviceCode, 15, 150, new MyPaint().getTextpaint());
+                            mediaPlayer.start();
+                            if (isFirst) {
+                                saveImageToGallery(DescernActivity.this, rgba1);
+                                saveTime = System.currentTimeMillis();
+                                isFirst = false;
+                            } else {
+                                currentTmeTime = System.currentTimeMillis();
+                                if (currentTmeTime - saveTime > 3000) {
+                                    saveImageToGallery(DescernActivity.this, rgba1);
+                                    saveTime = currentTmeTime;
+                                    isFirst = true;
+                                }
+                            }
+                        }
+                    });
+                    saveThread.start();
                     break;
             }
         }
