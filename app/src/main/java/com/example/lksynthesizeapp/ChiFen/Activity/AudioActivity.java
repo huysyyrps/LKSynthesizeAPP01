@@ -49,7 +49,7 @@ public class AudioActivity extends BaseActivity {
                 holder.setOnClickListener(R.id.imageView, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (o.equals("默认蜂鸣音报警")){
+                        if (o.equals("基础蜂鸣音报警")){
                             mediaPlayer = MediaPlayer.create(AudioActivity.this, R.raw.fengming);
                         }
                         if (o.equals("标准女音报警")){
@@ -89,7 +89,7 @@ public class AudioActivity extends BaseActivity {
                         new AlertDialogUtil(AudioActivity.this).showDialog("您确定将"+o+"\n设置为报警提示音吗", new AlertDialogCallBack() {
                             @Override
                             public void confirm(String name) {
-                                if (o.equals("默认蜂鸣音报警")){
+                                if (o.equals("基础蜂鸣音报警")){
                                     sharePreferencesUtils.setString(AudioActivity.this,"audio","fengming");
                                 }
                                 if (o.equals("标准女音报警")){
@@ -148,9 +148,9 @@ public class AudioActivity extends BaseActivity {
     }
 
     private void setData() {
-        stringList.add("默认蜂鸣音报警");
-        stringList.add("标准女音报警");
         stringList.add("标准男音报警");
+        stringList.add("标准女音报警");
+        stringList.add("基础蜂鸣音报警");
         stringList.add("ami蜂鸣音报警");
         stringList.add("电子蜂鸣音1");
         stringList.add("电子蜂鸣音2");

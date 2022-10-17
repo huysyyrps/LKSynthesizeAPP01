@@ -356,10 +356,10 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
                     if (result != null && result.length > 0 && result[0] != null) {
                         if (result[0].getOriginalValue() != null) {
                             String qrData = result[0].getOriginalValue();
-                            String data = decodeToString(qrData);
-                            if (data.contains("/")) {
-                                Log.e("XXXXXX", data);
-                                String[] dataArray = data.split("/");
+//                            String data = decodeToString(qrData);
+                            if (qrData.contains("/")) {
+                                Log.e("XXXXXX", qrData);
+                                String[] dataArray = qrData.split("/");
                                 sharePreferencesUtils.setString(DefinedActivity.this, "max", dataArray[0]);
                                 sharePreferencesUtils.setString(DefinedActivity.this, "deviceCode", dataArray[1]);
                                 sharePreferencesUtils.setString(DefinedActivity.this, "deviceName", dataArray[2]);

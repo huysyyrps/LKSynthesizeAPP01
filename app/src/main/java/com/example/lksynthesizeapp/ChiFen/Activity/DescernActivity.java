@@ -448,7 +448,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
     protected void onResume() {
         super.onResume();
         String audio = new SharePreferencesUtils().getString(this, "audio", "");
-        mediaPlayer = MediaPlayer.create(DescernActivity.this, R.raw.fengming);
+        mediaPlayer = MediaPlayer.create(DescernActivity.this, R.raw.nan);
         if (audio.equals("fengming")) {
             mediaPlayer = MediaPlayer.create(DescernActivity.this, R.raw.fengming);
         }
@@ -508,7 +508,8 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                     break;
                 case Constant.TAG_THERE:
 //                    Toast.makeText(DescernActivity.this, getResources().getString(R.string.dialog_close), Toast.LENGTH_SHORT).show();
-                    finish();
+                    Toast.makeText(DescernActivity.this, msg.obj.toString(), Toast.LENGTH_SHORT).show();
+//                    finish();
                     break;
                 case Constant.TAG_FOUR:
                     Bitmap bitH = (Bitmap) msg.obj;
