@@ -24,7 +24,6 @@ import com.example.lksynthesizeapp.Constant.Base.BaseActivity;
 import com.example.lksynthesizeapp.Constant.Base.BaseRecyclerAdapter;
 import com.example.lksynthesizeapp.Constant.Base.BaseViewHolder;
 import com.example.lksynthesizeapp.Constant.Base.Constant;
-import com.example.lksynthesizeapp.Constant.Base.ProgressDialogUtil;
 import com.example.lksynthesizeapp.Constant.View.Header;
 import com.example.lksynthesizeapp.R;
 import com.example.lksynthesizeapp.SharePreferencesUtils;
@@ -34,6 +33,7 @@ import com.scwang.smart.refresh.layout.SmartRefreshLayout;
 import com.scwang.smart.refresh.layout.api.RefreshLayout;
 import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
+import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -72,6 +72,7 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
     private int allNum;
     File[] files;
     List<File> fileListData;
+    LoadingDialog loadingDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,7 +163,6 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
                 }
             }
         });
-        ProgressDialogUtil.startLoad(this, "加载中...");
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -278,11 +278,11 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
             switch (msg.what) {
                 case Constant.TAG_ONE:
                     baseRecyclerAdapter.notifyDataSetChanged();
-                    ProgressDialogUtil.stopLoad();
+                    loadingDialog.close();
                     break;
                 case Constant.TAG_TWO:
                     Toast.makeText(PhotoActivity.this, "暂无数据", Toast.LENGTH_SHORT).show();
-                    ProgressDialogUtil.stopLoad();
+                    loadingDialog.close();
                     break;
             }
         }

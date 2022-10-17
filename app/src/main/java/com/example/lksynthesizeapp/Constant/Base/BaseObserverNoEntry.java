@@ -3,6 +3,9 @@ package com.example.lksynthesizeapp.Constant.Base;
 import android.accounts.NetworkErrorException;
 import android.content.Context;
 
+import com.example.lksynthesizeapp.R;
+import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
+
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.UnknownHostException;
@@ -22,10 +25,12 @@ import retrofit2.HttpException;
 public abstract class BaseObserverNoEntry<T> implements Observer<T> {
     protected Context mContext;
     private String labelTxt;
+    LoadingDialog loadingDialog ;
 
     public BaseObserverNoEntry(Context cxt, String text) {
         this.mContext = cxt;
         this.labelTxt = text;
+        loadingDialog = new LoadingDialog(mContext);
     }
 
     //开始
@@ -97,10 +102,20 @@ public abstract class BaseObserverNoEntry<T> implements Observer<T> {
     protected abstract void onFailure(Throwable e, boolean isNetWorkError) throws Exception;
 
     protected void onRequestStart() {
-        ProgressDialogUtil.startLoad(mContext,labelTxt);
+//        ProgressDialogUtil.startLoad(mContext,labelTxt);
+        loadingDialog.setLoadingText(mContext.getResources().getString(R.string.dialog_loding))
+//                        .setSuccessText("加载成功")//显示加载成功时的文字
+                //.setFailedText("加载失败")
+                .setSize(200)
+                .setShowTime(1)
+                .setInterceptBack(false)
+                .setLoadSpeed(LoadingDialog.Speed.SPEED_ONE)
+                .setRepeatCount(1)
+                .show();
     }
 
     protected void onRequestEnd() {
-        ProgressDialogUtil.stopLoad();
+//        ProgressDialogUtil.stopLoad();
+        loadingDialog.close();
     }
 }

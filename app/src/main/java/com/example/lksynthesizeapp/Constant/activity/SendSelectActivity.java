@@ -89,7 +89,7 @@ public class SendSelectActivity extends BaseActivity implements VersionInfoContr
     MediaProjectionManager projectionManager;
     private WifiManager mWifiManager;
     private String sid = "", pwd = "", max = "";
-    String Max, model, camer, descern;
+    String Max, deviceName, camer, descern;
     VersionInfoPresenter versionInfoPresenter;
     private DialogUpdate dialogUpdate;
     String passWord;
@@ -119,7 +119,7 @@ public class SendSelectActivity extends BaseActivity implements VersionInfoContr
         dialogUpdate = new DialogUpdate(this);
         versionInfoPresenter = new VersionInfoPresenter(this, this);
         Max = sharePreferencesUtils.getString(SendSelectActivity.this, "max", "");
-        model = sharePreferencesUtils.getString(SendSelectActivity.this, "model", "");
+        deviceName = sharePreferencesUtils.getString(SendSelectActivity.this, "deviceName", "");
         camer = sharePreferencesUtils.getString(SendSelectActivity.this, "havaCamer", "");
         descern = sharePreferencesUtils.getString(SendSelectActivity.this, "haveDescern", "");
         mWifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
@@ -202,13 +202,13 @@ public class SendSelectActivity extends BaseActivity implements VersionInfoContr
                 Toast.makeText(SendSelectActivity.this, "请输入工件编号", Toast.LENGTH_SHORT).show();
                 return;
             } else {
-                if (model.equals("爬行器") && descern.equals("否")) {
+                if (deviceName.equals("爬行器") && descern.equals("否")) {
                     connect("PXQNODESCERN");
-                } else if (model.equals("爬行器") && descern.equals("是")) {
+                } else if (deviceName.equals("爬行器") && descern.equals("是")) {
                     connect("PXQHAVEDESCERN");
-                } else if (model.equals("磁探机") && descern.equals("是")) {
+                } else if (deviceName.equals("磁探机") && descern.equals("是")) {
                     connect("CFTSYHAVEDESCERN");
-                } else if (model.equals("磁探机") && descern.equals("否")) {
+                } else if (deviceName.equals("磁探机") && descern.equals("否")) {
                     connect("CFTSYNODESCERN");
                 }
             }

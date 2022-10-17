@@ -140,22 +140,6 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         }
 
         address = getIntent().getStringExtra("address");
-        if (address != null) {
-            url = "http://" + address + ":8080?action=snapshot";
-            mythread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    while (runing) {
-                        draw();
-                    }
-                }
-            });
-            mythread.start();
-        } else {
-            Toast.makeText(mNotifications, "IP为空,请等待连接", Toast.LENGTH_SHORT).show();
-            finish();
-        }
-
         new BottomUI().hideBottomUIMenu(this.getWindow());
         if (new SharePreferencesUtils().getString(this, "keep", "").equals("true")) {
             //开启前台服务
@@ -348,6 +332,10 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                 new MainUI().showPopupMenu(rbAlbum, "Desc", this);
                 break;
             case R.id.rbSetting:
+                if (mythread != null) {
+                    mythread.interrupt();
+                }
+                runing = false;
                 Intent intent = new Intent(this, SettingActivity.class);
                 intent.putExtra("address", address);
                 intent.putExtra("tag", "desc");
@@ -480,6 +468,22 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
             mediaPlayer = MediaPlayer.create(DescernActivity.this, R.raw.dh);
         }
         Log.e("XXXXX", "onResume");
+        runing = true;
+        if (address != null) {
+            url = "http://" + address + ":8080?action=snapshot";
+            mythread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (runing) {
+                        draw();
+                    }
+                }
+            });
+            mythread.start();
+        } else {
+            Toast.makeText(mNotifications, "IP为空,请等待连接", Toast.LENGTH_SHORT).show();
+            finish();
+        }
     }
 
     @Override

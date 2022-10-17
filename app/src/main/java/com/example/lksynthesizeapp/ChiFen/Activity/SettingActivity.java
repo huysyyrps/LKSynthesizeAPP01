@@ -29,12 +29,12 @@ import com.example.lksynthesizeapp.Constant.Base.BaseActivity;
 import com.example.lksynthesizeapp.Constant.Base.BaseRecyclerAdapter;
 import com.example.lksynthesizeapp.Constant.Base.BaseViewHolder;
 import com.example.lksynthesizeapp.Constant.Base.Constant;
-import com.example.lksynthesizeapp.Constant.Base.ProgressDialogUtil;
 import com.example.lksynthesizeapp.Constant.Net.SSHCallBack;
 import com.example.lksynthesizeapp.Constant.Net.SSHExcuteCommandHelper;
 import com.example.lksynthesizeapp.Constant.activity.SendSelectActivity;
 import com.example.lksynthesizeapp.R;
 import com.example.lksynthesizeapp.SharePreferencesUtils;
+import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +51,7 @@ public class SettingActivity extends BaseActivity {
     BaseRecyclerAdapter baseRecyclerAdapter;
     SharePreferencesUtils sharePreferencesUtils;
     List<Setting> settingList = new ArrayList<>();
+    LoadingDialog loadingDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,6 +144,7 @@ public class SettingActivity extends BaseActivity {
             }
         };
         recyclerView.setAdapter(baseRecyclerAdapter);
+        loadingDialog = new LoadingDialog(this);
     }
 
     //获取当前应用的版本号
@@ -218,7 +220,15 @@ public class SettingActivity extends BaseActivity {
      */
     private void ShowDialog(String data1, String title) {
         try {
-            ProgressDialogUtil.startLoad(this, title);
+            loadingDialog.setLoadingText(getResources().getString(R.string.device_setting))
+//                        .setSuccessText("加载成功")//显示加载成功时的文字
+                    //.setFailedText("加载失败")
+                    .setSize(200)
+                    .setShowTime(1)
+                    .setInterceptBack(false)
+                    .setLoadSpeed(LoadingDialog.Speed.SPEED_ONE)
+                    .setRepeatCount(1)
+                    .show();
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -247,7 +257,15 @@ public class SettingActivity extends BaseActivity {
     //设置帧数  像素
     private void ShowDialog(String data1, String data2, String data3) {
         try {
-            ProgressDialogUtil.startLoad(this, "设置中");
+            loadingDialog.setLoadingText(getResources().getString(R.string.device_setting))
+//                        .setSuccessText("加载成功")//显示加载成功时的文字
+                    //.setFailedText("加载失败")
+                    .setSize(200)
+                    .setShowTime(1)
+                    .setInterceptBack(false)
+                    .setLoadSpeed(LoadingDialog.Speed.SPEED_ONE)
+                    .setRepeatCount(1)
+                    .show();
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -365,12 +383,12 @@ public class SettingActivity extends BaseActivity {
             switch (msg.what) {
                 case Constant.TAG_ONE:
                     Toast.makeText(SettingActivity.this, "重启成功", Toast.LENGTH_SHORT).show();
-                    ProgressDialogUtil.stopLoad();
+                    loadingDialog.close();
                     finish();
                     break;
                 case Constant.TAG_TWO:
                     Toast.makeText(SettingActivity.this, toastData, Toast.LENGTH_LONG).show();
-                    ProgressDialogUtil.stopLoad();
+                    loadingDialog.close();
                     break;
                 case Constant.TAG_THERE:
                     new DescernActivity().intance.finish();

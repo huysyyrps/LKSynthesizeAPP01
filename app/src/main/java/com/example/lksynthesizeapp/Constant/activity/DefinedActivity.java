@@ -117,7 +117,8 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
                                 Log.e("DefinedActivity", qrData);
                                 String[] dataArray = qrData.split("/");
                                 sharePreferencesUtils.setString(DefinedActivity.this, "max", dataArray[0]);
-                                sharePreferencesUtils.setString(DefinedActivity.this, "model", dataArray[2]);
+                                sharePreferencesUtils.setString(DefinedActivity.this, "deviceCode", dataArray[1]);
+                                sharePreferencesUtils.setString(DefinedActivity.this, "deviceName", dataArray[2]);
                                 sharePreferencesUtils.setString(DefinedActivity.this, "havaCamer", dataArray[4]);
                                 sharePreferencesUtils.setString(DefinedActivity.this, "haveDescern", dataArray[5]);
 //                            definedPresenter.getDefined(data[0]);
@@ -356,11 +357,12 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
                         if (result[0].getOriginalValue() != null) {
                             String qrData = result[0].getOriginalValue();
                             String data = decodeToString(qrData);
-                            if (data.contains("~~")) {
+                            if (data.contains("/")) {
                                 Log.e("XXXXXX", data);
-                                String[] dataArray = data.split("~~");
+                                String[] dataArray = data.split("/");
                                 sharePreferencesUtils.setString(DefinedActivity.this, "max", dataArray[0]);
-                                sharePreferencesUtils.setString(DefinedActivity.this, "model", dataArray[2]);
+                                sharePreferencesUtils.setString(DefinedActivity.this, "deviceCode", dataArray[1]);
+                                sharePreferencesUtils.setString(DefinedActivity.this, "deviceName", dataArray[2]);
                                 sharePreferencesUtils.setString(DefinedActivity.this, "havaCamer", dataArray[4]);
                                 sharePreferencesUtils.setString(DefinedActivity.this, "haveDescern", dataArray[5]);
 //                            definedPresenter.getDefined(data[0]);

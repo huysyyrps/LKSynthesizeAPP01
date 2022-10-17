@@ -61,10 +61,6 @@
 
         <activity android:name=".ChiFen.Activity.KeepActivity" />
         <activity
-            android:name=".TestActivity"
-            android:exported="false"
-            android:screenOrientation="landscape" />
-        <activity
             android:name=".ChiFen.Activity.SettingActivity"
             android:exported="false" />
         <activity

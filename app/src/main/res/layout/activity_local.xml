@@ -70,82 +70,8 @@
             android:textColor="@color/whith"/>
 
     </RadioGroup>
-    <LinearLayout
-        android:id="@+id/linlayoutData"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical">
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="32dp"
-            android:gravity="center"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:gravity="center"
-                android:text="工程名称\t:\t"
-                android:textColor="@color/red"
-                android:textSize="14dp" />
-            <TextView
-                android:id="@+id/tvCompName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:maxLength="15"
-                android:textColor="@color/red"
-                android:textSize="14dp" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="32dp"
-            android:gravity="center"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:gravity="center"
-                android:text="工件名称\t:\t"
-                android:textColor="@color/red"
-                android:textSize="14dp" />
-            <TextView
-                android:id="@+id/tvWorkName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:maxLength="15"
-                android:textColor="@color/red"
-                android:textSize="14dp" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="32dp"
-            android:gravity="center"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:gravity="center"
-                android:text="工件编号\t:\t"
-                android:textColor="@color/red"
-                android:textSize="14dp" />
 
-            <TextView
-                android:id="@+id/tvWorkCode"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:maxLength="15"
-                android:textColor="@color/red"
-                android:textSize="14dp" />
-
-        </LinearLayout>
-
-    </LinearLayout>
+    <include layout="@layout/activity_header"/>
 
     <LinearLayout
         android:id="@+id/linearLayoutStop"

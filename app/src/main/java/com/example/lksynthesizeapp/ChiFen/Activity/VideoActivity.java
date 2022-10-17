@@ -25,7 +25,6 @@ import com.example.lksynthesizeapp.Constant.Base.BaseActivity;
 import com.example.lksynthesizeapp.Constant.Base.BaseRecyclerAdapter;
 import com.example.lksynthesizeapp.Constant.Base.BaseViewHolder;
 import com.example.lksynthesizeapp.Constant.Base.Constant;
-import com.example.lksynthesizeapp.Constant.Base.ProgressDialogUtil;
 import com.example.lksynthesizeapp.Constant.View.Header;
 import com.example.lksynthesizeapp.R;
 import com.example.lksynthesizeapp.SharePreferencesUtils;
@@ -34,6 +33,7 @@ import com.scwang.smart.refresh.layout.SmartRefreshLayout;
 import com.scwang.smart.refresh.layout.api.RefreshLayout;
 import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
+import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -69,6 +69,7 @@ public class VideoActivity extends BaseActivity implements VideoContract.View {
     private int allNum;
     List<File> fileList;
     String tag = "";
+    LoadingDialog loadingDialog;
     private VideoPresenter videoPresenter;
     private String project = "", workName = "", workCode = "", compName = "", device = "";
 
@@ -77,6 +78,7 @@ public class VideoActivity extends BaseActivity implements VideoContract.View {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);//横屏
         ButterKnife.bind(this);
+        loadingDialog = new LoadingDialog(this);
         sharePreferencesUtils = new SharePreferencesUtils();
         compName = "鲁科检测";
         device = "磁探机";
@@ -157,7 +159,15 @@ public class VideoActivity extends BaseActivity implements VideoContract.View {
                 }
             }
         });
-        ProgressDialogUtil.startLoad(this, "加载中...");
+        loadingDialog.setLoadingText(getResources().getString(R.string.dialog_loding))
+//                        .setSuccessText("加载成功")//显示加载成功时的文字
+                //.setFailedText("加载失败")
+                .setSize(200)
+                .setShowTime(1)
+                .setInterceptBack(false)
+                .setLoadSpeed(LoadingDialog.Speed.SPEED_ONE)
+                .setRepeatCount(1)
+                .show();
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -275,7 +285,7 @@ public class VideoActivity extends BaseActivity implements VideoContract.View {
             switch (msg.what) {
                 case Constant.TAG_ONE:
                     baseRecyclerAdapter.notifyDataSetChanged();
-                    ProgressDialogUtil.stopLoad();
+                    loadingDialog.close();
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -285,7 +295,7 @@ public class VideoActivity extends BaseActivity implements VideoContract.View {
                     break;
                 case Constant.TAG_TWO:
                     Toast.makeText(VideoActivity.this, "暂无数据", Toast.LENGTH_SHORT).show();
-                    ProgressDialogUtil.stopLoad();
+                    loadingDialog.close();
                     break;
                 case Constant.TAG_THERE:
                     baseRecyclerAdapter.notifyDataSetChanged();

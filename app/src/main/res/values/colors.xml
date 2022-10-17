@@ -280,6 +280,7 @@
     <color name="translucent_color1">#00000000</color>
     <color name="translucent_color2">#4DFFFFFF</color>
     <color name="translucent_color3">#10000000</color>
+    <color name="dialog_color">#44444444</color>
 
     <color name="company_color">#f4b129</color>
     <color name="header_color">#262626</color>

@@ -71,6 +71,10 @@ public class LocalActivity extends AppCompatActivity implements EasyPermissions.
     LinearLayout linlayoutData;
     @BindView(R.id.rbBack)
     RadioButton rbBack;
+    @BindView(R.id.tvDeviceCode)
+    TextView tvDeviceCode;
+    @BindView(R.id.tvState)
+    TextView tvState;
 
     private Toast toast;
     String address;
@@ -78,7 +82,7 @@ public class LocalActivity extends AppCompatActivity implements EasyPermissions.
     private Notifications mNotifications;
     private MediaProjection mMediaProjection;
     private MediaProjectionManager mMediaProjectionManager;
-    private String project = "", workName = "", workCode = "";
+    private String project = "", workName = "", workCode = "", deviceCode = "";
     public static final String ACTION_STOP = BuildConfig.APPLICATION_ID + ".action.STOP";
     String[] PERMS = {Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -102,33 +106,10 @@ public class LocalActivity extends AppCompatActivity implements EasyPermissions.
         frameLayout.setBackgroundColor(getResources().getColor(R.color.black));
         mMediaProjectionManager = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
         mNotifications = new Notifications(getApplicationContext());
-        Intent intent = getIntent();
-        project = intent.getStringExtra("project");
-        workName = intent.getStringExtra("etWorkName");
-        workCode = intent.getStringExtra("etWorkCode");
-        if (project.trim().equals("") && workName.trim().equals("") && workCode.trim().equals("")) {
-            radioGroup.setVisibility(View.GONE);
-        }
-        if (!project.trim().equals("")) {
-            tvCompName.setText(project);
-        }
-        if (!workName.trim().equals("")) {
-            tvWorkName.setText(workName);
-        }
-        if (!workCode.trim().equals("")) {
-            tvWorkCode.setText(workCode);
-        }
 
-//        WebSettings WebSet = webView.getSettings();    //获取webview设置
-//        WebSet.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);   //自适应屏幕
-//        webView.setScrollContainer(false);
-//        webView.setVerticalScrollBarEnabled(false);
-//        webView.setHorizontalScrollBarEnabled(false);
         webView.setBackgroundColor(getColor(R.color.black));
-
         address = getIntent().getStringExtra("address");
         if (address != null) {
-//            address = "http://" + address + ":8080";
             webView.loadUrl("http://" + address + ":8080");
         } else {
             Toast.makeText(mNotifications, "IP为空,请等待连接", Toast.LENGTH_SHORT).show();
@@ -186,7 +167,7 @@ public class LocalActivity extends AppCompatActivity implements EasyPermissions.
                 }
                 break;
             case R.id.rbSound:
-                if (toast!=null){
+                if (toast != null) {
                     toast.cancel();
                 }
                 radioGroup.setVisibility(View.GONE);
@@ -217,8 +198,8 @@ public class LocalActivity extends AppCompatActivity implements EasyPermissions.
 //                ShowDialog("/etc/init.d/mjpg-streamer restart");
 //                ShowDialog("uci set mjpg-streamer.core.fps=30", "uci commit", "/etc/init.d/mjpg-streamer restart");
                 Intent intent = new Intent(this, SettingActivity.class);
-                intent.putExtra("address",address);
-                intent.putExtra("tag","local");
+                intent.putExtra("address", address);
+                intent.putExtra("tag", "local");
                 startActivity(intent);
                 break;
             case R.id.rbBack:
@@ -275,10 +256,10 @@ public class LocalActivity extends AppCompatActivity implements EasyPermissions.
     }
 
 
-    private void startMedia(){
+    private void startMedia() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             //获取mediaRecorder
-            mediaRecorder = new MyMediaRecorder().getMediaRecorder(project,workName,workCode,"/LUKEVideo/");
+            mediaRecorder = new MyMediaRecorder().getMediaRecorder(project, workName, workCode, "/LUKEVideo/");
             mVirtualDisplay = mMediaProjection.createVirtualDisplay("你的name",
                     2400, 1080, 1,
                     DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
