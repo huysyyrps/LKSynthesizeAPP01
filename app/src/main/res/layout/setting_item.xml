@@ -25,6 +25,13 @@
             android:gravity="center_vertical|left"
             android:textColor="@color/whith"/>
 
+        <TextView
+            android:id="@+id/tvData"
+            style="@style/TextView"
+            android:layout_width="wrap_content"
+            android:gravity="center_vertical|left"
+            android:textColor="@color/red"/>
+
 
         <ImageView
             android:id="@+id/ivGo"

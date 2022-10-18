@@ -59,4 +59,7 @@
     <string name="net_error">java.net.ConnectException: Failed to connect</string>
     <string name="conniction">连接</string>
     <string name="discon">断开</string>
+    <string name="change_net">请检查网络</string>
+    <string name="bast_version">已是最新版本</string>
+    <string name="url_null">下载连接为空</string>
 </resources>

@@ -22,27 +22,37 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.lksynthesizeapp.ChiFen.Base.MobileButlerUtil;
 import com.example.lksynthesizeapp.ChiFen.Base.MyCallBack;
 import com.example.lksynthesizeapp.ChiFen.Base.RegionalChooseUtil;
+import com.example.lksynthesizeapp.ChiFen.Module.VersionInfoContract;
+import com.example.lksynthesizeapp.ChiFen.Presenter.VersionInfoPresenter;
 import com.example.lksynthesizeapp.ChiFen.bean.Setting;
+import com.example.lksynthesizeapp.ChiFen.bean.VersionInfo;
 import com.example.lksynthesizeapp.Constant.Base.AlertDialogCallBack;
 import com.example.lksynthesizeapp.Constant.Base.AlertDialogUtil;
 import com.example.lksynthesizeapp.Constant.Base.BaseActivity;
 import com.example.lksynthesizeapp.Constant.Base.BaseRecyclerAdapter;
 import com.example.lksynthesizeapp.Constant.Base.BaseViewHolder;
 import com.example.lksynthesizeapp.Constant.Base.Constant;
+import com.example.lksynthesizeapp.Constant.Base.NetStat;
 import com.example.lksynthesizeapp.Constant.Net.SSHCallBack;
 import com.example.lksynthesizeapp.Constant.Net.SSHExcuteCommandHelper;
 import com.example.lksynthesizeapp.Constant.activity.SendSelectActivity;
 import com.example.lksynthesizeapp.R;
 import com.example.lksynthesizeapp.SharePreferencesUtils;
+import com.google.gson.Gson;
+import com.message.update.fileview.DialogUpdate;
+import com.message.update.fileview.FileDownLoadTask;
 import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 
-public class SettingActivity extends BaseActivity {
+public class SettingActivity extends BaseActivity implements VersionInfoContract.View {
 
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
@@ -52,11 +62,18 @@ public class SettingActivity extends BaseActivity {
     SharePreferencesUtils sharePreferencesUtils;
     List<Setting> settingList = new ArrayList<>();
     LoadingDialog loadingDialog;
+    VersionInfoPresenter versionInfoPresenter;
+    private DialogUpdate dialogUpdate;
+    String apkNETVersion = "";
+    String downloadUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
+        dialogUpdate = new DialogUpdate(this);
+        versionInfoPresenter = new VersionInfoPresenter(this,this);
+        upDataClient();
         address = getIntent().getStringExtra("address");
         tag = getIntent().getStringExtra("tag");
         //数据组装
@@ -67,13 +84,12 @@ public class SettingActivity extends BaseActivity {
             @Override
             public void convert(BaseViewHolder holder, final Setting setting) {
                 holder.setText( R.id.tvTitle, setting.getTitle());
-                if (setting.getTitle().equals("当前版本：")){
-                    try {
-                        holder.setText( R.id.tvTitle, setting.getTitle()+getVersionName());
-                        holder.setGoneImage( R.id.ivGo);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                if (setting.getTitle().equals("当前版本")){
+                    holder.setText( R.id.tvData, getVersionName());
+                    holder.setInImage( R.id.ivGo);
+                }
+                if (setting.getTitle().equals("版本检测")){
+                    holder.setText( R.id.tvData, apkNETVersion+"");
                 }
                 holder.setImage( SettingActivity.this, R.id.imageView,setting.getImagePath());
                 holder.setOnClickListener(R.id.linearLayout, new View.OnClickListener() {
@@ -139,6 +155,30 @@ public class SettingActivity extends BaseActivity {
                                 }
                             });
                         }
+
+                        if (setting.getTitle().equals("版本检测")){
+                            if (new NetStat().isNetworkConnected(SettingActivity.this)) {
+                                if (apkNETVersion.equals(getVersionName())){
+                                    Toast.makeText(SettingActivity.this, getResources().getString(R.string.bast_version), Toast.LENGTH_SHORT).show();
+                                }else {
+                                    if (apkNETVersion!=null&&getVersionName()!=null){
+                                        String[] netVersionArray = apkNETVersion.split("\\.");
+                                        String[] localVersionArray = getVersionName().split("\\.");
+                                        for (int i = 0; i < netVersionArray.length; i++) {
+                                            if (Integer.parseInt(netVersionArray[i]) > Integer.parseInt(localVersionArray[i])) {
+                                                if (downloadUrl!=null){
+                                                    new FileDownLoadTask(SettingActivity.this, downloadUrl).execute();
+                                                }else {
+                                                    Toast.makeText(SettingActivity.this, getResources().getString(R.string.url_null), Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }else {
+                                Toast.makeText(SettingActivity.this, getResources().getString(R.string.change_net), Toast.LENGTH_SHORT).show();
+                            }
+                        }
                     }
                 });
             }
@@ -147,21 +187,50 @@ public class SettingActivity extends BaseActivity {
         loadingDialog = new LoadingDialog(this);
     }
 
+    private void upDataClient() {
+        if (new NetStat().isNetworkConnected(SettingActivity.this)) {
+            HashMap<String, String> params = new HashMap<String, String>();
+            params.put("projectName", "济宁鲁科");
+            params.put("actionName", "test");
+            params.put("appVersion", "1.0.0");
+            params.put("channel", "default");
+            params.put("appType", "android");
+            params.put("clientType", "pxq");
+            params.put("phoneSystemVersion", "10.0.1");
+            params.put("phoneType", "华为");
+            Gson gson = new Gson();
+            String s = gson.toJson(params);
+            RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), gson.toJson(params));
+            versionInfoPresenter.getVersionInfo(requestBody);
+        }
+    }
+
     //获取当前应用的版本号
-    private String getVersionName() throws Exception {
+    private String getVersionName() {
         // 获取packagemanager的实例
         PackageManager packageManager = getPackageManager();
         // getPackageName()是你当前类的包名，0代表是获取版本信息
-        PackageInfo packInfo = packageManager.getPackageInfo(getPackageName(),0);
+        PackageInfo packInfo = null;
+        try {
+            packInfo = packageManager.getPackageInfo(getPackageName(),0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
         String version = packInfo.versionName;
         return version;
     }
 
     private void setData() {
         Setting setting = new Setting();
-        setting.setTitle("当前版本：");
+        setting.setTitle("当前版本");
         setting.setImagePath(R.drawable.ic_appversion);
         settingList.add(setting);
+
+        Setting setting7 = new Setting();
+        setting7.setTitle("版本检测");
+        setting7.setData("");
+        setting7.setImagePath(R.drawable.ic_version);
+        settingList.add(setting7);
 
 
         if (tag.equals("desc")){
@@ -398,4 +467,27 @@ public class SettingActivity extends BaseActivity {
             }
         }
     };
+
+    @Override
+    public void setVersionInfo(VersionInfo versionInfo) throws Exception {
+        String netVersion = versionInfo.getData().getVersion();
+        apkNETVersion = netVersion;
+        downloadUrl = versionInfo.getData().getApkUrl();
+        baseRecyclerAdapter.notifyDataSetChanged();
+//        String[] netVersionArray = netVersion.split("\\.");
+//        String[] localVersionArray = getVersionName().split("\\.");
+//        for (int i = 0; i < netVersionArray.length; i++) {
+//            if (Integer.parseInt(netVersionArray[i]) > Integer.parseInt(localVersionArray[i])) {
+//                apkNETVersion = netVersion;
+//                downloadUrl = versionInfo.getData().getApkUrl();
+//                baseRecyclerAdapter.notifyDataSetChanged();
+//                return;
+//            }
+//        }
+    }
+
+    @Override
+    public void setVersionInfoMessage(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
 }

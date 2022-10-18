@@ -13,7 +13,7 @@ import okhttp3.RequestBody;
 public interface VersionInfoContract {
     interface View extends BaseEView<presenter> {
         //获取版本信息
-        void setVersionInfo(VersionInfo versionInfo);
+        void setVersionInfo(VersionInfo versionInfo) throws Exception;
         void setVersionInfoMessage(String message);
     }
 

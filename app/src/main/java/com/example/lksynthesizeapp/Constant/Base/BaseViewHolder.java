@@ -146,6 +146,12 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
         return this;
     }
 
+    public BaseViewHolder setInImage(int viewId) {
+        ImageView rb = getView(viewId);
+        rb.setVisibility(View.INVISIBLE);
+        return this;
+    }
+
     public BaseViewHolder setGoneLinearLayout(int viewId) {
         LinearLayout ll = getView(viewId);
         ll.setVisibility(View.GONE);
