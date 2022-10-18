@@ -100,7 +100,6 @@
 
         </LinearLayout>
         <LinearLayout
-            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="32dp"
             android:gravity="center"
@@ -119,6 +118,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:maxLength="15"
+                android:text="@string/conniction"
                 android:textColor="@color/red"
                 android:textSize="14dp" />
 

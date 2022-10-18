@@ -84,6 +84,8 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
     TextView tvDeviceCode;
     @BindView(R.id.linlayoutData)
     LinearLayout linlayoutData;
+    @BindView(R.id.tvState)
+    TextView tvState;
     private String url;
     private Bitmap bmp = null;
     private Bitmap rgba;
@@ -98,7 +100,6 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
     public long saveTime = 0;
     public long currentTmeTime = 0;
     public static final int TIME = 3000;
-    Handler handler;
     private Toast toast;
     private Notifications mNotifications;
     //创建一个虚屏VirtualDisplay，内含一个真实的Display对象
@@ -185,7 +186,8 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
             conn = (HttpURLConnection) videoUrl.openConnection();
             //设置输入流
             conn.setDoInput(true);
-            conn.setConnectTimeout(5000);
+            conn.setConnectTimeout(3000);
+            conn.setReadTimeout(3000);
             //连接
             conn.connect();
             //得到网络返回的输入流
@@ -215,7 +217,6 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
             message.what = Constant.TAG_THERE;
             message.obj = ex.toString();
             handlerLoop.sendMessage(message);
-            return;
         } finally {
         }
     }
@@ -497,6 +498,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                 case Constant.TAG_ONE:
                     Bitmap bit = (Bitmap) msg.obj;
                     imageView.setImageBitmap(bit);
+                    tvState.setText(getResources().getString(R.string.conniction));
                     break;
                 case Constant.TAG_TWO:
                     Intent intent = getIntent();
@@ -507,13 +509,21 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                     startActivity(intent);
                     break;
                 case Constant.TAG_THERE:
+                    String toastString = msg.obj.toString();
+                    if (toastString.contains("java.net.ConnectException: Failed to connect")||toastString.contains("java.io.IOException: unexpected end")) {
+
+                    } else {
+                        Toast.makeText(DescernActivity.this, msg.obj.toString(), Toast.LENGTH_SHORT).show();
+                        tvState.setText(getResources().getString(R.string.discon));
+                    }
+                    Log.e("XXX", toastString);
 //                    Toast.makeText(DescernActivity.this, getResources().getString(R.string.dialog_close), Toast.LENGTH_SHORT).show();
-                    Toast.makeText(DescernActivity.this, msg.obj.toString(), Toast.LENGTH_SHORT).show();
 //                    finish();
                     break;
                 case Constant.TAG_FOUR:
                     Bitmap bitH = (Bitmap) msg.obj;
                     imageView.setImageBitmap(bitH);
+                    tvState.setText(getResources().getString(R.string.conniction));
                     saveThread = new Thread(new Runnable() {
                         @Override
                         public void run() {
