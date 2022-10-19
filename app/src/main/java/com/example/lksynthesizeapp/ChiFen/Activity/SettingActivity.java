@@ -73,7 +73,6 @@ public class SettingActivity extends BaseActivity implements VersionInfoContract
         ButterKnife.bind(this);
         dialogUpdate = new DialogUpdate(this);
         versionInfoPresenter = new VersionInfoPresenter(this,this);
-        upDataClient();
         address = getIntent().getStringExtra("address");
         tag = getIntent().getStringExtra("tag");
         //数据组装
@@ -87,9 +86,6 @@ public class SettingActivity extends BaseActivity implements VersionInfoContract
                 if (setting.getTitle().equals("当前版本")){
                     holder.setText( R.id.tvData, getVersionName());
                     holder.setInImage( R.id.ivGo);
-                }
-                if (setting.getTitle().equals("版本检测")){
-                    holder.setText( R.id.tvData, apkNETVersion+"");
                 }
                 holder.setImage( SettingActivity.this, R.id.imageView,setting.getImagePath());
                 holder.setOnClickListener(R.id.linearLayout, new View.OnClickListener() {
@@ -157,27 +153,7 @@ public class SettingActivity extends BaseActivity implements VersionInfoContract
                         }
 
                         if (setting.getTitle().equals("版本检测")){
-                            if (new NetStat().isNetworkConnected(SettingActivity.this)) {
-                                if (apkNETVersion.equals(getVersionName())){
-                                    Toast.makeText(SettingActivity.this, getResources().getString(R.string.bast_version), Toast.LENGTH_SHORT).show();
-                                }else {
-                                    if (apkNETVersion!=null&&getVersionName()!=null){
-                                        String[] netVersionArray = apkNETVersion.split("\\.");
-                                        String[] localVersionArray = getVersionName().split("\\.");
-                                        for (int i = 0; i < netVersionArray.length; i++) {
-                                            if (Integer.parseInt(netVersionArray[i]) > Integer.parseInt(localVersionArray[i])) {
-                                                if (downloadUrl!=null){
-                                                    new FileDownLoadTask(SettingActivity.this, downloadUrl).execute();
-                                                }else {
-                                                    Toast.makeText(SettingActivity.this, getResources().getString(R.string.url_null), Toast.LENGTH_SHORT).show();
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }else {
-                                Toast.makeText(SettingActivity.this, getResources().getString(R.string.change_net), Toast.LENGTH_SHORT).show();
-                            }
+                            upDataClient();
                         }
                     }
                 });
@@ -202,6 +178,8 @@ public class SettingActivity extends BaseActivity implements VersionInfoContract
             String s = gson.toJson(params);
             RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), gson.toJson(params));
             versionInfoPresenter.getVersionInfo(requestBody);
+        }else {
+            Toast.makeText(this, getResources().getString(R.string.change_net), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -471,19 +449,31 @@ public class SettingActivity extends BaseActivity implements VersionInfoContract
     @Override
     public void setVersionInfo(VersionInfo versionInfo) throws Exception {
         String netVersion = versionInfo.getData().getVersion();
-        apkNETVersion = netVersion;
-        downloadUrl = versionInfo.getData().getApkUrl();
-        baseRecyclerAdapter.notifyDataSetChanged();
-//        String[] netVersionArray = netVersion.split("\\.");
-//        String[] localVersionArray = getVersionName().split("\\.");
-//        for (int i = 0; i < netVersionArray.length; i++) {
-//            if (Integer.parseInt(netVersionArray[i]) > Integer.parseInt(localVersionArray[i])) {
-//                apkNETVersion = netVersion;
-//                downloadUrl = versionInfo.getData().getApkUrl();
-//                baseRecyclerAdapter.notifyDataSetChanged();
-//                return;
-//            }
-//        }
+        String[] netVersionArray = netVersion.split("\\.");
+        String[] localVersionArray = getVersionName().split("\\.");
+        for (int i = 0; i < netVersionArray.length; i++) {
+            if (Integer.parseInt(netVersionArray[i]) > Integer.parseInt(localVersionArray[i])) {
+                dialogUpdate.setMessage("版本号 "
+                        + versionInfo.getData().getVersion()
+                        + "\n"
+                        + versionInfo.getData().getUpdateInfo());
+                dialogUpdate.show();
+                dialogUpdate.setOnDialogUpdateOkListener(new DialogUpdate.OnDialogUpdateOkListener() {
+                    @Override
+                    public void onDialogUpdateOk() {
+                        new FileDownLoadTask(SettingActivity.this, versionInfo.getData().getApkUrl()).execute();
+                    }
+
+                    @Override
+                    public void onDialogUpdateCancel() {
+                    }
+                });
+            } else {
+                if (i == netVersionArray.length - 1) {
+                    Toast.makeText(this, getResources().getString(R.string.bast_version), Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
     }
 
     @Override

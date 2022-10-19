@@ -39,6 +39,7 @@ import com.example.lksynthesizeapp.ChiFen.Base.TirenSet;
 import com.example.lksynthesizeapp.ChiFen.Media.Notifications;
 import com.example.lksynthesizeapp.ChiFen.service.WhiteService;
 import com.example.lksynthesizeapp.Constant.Base.Constant;
+import com.example.lksynthesizeapp.Constant.activity.SendSelectActivity;
 import com.example.lksynthesizeapp.R;
 import com.example.lksynthesizeapp.SharePreferencesUtils;
 import com.example.lksynthesizeapp.YoloV5Ncnn;
@@ -53,7 +54,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class DescernActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
+public class DescernActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks,Runnable {
     @BindView(R.id.rbCamera)
     RadioButton rbCamera;
     @BindView(R.id.rbVideo)
@@ -157,6 +158,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                     while (runing) {
                         draw();
                     }
+                    draw();
                 }
             });
             mythread.start();
@@ -194,12 +196,6 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
             inputstream = conn.getInputStream();
             //创建出一个bitmap
             bmp = BitmapFactory.decodeStream(inputstream);
-            if (bmp == null) {
-                Message message = new Message();
-                message.what = Constant.TAG_TWO;
-                message.obj = bmp;
-                handlerLoop.sendMessage(message);
-            }
             if (userTAG.equals("CFTSYHAVEDESCERN")) {
                 YoloV5Ncnn.Obj[] objects = yolov5ncnn.Detect(bmp, false);
                 showObjects(objects);
@@ -351,11 +347,16 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                 startActivity(intent);
                 break;
             case R.id.rbBack:
-                if (mythread != null) {
-                    mythread.interrupt();
-                }
                 runing = false;
-                finish();
+                if (saveThread!=null){
+                    saveThread.interrupt();
+                    saveThread = null;
+                }
+                if (mythread!=null){
+                    mythread.interrupt();
+                    mythread = null;
+                }
+                startActivity(new Intent(this, SendSelectActivity.class));
                 finish();
                 break;
         }
@@ -500,18 +501,13 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                     imageView.setImageBitmap(bit);
                     tvState.setText(getResources().getString(R.string.conniction));
                     break;
-                case Constant.TAG_TWO:
-                    Intent intent = getIntent();
-                    overridePendingTransition(0, 0);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    finish();
-                    overridePendingTransition(0, 0);
-                    startActivity(intent);
-                    break;
                 case Constant.TAG_THERE:
                     String toastString = msg.obj.toString();
-                    if (toastString.contains("java.net.ConnectException: Failed to connect")||toastString.contains("java.io.IOException: unexpected end")) {
-
+                    if (toastString.contains("java.net.ConnectException: Failed to connect")
+                            ||toastString.contains("java.io.IOException: unexpected end")
+                            ||toastString.contains("java.io.InterruptedIOException: thread interrupted")
+                            ||toastString.contains("java.lang.NullPointerException: Attempt to get length of null array")) {
+                        break;
                     } else {
                         Toast.makeText(DescernActivity.this, msg.obj.toString(), Toast.LENGTH_SHORT).show();
                         tvState.setText(getResources().getString(R.string.discon));
@@ -553,4 +549,9 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
             }
         }
     };
+
+    @Override
+    public void run() {
+
+    }
 }

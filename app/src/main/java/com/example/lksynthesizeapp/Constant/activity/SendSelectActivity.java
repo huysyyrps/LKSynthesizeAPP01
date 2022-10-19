@@ -103,6 +103,7 @@ public class SendSelectActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
         intance = this;
+        loadingDialog = new LoadingDialog(this);
         Max = sharePreferencesUtils.getString(SendSelectActivity.this, "max", "");
         deviceName = sharePreferencesUtils.getString(SendSelectActivity.this, "deviceName", "");
         camer = sharePreferencesUtils.getString(SendSelectActivity.this, "havaCamer", "");
@@ -135,7 +136,6 @@ public class SendSelectActivity extends BaseActivity {
             case R.id.tvConfim:
                 countDown();
                 haveAddress();
-                loadingDialog = new LoadingDialog(this);
                 loadingDialog.setLoadingText(getResources().getString(R.string.device_connect))
 //                        .setSuccessText("加载成功")//显示加载成功时的文字
                         //.setFailedText("加载失败")
@@ -145,7 +145,7 @@ public class SendSelectActivity extends BaseActivity {
                         .setLoadSpeed(LoadingDialog.Speed.SPEED_ONE)
                         .setRepeatCount(1)
                         .show();
-                break;
+            break;
         }
     }
 
@@ -172,28 +172,35 @@ public class SendSelectActivity extends BaseActivity {
 
     public void SelectActivity(String data) {
         if (address != null) {
-            if (camer.equals("否")) {
-                Toast.makeText(this, "当前设备不具备摄像头功能", Toast.LENGTH_SHORT).show();
-                return;
-            } else if (etProject.getText().toString().trim().equals("")) {
-                Toast.makeText(SendSelectActivity.this, "请输入工程名称", Toast.LENGTH_SHORT).show();
-                return;
-            } else if (etWorkName.getText().toString().trim().equals("")) {
-                Toast.makeText(SendSelectActivity.this, "请输入工件名称", Toast.LENGTH_SHORT).show();
-                return;
-            } else if (etWorkCode.getText().toString().trim().equals("")) {
-                Toast.makeText(SendSelectActivity.this, "请输入工件编号", Toast.LENGTH_SHORT).show();
-                return;
-            } else {
-                if (deviceName.equals("爬行器") && descern.equals("否")) {
-                    connect("PXQNODESCERN");
-                } else if (deviceName.equals("爬行器") && descern.equals("是")) {
-                    connect("PXQHAVEDESCERN");
-                } else if (deviceName.equals("磁探机") && descern.equals("是")) {
-                    connect("CFTSYHAVEDESCERN");
-                } else if (deviceName.equals("磁探机") && descern.equals("否")) {
-                    connect("CFTSYNODESCERN");
+            if (!address.equals("")){
+                if (camer.equals("否")) {
+                    Toast.makeText(this, "当前设备不具备摄像头功能", Toast.LENGTH_SHORT).show();
+                    return;
+                } else if (etProject.getText().toString().trim().equals("")) {
+                    Toast.makeText(SendSelectActivity.this, "请输入工程名称", Toast.LENGTH_SHORT).show();
+                    loadingDialog.close();
+                    return;
+                } else if (etWorkName.getText().toString().trim().equals("")) {
+                    Toast.makeText(SendSelectActivity.this, "请输入工件名称", Toast.LENGTH_SHORT).show();
+                    loadingDialog.close();
+                    return;
+                } else if (etWorkCode.getText().toString().trim().equals("")) {
+                    Toast.makeText(SendSelectActivity.this, "请输入工件编号", Toast.LENGTH_SHORT).show();
+                    loadingDialog.close();
+                    return;
+                } else {
+                    if (deviceName.equals("爬行器") && descern.equals("否")) {
+                        connect("PXQNODESCERN");
+                    } else if (deviceName.equals("爬行器") && descern.equals("是")) {
+                        connect("PXQHAVEDESCERN");
+                    } else if (deviceName.equals("磁探机") && descern.equals("是")) {
+                        connect("CFTSYHAVEDESCERN");
+                    } else if (deviceName.equals("磁探机") && descern.equals("否")) {
+                        connect("CFTSYNODESCERN");
+                    }
                 }
+            }else {
+                Toast.makeText(SendSelectActivity.this, "获取IP失败", Toast.LENGTH_SHORT).show();
             }
         } else {
             Toast.makeText(SendSelectActivity.this, "获取IP失败", Toast.LENGTH_SHORT).show();
@@ -201,7 +208,7 @@ public class SendSelectActivity extends BaseActivity {
     }
 
     private void haveAddress() {
-        disposable = Observable.interval(0, 5, TimeUnit.SECONDS)
+        disposable = Observable.interval(0, 1, TimeUnit.SECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<Long>() {
@@ -233,8 +240,6 @@ public class SendSelectActivity extends BaseActivity {
                                                 //创建出一个bitmap
                                                 Bitmap bmp = BitmapFactory.decodeStream(inputstream);
                                                 if (bmp != null && !bmp.equals("")) {
-                                                    disposable.dispose();
-                                                    mythread.interrupt();
                                                     Message message = new Message();
                                                     message.what = Constant.TAG_ONE;
                                                     handler.sendMessage(message);
@@ -296,8 +301,8 @@ public class SendSelectActivity extends BaseActivity {
             startActivity(intent);
         }
         address = "";
-        timer.cancel();
         loadingDialog.close();
+        finish();
     }
 
     private void showDialog() {
@@ -318,7 +323,12 @@ public class SendSelectActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        timer.cancel();
+        try {
+            timer.cancel();
+            mythread.interrupt();
+        }catch (Exception e){
+
+        }
     }
 
     private void countDown(){
@@ -342,6 +352,8 @@ public class SendSelectActivity extends BaseActivity {
             super.handleMessage(msg);
             switch (msg.what){
                 case Constant.TAG_ONE:
+                    disposable.dispose();
+                    mythread.interrupt();
                     SelectActivity("");
                     break;
                 case Constant.TAG_TWO:
