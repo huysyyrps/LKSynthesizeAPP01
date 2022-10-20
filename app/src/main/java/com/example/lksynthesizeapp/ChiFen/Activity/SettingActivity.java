@@ -171,7 +171,7 @@ public class SettingActivity extends BaseActivity implements VersionInfoContract
             params.put("appVersion", "1.0.0");
             params.put("channel", "default");
             params.put("appType", "android");
-            params.put("clientType", "pxq");
+            params.put("clientType", "爬行器");
             params.put("phoneSystemVersion", "10.0.1");
             params.put("phoneType", "华为");
             Gson gson = new Gson();

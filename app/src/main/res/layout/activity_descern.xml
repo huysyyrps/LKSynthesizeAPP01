@@ -84,6 +84,12 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:background="@drawable/ic_tirme" />
+        <Chronometer
+            android:id="@+id/chronometer"
+            android:textColor="@color/red"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"/>
 
     </LinearLayout>
 

@@ -42,8 +42,6 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -85,7 +83,7 @@ public class SendSelectActivity extends BaseActivity {
     private String url;
     Disposable disposable;
     LoadingDialog loadingDialog;
-    Timer timer;
+//    Timer timer;
 
     //推出程序
     @Override
@@ -134,7 +132,7 @@ public class SendSelectActivity extends BaseActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tvConfim:
-                countDown();
+//                countDown();
                 haveAddress();
                 loadingDialog.setLoadingText(getResources().getString(R.string.device_connect))
 //                        .setSuccessText("加载成功")//显示加载成功时的文字
@@ -208,13 +206,13 @@ public class SendSelectActivity extends BaseActivity {
     }
 
     private void haveAddress() {
-        disposable = Observable.interval(0, 1, TimeUnit.SECONDS)
+        disposable = Observable.interval(0, 3, TimeUnit.SECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<Long>() {
                     @Override
                     public void accept(Long aLong) throws Exception {
-                        new getIp().getConnectIp(new GetIpCallBack() {
+                        new getIp().cleanARP(new GetIpCallBack() {
                             @Override
                             public void success(String backAddress) {
                                 address = backAddress;
@@ -324,27 +322,27 @@ public class SendSelectActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         try {
-            timer.cancel();
+//            timer.cancel();
             mythread.interrupt();
         }catch (Exception e){
 
         }
     }
 
-    private void countDown(){
-        timer=new Timer();
-        timer.schedule(new TimerTask() {
-            int i=30;
-            @Override
-            public void run() {
-                //定义一个消息传过去
-                Message msg=new Message();
-                msg.what=Constant.TAG_TWO;
-                msg.obj = i--;
-                handler.sendMessage(msg);
-            }
-        },0,1000); //延时0毫秒开始计时，每隔1秒计时一
-    }
+//    private void countDown(){
+//        timer=new Timer();
+//        timer.schedule(new TimerTask() {
+//            int i=30;
+//            @Override
+//            public void run() {
+//                //定义一个消息传过去
+//                Message msg=new Message();
+//                msg.what=Constant.TAG_TWO;
+//                msg.obj = i--;
+//                handler.sendMessage(msg);
+//            }
+//        },0,1000); //延时0毫秒开始计时，每隔1秒计时一
+//    }
 
     Handler handler = new Handler() {
         @Override
@@ -356,14 +354,14 @@ public class SendSelectActivity extends BaseActivity {
                     mythread.interrupt();
                     SelectActivity("");
                     break;
-                case Constant.TAG_TWO:
-                    int second = (int) msg.obj;
-                    if (second==0){
-                        timer.cancel();
-                        Toast.makeText(SendSelectActivity.this, R.string.dialog_close, Toast.LENGTH_SHORT).show();
-                        countDown();
-                    }
-                    break;
+//                case Constant.TAG_TWO:
+//                    int second = (int) msg.obj;
+//                    if (second==0){
+//                        timer.cancel();
+//                        Toast.makeText(SendSelectActivity.this, R.string.dialog_close, Toast.LENGTH_SHORT).show();
+//                        countDown();
+//                    }
+//                    break;
             }
         }
     };

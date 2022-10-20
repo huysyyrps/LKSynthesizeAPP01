@@ -17,9 +17,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Chronometer;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -54,7 +56,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class DescernActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks,Runnable {
+public class DescernActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks, Runnable {
     @BindView(R.id.rbCamera)
     RadioButton rbCamera;
     @BindView(R.id.rbVideo)
@@ -87,6 +89,8 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
     LinearLayout linlayoutData;
     @BindView(R.id.tvState)
     TextView tvState;
+    @BindView(R.id.chronometer)
+    Chronometer chronometer;
     private String url;
     private Bitmap bmp = null;
     private Bitmap rgba;
@@ -328,6 +332,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                 }
                 break;
             case R.id.linearLayoutStop:
+                ChronometerEnd();
                 radioGroup.setVisibility(View.VISIBLE);
                 linearLayoutStop.setVisibility(View.GONE);
                 if (mediaRecorder != null) {
@@ -348,11 +353,11 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                 break;
             case R.id.rbBack:
                 runing = false;
-                if (saveThread!=null){
+                if (saveThread != null) {
                     saveThread.interrupt();
                     saveThread = null;
                 }
-                if (mythread!=null){
+                if (mythread != null) {
                     mythread.interrupt();
                     mythread = null;
                 }
@@ -360,6 +365,20 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                 finish();
                 break;
         }
+    }
+
+    //开始计时
+    private void ChronometerStart() {
+        chronometer.start();//开始计时
+        chronometer.setBase(SystemClock.elapsedRealtime());
+        CharSequence time = chronometer.getText();
+        chronometer.setText(time.toString());
+    }
+
+    //结束计时
+    private void ChronometerEnd() {
+        chronometer.stop();
+        chronometer.setBase(SystemClock.elapsedRealtime());
     }
 
     //截图
@@ -379,6 +398,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         //开始录制
         try {
             mediaRecorder.start();
+            ChronometerStart();
         } catch (IllegalStateException e) {
             e.printStackTrace();
         }
@@ -504,9 +524,9 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                 case Constant.TAG_THERE:
                     String toastString = msg.obj.toString();
                     if (toastString.contains("java.net.ConnectException: Failed to connect")
-                            ||toastString.contains("java.io.IOException: unexpected end")
-                            ||toastString.contains("java.io.InterruptedIOException: thread interrupted")
-                            ||toastString.contains("java.lang.NullPointerException: Attempt to get length of null array")) {
+                            || toastString.contains("java.io.IOException: unexpected end")
+                            || toastString.contains("java.io.InterruptedIOException: thread interrupted")
+                            || toastString.contains("java.lang.NullPointerException: Attempt to get length of null array")) {
                         break;
                     } else {
                         Toast.makeText(DescernActivity.this, msg.obj.toString(), Toast.LENGTH_SHORT).show();
