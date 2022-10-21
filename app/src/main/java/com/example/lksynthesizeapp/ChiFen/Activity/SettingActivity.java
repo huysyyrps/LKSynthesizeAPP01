@@ -56,7 +56,6 @@ public class SettingActivity extends BaseActivity implements VersionInfoContract
 
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
-    String tag;
     String toastData = "";
     BaseRecyclerAdapter baseRecyclerAdapter;
     SharePreferencesUtils sharePreferencesUtils;
@@ -64,16 +63,13 @@ public class SettingActivity extends BaseActivity implements VersionInfoContract
     LoadingDialog loadingDialog;
     VersionInfoPresenter versionInfoPresenter;
     private DialogUpdate dialogUpdate;
-    String apkNETVersion = "";
-    String downloadUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
         dialogUpdate = new DialogUpdate(this);
-        versionInfoPresenter = new VersionInfoPresenter(this,this);
-        tag = getIntent().getStringExtra("tag");
+        versionInfoPresenter = new VersionInfoPresenter(this, this);
         //数据组装
         setData();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(SettingActivity.this);
@@ -81,34 +77,34 @@ public class SettingActivity extends BaseActivity implements VersionInfoContract
         baseRecyclerAdapter = new BaseRecyclerAdapter<Setting>(SettingActivity.this, R.layout.setting_item, settingList) {
             @Override
             public void convert(BaseViewHolder holder, final Setting setting) {
-                holder.setText( R.id.tvTitle, setting.getTitle());
-                if (setting.getTitle().equals("当前版本")){
-                    holder.setText( R.id.tvData, getVersionName());
-                    holder.setInImage( R.id.ivGo);
+                holder.setText(R.id.tvTitle, setting.getTitle());
+                if (setting.getTitle().equals("当前版本")) {
+                    holder.setText(R.id.tvData, getVersionName());
+                    holder.setInImage(R.id.ivGo);
                 }
-                holder.setImage( SettingActivity.this, R.id.imageView,setting.getImagePath());
+                holder.setImage(SettingActivity.this, R.id.imageView, setting.getImagePath());
                 holder.setOnClickListener(R.id.linearLayout, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (setting.getTitle().equals("息屏运行")){
+                        if (setting.getTitle().equals("息屏运行")) {
                             requestIgnoreBatteryOptimizations();
                         }
-                        if (setting.getTitle().equals("报警音设置")){
-                            startActivity(new Intent(SettingActivity.this,AudioActivity.class));
+                        if (setting.getTitle().equals("报警音设置")) {
+                            startActivity(new Intent(SettingActivity.this, AudioActivity.class));
                             finish();
                         }
                         //重启视频服务
-                        if (setting.getTitle().equals("服务重启")){
-                            ShowDialog("/etc/init.d/mjpg-streamer restart","重启中");
+                        if (setting.getTitle().equals("服务重启")) {
+                            ShowDialog("/etc/init.d/mjpg-streamer restart", "重启中");
 //                            ShowDialog("uci set mjpg-streamer.core.fps=30", "uci commit", "/etc/init.d/mjpg-streamer restart");
                         }
 
-                        //重启设备
-                        if (setting.getTitle().equals("设备重启")){
-                            new AlertDialogUtil(SettingActivity.this).showDialog("您确定要重启设备吗？", new AlertDialogCallBack() {
+                        //关闭AP
+                        if (setting.getTitle().equals("关闭AP")) {
+                            new AlertDialogUtil(SettingActivity.this).showDialog("您确定要关闭AP吗？", new AlertDialogCallBack() {
                                 @Override
                                 public void confirm(String name) {
-                                    ShowDialog("reboot","设备重启中");
+                                    ShowDialog("wifimode ap", "设备关闭中");
                                 }
 
                                 @Override
@@ -129,8 +125,34 @@ public class SettingActivity extends BaseActivity implements VersionInfoContract
 //                            ShowDialog("uci set mjpg-streamer.core.fps=30", "uci commit", "/etc/init.d/mjpg-streamer restart");
                         }
 
-                        if (setting.getTitle().equals("帧数设置")){
-                            RegionalChooseUtil.initJsonData(SettingActivity.this,"frames");
+                        //重启设备
+                        if (setting.getTitle().equals("设备重启")) {
+                            new AlertDialogUtil(SettingActivity.this).showDialog("您确定要重启设备吗？", new AlertDialogCallBack() {
+                                @Override
+                                public void confirm(String name) {
+                                    ShowDialog("reboot", "设备重启中");
+                                }
+
+                                @Override
+                                public void cancel() {
+
+                                }
+
+                                @Override
+                                public void save(String name) {
+
+                                }
+
+                                @Override
+                                public void checkName(String name) {
+
+                                }
+                            });
+//                            ShowDialog("uci set mjpg-streamer.core.fps=30", "uci commit", "/etc/init.d/mjpg-streamer restart");
+                        }
+
+                        if (setting.getTitle().equals("帧数设置")) {
+                            RegionalChooseUtil.initJsonData(SettingActivity.this, "frames");
                             RegionalChooseUtil.showPickerView(SettingActivity.this, new MyCallBack() {
                                 @Override
                                 public void callBack(Object object) {
@@ -140,8 +162,8 @@ public class SettingActivity extends BaseActivity implements VersionInfoContract
                             });
                         }
 
-                        if (setting.getTitle().equals("像素设置")){
-                            RegionalChooseUtil.initJsonData(SettingActivity.this,"resolving");
+                        if (setting.getTitle().equals("像素设置")) {
+                            RegionalChooseUtil.initJsonData(SettingActivity.this, "resolving");
                             RegionalChooseUtil.showPickerView(SettingActivity.this, new MyCallBack() {
                                 @Override
                                 public void callBack(Object object) {
@@ -151,7 +173,7 @@ public class SettingActivity extends BaseActivity implements VersionInfoContract
                             });
                         }
 
-                        if (setting.getTitle().equals("版本检测")){
+                        if (setting.getTitle().equals("版本检测")) {
                             upDataClient();
                         }
                     }
@@ -177,7 +199,7 @@ public class SettingActivity extends BaseActivity implements VersionInfoContract
             String s = gson.toJson(params);
             RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), gson.toJson(params));
             versionInfoPresenter.getVersionInfo(requestBody);
-        }else {
+        } else {
             Toast.makeText(this, getResources().getString(R.string.change_net), Toast.LENGTH_SHORT).show();
         }
     }
@@ -189,7 +211,7 @@ public class SettingActivity extends BaseActivity implements VersionInfoContract
         // getPackageName()是你当前类的包名，0代表是获取版本信息
         PackageInfo packInfo = null;
         try {
-            packInfo = packageManager.getPackageInfo(getPackageName(),0);
+            packInfo = packageManager.getPackageInfo(getPackageName(), 0);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
@@ -210,12 +232,10 @@ public class SettingActivity extends BaseActivity implements VersionInfoContract
         settingList.add(setting7);
 
 
-        if (tag.equals("desc")){
-            Setting setting1 = new Setting();
-            setting1.setTitle("报警音设置");
-            setting1.setImagePath(R.drawable.ic_audio);
-            settingList.add(setting1);
-        }
+        Setting setting1 = new Setting();
+        setting1.setTitle("报警音设置");
+        setting1.setImagePath(R.drawable.ic_audio);
+        settingList.add(setting1);
 
         Setting setting2 = new Setting();
         setting2.setTitle("服务重启");
@@ -241,6 +261,11 @@ public class SettingActivity extends BaseActivity implements VersionInfoContract
         setting6.setTitle("息屏运行");
         setting6.setImagePath(R.drawable.ic_service);
         settingList.add(setting6);
+
+        Setting setting8 = new Setting();
+        setting8.setTitle("关闭AP");
+        setting8.setImagePath(R.drawable.ic_service);
+        settingList.add(setting8);
 
     }
 
@@ -281,9 +306,9 @@ public class SettingActivity extends BaseActivity implements VersionInfoContract
                     SSHExcuteCommandHelper.writeBefor(Constant.URL, data1, new SSHCallBack() {
                         @Override
                         public void confirm(String data) {
-                            if (title.equals("设备重启中")){
+                            if (title.equals("设备重启中")) {
                                 handlerSetting.sendEmptyMessage(Constant.TAG_THERE);
-                            }else {
+                            } else {
                                 handlerSetting.sendEmptyMessage(Constant.TAG_ONE);
                             }
                         }
@@ -300,6 +325,7 @@ public class SettingActivity extends BaseActivity implements VersionInfoContract
             e.printStackTrace();
         }
     }
+
     //设置帧数  像素
     private void ShowDialog(String data1, String data2, String data3) {
         try {
@@ -373,17 +399,18 @@ public class SettingActivity extends BaseActivity implements VersionInfoContract
         try {
             Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
             intent.setData(Uri.parse("package:" + getPackageName()));
-            startActivityForResult(intent,Constant.TAG_THERE);
+            startActivityForResult(intent, Constant.TAG_THERE);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == Constant.TAG_THERE) {
-            if(isIgnoringBatteryOptimizations()){
+            if (isIgnoringBatteryOptimizations()) {
                 Toast.makeText(this, "已开启", Toast.LENGTH_SHORT).show();
                 new AlertDialogUtil(SettingActivity.this).showDialog("为了您正常使用此程序，请您 "
                         + "\n"
@@ -393,7 +420,7 @@ public class SettingActivity extends BaseActivity implements VersionInfoContract
                         Intent powerUsageIntent = new Intent(Intent.ACTION_POWER_USAGE_SUMMARY);
                         ResolveInfo resolveInfo = getPackageManager().resolveActivity(powerUsageIntent, 0);
 // check that the Battery app exists on this device
-                        if(resolveInfo != null){
+                        if (resolveInfo != null) {
                             startActivity(powerUsageIntent);
                         }
                     }
@@ -417,10 +444,10 @@ public class SettingActivity extends BaseActivity implements VersionInfoContract
         }
     }
 
-    public void checkPermission(){
+    public void checkPermission() {
         MobileButlerUtil mobileButlerUtil = new MobileButlerUtil(this);
         mobileButlerUtil.goHuaweiSetting();
-        new SharePreferencesUtils().setString(this,"keep","true");
+        new SharePreferencesUtils().setString(this, "keep", "true");
     }
 
     Handler handlerSetting = new Handler() {

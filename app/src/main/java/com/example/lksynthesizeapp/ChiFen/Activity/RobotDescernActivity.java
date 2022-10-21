@@ -59,6 +59,7 @@ import com.example.lksynthesizeapp.ChiFen.Robot.View.CircleMenu;
 import com.example.lksynthesizeapp.ChiFen.Robot.View.CircleMenuAdapter;
 import com.example.lksynthesizeapp.ChiFen.bean.ItemInfo;
 import com.example.lksynthesizeapp.Constant.Base.AlertDialogUtil;
+import com.example.lksynthesizeapp.Constant.Base.Constant;
 import com.example.lksynthesizeapp.R;
 import com.example.lksynthesizeapp.SharePreferencesUtils;
 import com.example.lksynthesizeapp.YoloV5Ncnn;
@@ -128,7 +129,6 @@ public class RobotDescernActivity extends AppCompatActivity {
     private MediaPlayer mediaPlayer;
     long currentTme = 0, currentTme1 = 0;
     public boolean runing = true;
-    public static String address = "";
     public boolean isFirst = true;
     public static final int TIME = 3000;
     Message message;
@@ -172,23 +172,17 @@ public class RobotDescernActivity extends AppCompatActivity {
         if (!ret_init) {
             Log.e("MainActivity", "yolov5ncnn Init failed");
         }
-        address = getIntent().getStringExtra("address");
-        if (address != null) {
-            url = "http://" + address + ":8080?action=snapshot";
-            mythread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    while (runing) {
-                        draw();
-                        currentTme = System.currentTimeMillis();
-                    }
+        url = "http://" + Constant.URL + ":8080?action=snapshot";
+        mythread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (runing) {
+                    draw();
+                    currentTme = System.currentTimeMillis();
                 }
-            });
-            mythread.start();
-        } else {
-            Toast.makeText(this, "IP为空,请等待连接", Toast.LENGTH_SHORT).show();
-            finish();
-        }
+            }
+        });
+        mythread.start();
 
         new BottomUI().hideBottomUIMenu(this.getWindow());
 
@@ -202,7 +196,7 @@ public class RobotDescernActivity extends AppCompatActivity {
     private void modbusConnect() {
         modbusReq.setParam(new ModbusParam()
 //                .setHost("172.16.16.68")
-                .setHost(address)
+                .setHost(Constant.URL)
                 .setPort(502)
                 .setEncapsulated(true)
                 .setKeepAlive(true)
@@ -407,8 +401,7 @@ public class RobotDescernActivity extends AppCompatActivity {
                 break;
             case R.id.rbSetting:
                 Intent intent = new Intent(this, SettingActivity.class);
-                intent.putExtra("address", address);
-                intent.putExtra("tag", "desc");
+                intent.putExtra("address", Constant.URL);
                 startActivity(intent);
                 break;
         }
@@ -466,7 +459,7 @@ public class RobotDescernActivity extends AppCompatActivity {
             int width = wm.getDefaultDisplay().getWidth();
             int height = wm.getDefaultDisplay().getHeight();
             //获取mediaRecorder
-            mediaRecorder = new MyMediaRecorder().getMediaRecorder(this,project, workName, workCode, "/LUKERobotDescVideo/");
+            mediaRecorder = new MyMediaRecorder().getMediaRecorder(this, project, workName, workCode, "/LUKERobotDescVideo/");
             mVirtualDisplay = mMediaProjection.createVirtualDisplay("你的name",
                     width, height, 1,
                     DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,

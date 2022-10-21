@@ -282,6 +282,29 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                         Log.e("XXX", "保存失败");
                     }
                 }
+//                String path = Environment.getExternalStorageDirectory().getPath();
+//                if (Build.VERSION.SDK_INT > 29) {
+//                    path = this.getExternalFilesDir(null).getAbsolutePath() ;
+//                }
+//                try {
+//                    // 截屏-将view作为原图绘制出来
+//                    View v = this.getWindow().getDecorView();
+//                    Bitmap bitmap = Bitmap.createBitmap(v.getWidth(), v.getHeight(),Bitmap.Config.RGB_565);
+//                    Canvas c = new Canvas(bitmap);
+//                    c.translate(-v.getScrollX(), -v.getScrollY());
+//                    v.draw(c);
+//                    // 压缩Bitmap,不支持png图片的压缩
+//                    Uri insertUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, new ContentValues());
+//                    OutputStream outputStream = getContentResolver().openOutputStream(insertUri, "123");
+//                    if (bitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream)) {
+//                        Log.e("XXX", "success");
+//                    } else {
+//                        Log.e("XXX", "fail");
+//                    }
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                    Log.e("XXX",e.toString());
+//                }
                 break;
             case R.id.rbVideo:
                 if (toast != null) {
@@ -352,7 +375,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
             //获取mediaRecorder
             mediaRecorder = new MyMediaRecorder().getMediaRecorder(this, project, workName, workCode, "/LUKEDescVideo/");
             mVirtualDisplay = mMediaProjection.createVirtualDisplay("你的name",
-                    1920, 1080, 1,
+                    2400, 1080, 1,
                     DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
                     mediaRecorder.getSurface(),
                     null, null);
