@@ -62,4 +62,6 @@
     <string name="change_net">请检查网络</string>
     <string name="bast_version">已是最新版本</string>
     <string name="url_null">下载连接为空</string>
+
+    <string name="device_sure">设备确认</string>
 </resources>

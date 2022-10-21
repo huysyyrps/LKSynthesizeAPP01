@@ -259,7 +259,7 @@ public class LocalActivity extends AppCompatActivity implements EasyPermissions.
     private void startMedia() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             //获取mediaRecorder
-            mediaRecorder = new MyMediaRecorder().getMediaRecorder(project, workName, workCode, "/LUKEVideo/");
+            mediaRecorder = new MyMediaRecorder().getMediaRecorder(this,project, workName, workCode, "/LUKEVideo/");
             mVirtualDisplay = mMediaProjection.createVirtualDisplay("你的name",
                     2400, 1080, 1,
                     DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,

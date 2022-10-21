@@ -3,6 +3,7 @@ package com.example.lksynthesizeapp.Constant.activity;
 import static com.huawei.hms.hmsscankit.RemoteView.REQUEST_CODE_PHOTO;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
@@ -22,6 +23,7 @@ import com.example.lksynthesizeapp.Constant.Base.AlertDialogCallBack;
 import com.example.lksynthesizeapp.Constant.Base.AlertDialogUtil;
 import com.example.lksynthesizeapp.Constant.Base.BaseActivity;
 import com.example.lksynthesizeapp.Constant.Base.Constant;
+import com.example.lksynthesizeapp.Constant.Base.DialogCallBack;
 import com.example.lksynthesizeapp.Constant.Bean.Defined;
 import com.example.lksynthesizeapp.Constant.Module.DefinedContract;
 import com.example.lksynthesizeapp.Constant.Presenter.DefinedPresenter;
@@ -62,12 +64,14 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
             Manifest.permission.ACCESS_WIFI_STATE};
     SharePreferencesUtils sharePreferencesUtils;
     private int[] img = {R.drawable.ic_light_close, R.drawable.ic_light_open};
+    private AlertDialogUtil alertDialogUtil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
         // Bind the camera preview screen.
+        alertDialogUtil = new AlertDialogUtil(this);
         sharePreferencesUtils = new SharePreferencesUtils();
         definedPresenter = new DefinedPresenter(this, this);
         frameLayout = findViewById(R.id.rim);
@@ -121,7 +125,6 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
                                 sharePreferencesUtils.setString(DefinedActivity.this, "deviceName", dataArray[2]);
                                 sharePreferencesUtils.setString(DefinedActivity.this, "havaCamer", dataArray[4]);
                                 sharePreferencesUtils.setString(DefinedActivity.this, "haveDescern", dataArray[5]);
-//                            definedPresenter.getDefined(data[0]);
                                 startActivity(new Intent(DefinedActivity.this, SendSelectActivity.class));
                                 finish();
                                 tag = "second";
@@ -133,6 +136,21 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
                         }
                     }
                 }
+            }
+        });
+    }
+
+    private void showDialog(String name, String password) {
+        alertDialogUtil.showWifiSetting(DefinedActivity.this, name, password, new DialogCallBack() {
+            @Override
+            public void confirm(String data, Dialog dialog) {
+                //Intent intent = new Intent(Settings.ACTION_AIRPLANE_MODE_SETTINGS);
+                //startActivity(intent);
+            }
+
+            @Override
+            public void cancel() {
+
             }
         });
     }

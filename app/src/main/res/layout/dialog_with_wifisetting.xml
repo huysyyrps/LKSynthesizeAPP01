@@ -86,7 +86,7 @@
                 android:textSize="12dp"
                 android:textColor="@color/whith"
                 android:lineHeight="17dp"
-                android:text="请在下拉状态栏内长按热点按钮，跳转到热点配置界面后复制“名称”、“密码”进行配置。如不配置将无法连接设备摄像头。"/>
+                android:text="请在下拉状态栏内长按WIFI按钮，跳转到WIFI配置界面后复制“名称”、“密码”进行配置。如不配置将无法连接设备摄像头。"/>
         </LinearLayout>
 
         <LinearLayout

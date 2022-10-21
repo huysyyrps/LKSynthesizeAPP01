@@ -56,7 +56,7 @@ public class SettingActivity extends BaseActivity implements VersionInfoContract
 
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
-    String address,tag;
+    String tag;
     String toastData = "";
     BaseRecyclerAdapter baseRecyclerAdapter;
     SharePreferencesUtils sharePreferencesUtils;
@@ -73,7 +73,6 @@ public class SettingActivity extends BaseActivity implements VersionInfoContract
         ButterKnife.bind(this);
         dialogUpdate = new DialogUpdate(this);
         versionInfoPresenter = new VersionInfoPresenter(this,this);
-        address = getIntent().getStringExtra("address");
         tag = getIntent().getStringExtra("tag");
         //数据组装
         setData();
@@ -279,7 +278,7 @@ public class SettingActivity extends BaseActivity implements VersionInfoContract
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    SSHExcuteCommandHelper.writeBefor(address, data1, new SSHCallBack() {
+                    SSHExcuteCommandHelper.writeBefor(Constant.URL, data1, new SSHCallBack() {
                         @Override
                         public void confirm(String data) {
                             if (title.equals("设备重启中")){
@@ -316,13 +315,13 @@ public class SettingActivity extends BaseActivity implements VersionInfoContract
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    SSHExcuteCommandHelper.writeBefor(address, data1, new SSHCallBack() {
+                    SSHExcuteCommandHelper.writeBefor(Constant.URL, data1, new SSHCallBack() {
                         @Override
                         public void confirm(String data) {
-                            SSHExcuteCommandHelper.writeBefor(address, data2, new SSHCallBack() {
+                            SSHExcuteCommandHelper.writeBefor(Constant.URL, data2, new SSHCallBack() {
                                 @Override
                                 public void confirm(String data) {
-                                    SSHExcuteCommandHelper.writeBefor(address, data3, new SSHCallBack() {
+                                    SSHExcuteCommandHelper.writeBefor(Constant.URL, data3, new SSHCallBack() {
                                         @Override
                                         public void confirm(String data) {
                                             handlerSetting.sendEmptyMessage(Constant.TAG_ONE);

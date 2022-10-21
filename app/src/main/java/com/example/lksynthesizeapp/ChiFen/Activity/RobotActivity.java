@@ -428,7 +428,7 @@ public class RobotActivity extends BaseActivity {
     private void startMedia() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             //获取mediaRecorder
-            mediaRecorder = new MyMediaRecorder().getMediaRecorder(project, workName, workCode, "/LUKERobotVideo/");
+            mediaRecorder = new MyMediaRecorder().getMediaRecorder(this,project, workName, workCode, "/LUKERobotVideo/");
             mVirtualDisplay = mMediaProjection.createVirtualDisplay("你的name",
                     2400, 1080, 1,
                     DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,

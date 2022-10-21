@@ -16,6 +16,11 @@ public class Constant {
     public static final int MODBUS_CODE=1;
 
 
+    public static final String URL="192.168.43.251";
+    public static final String PASSWORD="88888888";
+
+
+
 
     //方向控制
     public static final String MOB_DIRECTION = "01060004000";

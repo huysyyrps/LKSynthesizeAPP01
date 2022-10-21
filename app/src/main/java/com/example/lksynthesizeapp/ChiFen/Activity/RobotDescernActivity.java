@@ -466,7 +466,7 @@ public class RobotDescernActivity extends AppCompatActivity {
             int width = wm.getDefaultDisplay().getWidth();
             int height = wm.getDefaultDisplay().getHeight();
             //获取mediaRecorder
-            mediaRecorder = new MyMediaRecorder().getMediaRecorder(project, workName, workCode, "/LUKERobotDescVideo/");
+            mediaRecorder = new MyMediaRecorder().getMediaRecorder(this,project, workName, workCode, "/LUKERobotDescVideo/");
             mVirtualDisplay = mMediaProjection.createVirtualDisplay("你的name",
                     width, height, 1,
                     DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
