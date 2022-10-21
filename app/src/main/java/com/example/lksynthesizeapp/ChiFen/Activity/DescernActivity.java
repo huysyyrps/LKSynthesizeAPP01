@@ -162,7 +162,6 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                     while (runing) {
                         draw();
                     }
-                    draw();
                 }
             });
             mythread.start();
@@ -387,10 +386,13 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
 
     private void startMedia() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            WindowManager wm = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
+            int width = wm.getDefaultDisplay().getWidth();
+            int height = wm.getDefaultDisplay().getHeight();
             //获取mediaRecorder
             mediaRecorder = new MyMediaRecorder().getMediaRecorder(project, workName, workCode, "/LUKEDescVideo/");
             mVirtualDisplay = mMediaProjection.createVirtualDisplay("你的name",
-                    2400, 1080, 1,
+                    width, height, 1,
                     DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
                     mediaRecorder.getSurface(),
                     null, null);

@@ -28,12 +28,13 @@ import android.media.projection.MediaProjectionManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -115,9 +116,11 @@ public class RobotDescernActivity extends AppCompatActivity {
     LinearLayout linearLayoutStop;
     @BindView(R.id.rbSetting)
     RadioButton rbSetting;
+    @BindView(R.id.chronometer)
+    Chronometer chronometer;
     private String url;
     private Bitmap bmp = null;
-    private Thread mythread;
+    private Thread mythread, saveThread;
     private YoloV5Ncnn yolov5ncnn = new YoloV5Ncnn();
     URL videoUrl;
     HttpURLConnection conn;
@@ -392,6 +395,7 @@ public class RobotDescernActivity extends AppCompatActivity {
                 }
                 break;
             case R.id.linearLayoutStop:
+                ChronometerEnd();
                 radioGroup.setVisibility(View.VISIBLE);
                 linearLayoutStop.setVisibility(View.GONE);
                 if (mediaRecorder != null) {
@@ -403,11 +407,25 @@ public class RobotDescernActivity extends AppCompatActivity {
                 break;
             case R.id.rbSetting:
                 Intent intent = new Intent(this, SettingActivity.class);
-                intent.putExtra("address",address);
-                intent.putExtra("tag","desc");
+                intent.putExtra("address", address);
+                intent.putExtra("tag", "desc");
                 startActivity(intent);
                 break;
         }
+    }
+
+    //开始计时
+    private void ChronometerStart() {
+        chronometer.start();//开始计时
+        chronometer.setBase(SystemClock.elapsedRealtime());
+        CharSequence time = chronometer.getText();
+        chronometer.setText(time.toString());
+    }
+
+    //结束计时
+    private void ChronometerEnd() {
+        chronometer.stop();
+        chronometer.setBase(SystemClock.elapsedRealtime());
     }
 
     //创建申请录屏的 Intent
@@ -444,10 +462,13 @@ public class RobotDescernActivity extends AppCompatActivity {
 
     private void startMedia() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            WindowManager wm = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
+            int width = wm.getDefaultDisplay().getWidth();
+            int height = wm.getDefaultDisplay().getHeight();
             //获取mediaRecorder
             mediaRecorder = new MyMediaRecorder().getMediaRecorder(project, workName, workCode, "/LUKERobotDescVideo/");
             mVirtualDisplay = mMediaProjection.createVirtualDisplay("你的name",
-                    2400, 1080, 1,
+                    width, height, 1,
                     DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
                     mediaRecorder.getSurface(),
                     null, null);
@@ -455,6 +476,7 @@ public class RobotDescernActivity extends AppCompatActivity {
         //开始录制
         try {
             mediaRecorder.start();
+            ChronometerStart();
         } catch (IllegalStateException e) {
             e.printStackTrace();
         }
@@ -609,40 +631,6 @@ public class RobotDescernActivity extends AppCompatActivity {
         return retVal;
     }
 
-    //消息处理者,创建一个Handler的子类对象,目的是重写Handler的处理消息的方法(handleMessage())
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case TAG_ONE:
-                    Toast.makeText(RobotDescernActivity.this, R.string.connect_success, Toast.LENGTH_SHORT).show();
-                    break;
-                case TAG_TWO:
-                    Toast.makeText(RobotDescernActivity.this, R.string.connect_faile, Toast.LENGTH_SHORT).show();
-                    break;
-                case TAG_THERE:
-                    String data = msg.obj.toString();
-                    set16Data(substringData(data));
-                    break;
-                case TAG_FOUR:
-                    short[] dataArray = (short[]) msg.obj;
-                    String[] typeData = new String[dataArray.length];
-                    for (int i = 0; i < dataArray.length; i++) {
-                        String strHex2 = String.format("%04x", dataArray[i]).toUpperCase();//高位补0
-                        typeData[i] = strHex2;
-                    }
-                    setFloatData(typeData);
-                    break;
-                case TAG_FIVE:
-                    String message = msg.obj.toString();
-                    Toast.makeText(RobotDescernActivity.this, message, Toast.LENGTH_SHORT).show();
-                    break;
-
-            }
-        }
-
-    };
-
     //显示16进制数据
     private void set16Data(String[] strs) {
         //磁化
@@ -721,6 +709,8 @@ public class RobotDescernActivity extends AppCompatActivity {
             conn = (HttpURLConnection) videoUrl.openConnection();
             //设置输入流
             conn.setDoInput(true);
+            conn.setConnectTimeout(3000);
+            conn.setReadTimeout(3000);
             //连接
             conn.connect();
             //得到网络返回的输入流
@@ -733,63 +723,49 @@ public class RobotDescernActivity extends AppCompatActivity {
             conn.disconnect();
         } catch (Exception ex) {
             Log.e("XXX", ex.toString());
+            Message message = new Message();
+            message.what = TAG_THERE;
+            message.obj = ex.toString();
+            handlerLoop.sendMessage(message);
         } finally {
         }
     }
 
     private void showObjects(YoloV5Ncnn.Obj[] objects) {
-        if (objects == null) {
-            imageView.setImageBitmap(bmp);
-//            currentTme1 = System.currentTimeMillis();
-//            Log.e("XXX",(currentTme1-currentTme)+"");
+        if (objects.length == 0) {
+            Message message = new Message();
+            message.what = TAG_ONE;
+            message.obj = bmp;
+            handlerLoop.sendMessage(message);
+//            imageView.setImageBitmap(bmp);
             return;
-        }
+        } else {
+            Bitmap rgba = bmp.copy(Bitmap.Config.ARGB_8888, true);
+            Canvas canvas = new Canvas(rgba);
+            for (int i = 0; i < objects.length; i++) {
+                canvas.drawRect(objects[i].x, objects[i].y, objects[i].x + objects[i].w, objects[i].y + objects[i].h, new MyPaint().getLinePaint());
+                // draw filled text inside image
+                {
+                    String text = objects[i].label + " = " + String.format("%.1f", objects[i].prob * 100) + "%";
 
-        // draw objects on bitmap
-        Bitmap rgba = bmp.copy(Bitmap.Config.ARGB_8888, true);
-        Canvas canvas = new Canvas(rgba);
-        for (int i = 0; i < objects.length; i++) {
-            canvas.drawRect(objects[i].x, objects[i].y, objects[i].x + objects[i].w, objects[i].y + objects[i].h, new MyPaint().getLinePaint());
-            // draw filled text inside image
-            {
-                String text = objects[i].label + " = " + String.format("%.1f", objects[i].prob * 100) + "%";
+                    float text_width = new MyPaint().getTextpaint().measureText(text) + 10;
+                    float text_height = -new MyPaint().getTextpaint().ascent() + new MyPaint().getTextpaint().descent() + 10;
 
-                float text_width = new MyPaint().getTextpaint().measureText(text) + 10;
-                float text_height = -new MyPaint().getTextpaint().ascent() + new MyPaint().getTextpaint().descent() + 10;
-
-                float x = objects[i].x;
-                float y = objects[i].y - text_height;
-                if (y < 0)
-                    y = 0;
-                if (x + text_width > rgba.getWidth())
-                    x = rgba.getWidth() - text_width;
+                    float x = objects[i].x;
+                    float y = objects[i].y - text_height;
+                    if (y < 0)
+                        y = 0;
+                    if (x + text_width > rgba.getWidth())
+                        x = rgba.getWidth() - text_width;
 //                canvas.drawRect(x, y, x + text_width, y + text_height, textbgpaint);
-                canvas.drawText(text, x, y - new MyPaint().getTextpaint().ascent(), new MyPaint().getTextpaint());
-            }
-        }
-        if (objects.length != 0) {
-            mediaPlayer.start();
-        }
-        Log.e("XXXXXXXX", "3333333333");
-        if (objects.length != 0) {
-            mediaPlayer.start();
-            if (isFirst) {
-                saveImageToGallery(RobotDescernActivity.this, rgba);
-                saveTime = System.currentTimeMillis();
-                isFirst = false;
-            } else {
-                if (handler == null) {
-                    handler = new Handler(Looper.getMainLooper());
-                } else {
-                    currentTmeTime = System.currentTimeMillis();
-                    if (currentTmeTime - saveTime > 3000) {
-                        saveImageToGallery(RobotDescernActivity.this, rgba);
-                        saveTime = currentTmeTime;
-                    }
+                    canvas.drawText(text, x, y - new MyPaint().getTextpaint().ascent(), new MyPaint().getTextpaint());
                 }
             }
+            Message message = new Message();
+            message.what = TAG_FOUR;
+            message.obj = rgba;
+            handlerLoop.sendMessage(message);
         }
-        imageView.setImageBitmap(rgba);
     }
 
     public static void saveImageToGallery(Context context, Bitmap bmp) {
@@ -856,4 +832,94 @@ public class RobotDescernActivity extends AppCompatActivity {
         }
         Log.e("XXXXX", "onResume");
     }
+
+    Handler handlerLoop = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case TAG_ONE:
+                    Bitmap bit = (Bitmap) msg.obj;
+                    imageView.setImageBitmap(bit);
+                    break;
+                case TAG_THERE:
+                    String toastString = msg.obj.toString();
+                    if (toastString.contains("java.net.ConnectException: Failed to connect")
+                            || toastString.contains("java.io.IOException: unexpected end")
+                            || toastString.contains("java.io.InterruptedIOException: thread interrupted")
+                            || toastString.contains("java.lang.NullPointerException: Attempt to get length of null array")) {
+                        break;
+                    } else {
+                        Toast.makeText(RobotDescernActivity.this, msg.obj.toString(), Toast.LENGTH_SHORT).show();
+                    }
+                    Log.e("XXX", toastString);
+//                    Toast.makeText(DescernActivity.this, getResources().getString(R.string.dialog_close), Toast.LENGTH_SHORT).show();
+//                    finish();
+                    break;
+                case TAG_FOUR:
+                    Bitmap bitH = (Bitmap) msg.obj;
+                    imageView.setImageBitmap(bitH);
+                    saveThread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Bitmap rgba1 = bitH.copy(Bitmap.Config.ARGB_8888, true);
+                            Canvas canvas1 = new Canvas(rgba1);
+                            canvas1.drawText("工程名称:" + project, 15, 30, new MyPaint().getTextpaint());
+                            canvas1.drawText("工件名称:" + workName, 15, 70, new MyPaint().getTextpaint());
+                            canvas1.drawText("工件编号:" + workCode, 15, 110, new MyPaint().getTextpaint());
+                            mediaPlayer.start();
+                            if (isFirst) {
+                                saveImageToGallery(RobotDescernActivity.this, rgba1);
+                                saveTime = System.currentTimeMillis();
+                                isFirst = false;
+                            } else {
+                                currentTmeTime = System.currentTimeMillis();
+                                if (currentTmeTime - saveTime > 3000) {
+                                    saveImageToGallery(RobotDescernActivity.this, rgba1);
+                                    saveTime = currentTmeTime;
+                                    isFirst = true;
+                                }
+                            }
+                        }
+                    });
+                    saveThread.start();
+                    break;
+            }
+        }
+    };
+
+    //消息处理者,创建一个Handler的子类对象,目的是重写Handler的处理消息的方法(handleMessage())
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case TAG_ONE:
+                    Toast.makeText(RobotDescernActivity.this, R.string.connect_success, Toast.LENGTH_SHORT).show();
+                    break;
+                case TAG_TWO:
+                    Toast.makeText(RobotDescernActivity.this, R.string.connect_faile, Toast.LENGTH_SHORT).show();
+                    break;
+                case TAG_THERE:
+                    String data = msg.obj.toString();
+                    set16Data(substringData(data));
+                    break;
+                case TAG_FOUR:
+                    short[] dataArray = (short[]) msg.obj;
+                    String[] typeData = new String[dataArray.length];
+                    for (int i = 0; i < dataArray.length; i++) {
+                        String strHex2 = String.format("%04x", dataArray[i]).toUpperCase();//高位补0
+                        typeData[i] = strHex2;
+                    }
+                    setFloatData(typeData);
+                    break;
+                case TAG_FIVE:
+                    String message = msg.obj.toString();
+                    Toast.makeText(RobotDescernActivity.this, message, Toast.LENGTH_SHORT).show();
+                    break;
+
+            }
+        }
+
+    };
+
 }
