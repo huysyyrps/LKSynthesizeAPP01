@@ -82,6 +82,8 @@ public class MainUI {
             popupMenu.getMenuInflater().inflate(R.menu.modbus_tzd_dialog, popupMenu.getMenu());
         }else if(tag.equals("CHControl")){
             popupMenu.getMenuInflater().inflate(R.menu.modbus_ch_dialog, popupMenu.getMenu());
+        }else if(tag.equals("BatteryControl")){
+            popupMenu.getMenuInflater().inflate(R.menu.modbus_battery_dialog, popupMenu.getMenu());
         }
         // menu的item点击事件
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -98,6 +100,10 @@ public class MainUI {
                 }else if (item.getTitle().equals("开启磁化")){
                     modbusCallBack.success("");
                 }else if (item.getTitle().equals("关闭磁化")){
+                    modbusCallBack.fail("");
+                }else if (item.getTitle().equals("电池阀开启")){
+                    modbusCallBack.success("");
+                }else if (item.getTitle().equals("电池阀关闭")){
                     modbusCallBack.fail("");
                 }
                 return false;

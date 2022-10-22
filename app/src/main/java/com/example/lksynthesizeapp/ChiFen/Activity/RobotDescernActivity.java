@@ -119,6 +119,8 @@ public class RobotDescernActivity extends AppCompatActivity {
     RadioButton rbSetting;
     @BindView(R.id.chronometer)
     Chronometer chronometer;
+    @BindView(R.id.tvBattery)
+    TextView tvBattery;
     private String url;
     private Bitmap bmp = null;
     private Thread mythread, saveThread;
@@ -151,7 +153,7 @@ public class RobotDescernActivity extends AppCompatActivity {
     public long saveTime = 0;
     public long currentTmeTime = 0;
     private String selectMode;
-    private int  selectnum;
+    private int selectnum;
 
 
     @Override
@@ -171,11 +173,11 @@ public class RobotDescernActivity extends AppCompatActivity {
         workName = intent.getStringExtra("etWorkName");
         workCode = intent.getStringExtra("etWorkCode");
         selectMode = intent.getStringExtra("selectMode");
-        if (selectMode.equals("mode1")){
+        if (selectMode.equals("mode1")) {
             selectnum = 1;
-        }else if (selectMode.equals("mode2")){
+        } else if (selectMode.equals("mode2")) {
             selectnum = 2;
-        }else if (selectMode.equals("mode3")){
+        } else if (selectMode.equals("mode3")) {
             selectnum = 3;
         }
         boolean ret_init = yolov5ncnn.Init(getAssets(), selectnum);
@@ -322,7 +324,8 @@ public class RobotDescernActivity extends AppCompatActivity {
 
     @OnClick({R.id.btnStop, R.id.tvSpeed, R.id.tvDistance, R.id.tvCHTime,
             R.id.tvCEControl, R.id.tvLightSelect, R.id.tvSearchlightControl,
-            R.id.tvCHControl, R.id.rbCamera, R.id.rbVideo, R.id.rbAlbum, R.id.linearLayoutStop, R.id.rbSetting})
+            R.id.tvCHControl, R.id.rbCamera, R.id.rbVideo, R.id.rbAlbum,
+            R.id.linearLayoutStop, R.id.rbSetting, R.id.tvBattery})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btnStop:
@@ -355,6 +358,10 @@ public class RobotDescernActivity extends AppCompatActivity {
             case R.id.tvCHControl:
                 CHControl(tvCHControl);
                 //磁化控制
+                break;
+            case R.id.tvBattery:
+                BatteryControl(tvBattery);
+                //电池阀
                 break;
             case R.id.rbCamera:
                 if (toast != null) {
@@ -558,6 +565,23 @@ public class RobotDescernActivity extends AppCompatActivity {
     }
 
     /**
+     * 电池阀控制
+     */
+    private void BatteryControl(View view) {
+        new MainUI().showPopupMenu(view, "BatteryControl", this, new ModbusCallBack() {
+            @Override
+            public void success(String s) {
+                modbusContion.writeRegisterClickEvent(MODBUS_CODE, 8, TAG_ONE);
+            }
+
+            @Override
+            public void fail(String s) {
+                modbusContion.writeRegisterClickEvent(MODBUS_CODE, 8, TAG_THERE);
+            }
+        });
+    }
+
+    /**
      * 弹窗数据设置
      */
     private void showFDialog(String tag) {
@@ -659,7 +683,14 @@ public class RobotDescernActivity extends AppCompatActivity {
 
         //探照灯
         if (strs[4] != null && strs[4].trim().equals("1")) {
-            tvSearchlightControl.setText(R.string.search_light_open);
+            tvSearchlightControl.setText(R.string.battery_open);
+        } else if (strs[4] != null && strs[4].trim().equals("3")) {
+            tvSearchlightControl.setText(R.string.battery_close);
+        }
+
+        //电池阀
+        if (strs[5] != null && strs[5].trim().equals("1")) {
+            tvBattery.setText(R.string.search_light_open);
         } else if (strs[4] != null && strs[4].trim().equals("3")) {
             tvSearchlightControl.setText(R.string.search_light_close);
         }

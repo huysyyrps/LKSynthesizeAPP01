@@ -48,6 +48,9 @@
     <string name="search_light_open">探照灯开启</string>
     <string name="search_light_close">探照灯关闭</string>
 
+    <string name="battery_open">电池阀开启</string>
+    <string name="battery_close">电池阀关闭</string>
+
     <string name="ch_control_open">开启磁化</string>
     <string name="ch_control_close">关闭磁化</string>
 

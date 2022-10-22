@@ -101,7 +101,7 @@ public class SendSelectActivity extends BaseActivity {
         new EditTextLengClient().textLeng(etWorkCode, this);
         new EditTextLengClient().textLeng(etWorkName, this);
         deviceName = sharePreferencesUtils.getString(SendSelectActivity.this, "deviceName", "");
-        Toast.makeText(intance, "WIFI名称"+ sharePreferencesUtils.getString(SendSelectActivity.this, "havaCamer", "")+"\n"
+        Toast.makeText(intance, "WIFI名称"+ sharePreferencesUtils.getString(SendSelectActivity.this, "wifiName", "")+"\n"
                 +"WIFI密码"+Constant.PASSWORD, Toast.LENGTH_SHORT).show();
         initSpinner();
     }

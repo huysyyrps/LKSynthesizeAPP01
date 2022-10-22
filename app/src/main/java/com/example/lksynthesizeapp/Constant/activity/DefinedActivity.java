@@ -121,7 +121,7 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
                                 sharePreferencesUtils.setString(DefinedActivity.this, "max", dataArray[0]);
                                 sharePreferencesUtils.setString(DefinedActivity.this, "deviceCode", dataArray[1]);
                                 sharePreferencesUtils.setString(DefinedActivity.this, "deviceName", dataArray[2]);
-                                sharePreferencesUtils.setString(DefinedActivity.this, "havaCamer", dataArray[4]);
+                                sharePreferencesUtils.setString(DefinedActivity.this, "wifiName", dataArray[4]);
                                 sharePreferencesUtils.setString(DefinedActivity.this, "haveDescern", dataArray[5]);
                                 startActivity(new Intent(DefinedActivity.this, SendSelectActivity.class));
                                 finish();
@@ -363,7 +363,7 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
                                 sharePreferencesUtils.setString(DefinedActivity.this, "max", dataArray[0]);
                                 sharePreferencesUtils.setString(DefinedActivity.this, "deviceCode", dataArray[1]);
                                 sharePreferencesUtils.setString(DefinedActivity.this, "deviceName", dataArray[2]);
-                                sharePreferencesUtils.setString(DefinedActivity.this, "havaCamer", dataArray[4]);
+                                sharePreferencesUtils.setString(DefinedActivity.this, "wifiName", dataArray[4]);
                                 sharePreferencesUtils.setString(DefinedActivity.this, "haveDescern", dataArray[5]);
 //                            definedPresenter.getDefined(data[0]);
                                 startActivity(new Intent(DefinedActivity.this, SendSelectActivity.class));
