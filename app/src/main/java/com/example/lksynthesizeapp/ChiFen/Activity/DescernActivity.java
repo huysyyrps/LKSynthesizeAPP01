@@ -117,6 +117,8 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
             Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.FOREGROUND_SERVICE};
     private MediaRecorder mediaRecorder;
     public static DescernActivity intance = null;
+    private String selectMode;
+    private int  selectnum;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,14 +133,22 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         setContentView(R.layout.activity_descern);
         ButterKnife.bind(this);
         intance = this;
-        boolean ret_init = yolov5ncnn.Init(getAssets());
-        if (!ret_init) {
-            Toast.makeText(this, "yolov5ncnn Init failed", Toast.LENGTH_SHORT).show();
-        }
         Intent intent = getIntent();
         project = intent.getStringExtra("project");
         workName = intent.getStringExtra("etWorkName");
         workCode = intent.getStringExtra("etWorkCode");
+        selectMode = intent.getStringExtra("selectMode");
+        if (selectMode.equals("mode1")){
+            selectnum = 1;
+        }else if (selectMode.equals("mode2")){
+            selectnum = 2;
+        }else if (selectMode.equals("mode3")){
+            selectnum = 3;
+        }
+        boolean ret_init = yolov5ncnn.Init(getAssets(),selectnum);
+        if (!ret_init) {
+            Toast.makeText(this, "yolov5ncnn Init failed", Toast.LENGTH_SHORT).show();
+        }
         deviceCode = new SharePreferencesUtils().getString(DescernActivity.this, "deviceCode", "");
         if (!project.trim().equals("")) {
             tvCompName.setText(project);
@@ -191,7 +201,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
             inputstream = conn.getInputStream();
             //创建出一个bitmap
             bmp = BitmapFactory.decodeStream(inputstream);
-            YoloV5Ncnn.Obj[] objects = yolov5ncnn.Detect(bmp, false);
+            YoloV5Ncnn.Obj[] objects = yolov5ncnn.Detect(bmp, false,selectnum);
             showObjects(objects);
             //关闭HttpURLConnection连接
             conn.disconnect();

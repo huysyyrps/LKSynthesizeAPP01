@@ -3,7 +3,6 @@ package com.example.lksynthesizeapp.Constant.activity;
 import static com.huawei.hms.hmsscankit.RemoteView.REQUEST_CODE_PHOTO;
 
 import android.Manifest;
-import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
@@ -23,7 +22,6 @@ import com.example.lksynthesizeapp.Constant.Base.AlertDialogCallBack;
 import com.example.lksynthesizeapp.Constant.Base.AlertDialogUtil;
 import com.example.lksynthesizeapp.Constant.Base.BaseActivity;
 import com.example.lksynthesizeapp.Constant.Base.Constant;
-import com.example.lksynthesizeapp.Constant.Base.DialogCallBack;
 import com.example.lksynthesizeapp.Constant.Bean.Defined;
 import com.example.lksynthesizeapp.Constant.Module.DefinedContract;
 import com.example.lksynthesizeapp.Constant.Presenter.DefinedPresenter;
@@ -139,22 +137,6 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
             }
         });
     }
-
-    private void showDialog(String name, String password) {
-        alertDialogUtil.showWifiSetting(DefinedActivity.this, name, password, new DialogCallBack() {
-            @Override
-            public void confirm(String data, Dialog dialog) {
-                //Intent intent = new Intent(Settings.ACTION_AIRPLANE_MODE_SETTINGS);
-                //startActivity(intent);
-            }
-
-            @Override
-            public void cancel() {
-
-            }
-        });
-    }
-
 
     /**
      * 字符Base64加密

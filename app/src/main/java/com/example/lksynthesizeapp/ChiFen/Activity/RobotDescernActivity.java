@@ -150,6 +150,8 @@ public class RobotDescernActivity extends AppCompatActivity {
     private MediaRecorder mediaRecorder;
     public long saveTime = 0;
     public long currentTmeTime = 0;
+    private String selectMode;
+    private int  selectnum;
 
 
     @Override
@@ -168,7 +170,15 @@ public class RobotDescernActivity extends AppCompatActivity {
         project = intent.getStringExtra("project");
         workName = intent.getStringExtra("etWorkName");
         workCode = intent.getStringExtra("etWorkCode");
-        boolean ret_init = yolov5ncnn.Init(getAssets());
+        selectMode = intent.getStringExtra("selectMode");
+        if (selectMode.equals("mode1")){
+            selectnum = 1;
+        }else if (selectMode.equals("mode2")){
+            selectnum = 2;
+        }else if (selectMode.equals("mode3")){
+            selectnum = 3;
+        }
+        boolean ret_init = yolov5ncnn.Init(getAssets(), selectnum);
         if (!ret_init) {
             Log.e("MainActivity", "yolov5ncnn Init failed");
         }
@@ -710,7 +720,7 @@ public class RobotDescernActivity extends AppCompatActivity {
             inputstream = conn.getInputStream();
             //创建出一个bitmap
             bmp = BitmapFactory.decodeStream(inputstream);
-            YoloV5Ncnn.Obj[] objects = yolov5ncnn.Detect(bmp, false);
+            YoloV5Ncnn.Obj[] objects = yolov5ncnn.Detect(bmp, false, selectnum);
             showObjects(objects);
             //关闭HttpURLConnection连接
             conn.disconnect();

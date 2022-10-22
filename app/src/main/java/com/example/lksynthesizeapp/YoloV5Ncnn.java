@@ -19,7 +19,7 @@ import android.graphics.Bitmap;
 
 public class YoloV5Ncnn
 {
-    public native boolean Init(AssetManager mgr);
+    public native boolean Init(AssetManager mgr, int selecynum);
 
     public class Obj
     {
@@ -31,7 +31,7 @@ public class YoloV5Ncnn
         public float prob;
     }
 
-    public native Obj[] Detect(Bitmap bitmap, boolean use_gpu);
+    public native Obj[] Detect(Bitmap bitmap, boolean use_gpu, int selecynum);
 
     static {
         System.loadLibrary("yolov5ncnn");

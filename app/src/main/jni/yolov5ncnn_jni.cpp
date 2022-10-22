@@ -467,7 +467,7 @@ JNIEXPORT void JNI_OnUnload(JavaVM *vm, void *reserved) {
 
 // public native boolean Init(AssetManager mgr);
 JNIEXPORT jboolean JNICALL
-Java_com_example_lksynthesizeapp_YoloV5Ncnn_Init(JNIEnv *env, jobject thiz, jobject assetManager) {
+Java_com_example_lksynthesizeapp_YoloV5Ncnn_Init(JNIEnv *env, jobject thiz, jobject assetManager, jint mode) {
     ncnn::Option opt;
     opt.lightmode = true;
     opt.num_threads = 4;
@@ -487,20 +487,66 @@ Java_com_example_lksynthesizeapp_YoloV5Ncnn_Init(JNIEnv *env, jobject thiz, jobj
 
     // init param
     {
-        int ret = yolov5.load_param(mgr, "yolov5s.param");
-        if (ret != 0) {
-            __android_log_print(ANDROID_LOG_DEBUG, "YoloV5Ncnn", "load_param failed");
-            return JNI_FALSE;
+        if (mode == 1){
+            int ret = yolov5.load_param(mgr, "bz220416_sim.param");
+            if (ret != 0) {
+                __android_log_print(ANDROID_LOG_DEBUG, "YoloV5Ncnn", "load_param failed");
+                return JNI_FALSE;
+            }
         }
+        if (mode == 2){
+            int ret = yolov5.load_param(mgr, "xy211223.param");
+            if (ret != 0) {
+                __android_log_print(ANDROID_LOG_DEBUG, "YoloV5Ncnn", "load_param failed");
+                return JNI_FALSE;
+            }
+        }
+        if (mode == 3){
+            int ret = yolov5.load_param(mgr, "yolov5s.param");
+            if (ret != 0) {
+                __android_log_print(ANDROID_LOG_DEBUG, "YoloV5Ncnn", "load_param failed");
+                return JNI_FALSE;
+            }
+        }
+//        22/10/22注释
+//        int ret = yolov5.load_param(mgr, "yolov5s.param");
+//        int ret = yolov5.load_param(mgr, "bz220416_sim.param");
+//        if (ret != 0) {
+//            __android_log_print(ANDROID_LOG_DEBUG, "YoloV5Ncnn", "load_param failed");
+//            return JNI_FALSE;
+//        }
     }
 
     // init bin
     {
-        int ret = yolov5.load_model(mgr, "yolov5s.bin");
-        if (ret != 0) {
-            __android_log_print(ANDROID_LOG_DEBUG, "YoloV5Ncnn", "load_model failed");
-            return JNI_FALSE;
+        if (mode == 1){
+            int ret = yolov5.load_model(mgr, "bz220416_sim.bin");
+            if (ret != 0) {
+                __android_log_print(ANDROID_LOG_DEBUG, "YoloV5Ncnn", "load_param failed");
+                return JNI_FALSE;
+            }
         }
+        if (mode == 2){
+            int ret = yolov5.load_model(mgr, "xy211223.bin");
+            if (ret != 0) {
+                __android_log_print(ANDROID_LOG_DEBUG, "YoloV5Ncnn", "load_param failed");
+                return JNI_FALSE;
+            }
+        }
+        if (mode == 3){
+            int ret = yolov5.load_model(mgr, "yolov5s.bin");
+            if (ret != 0) {
+                __android_log_print(ANDROID_LOG_DEBUG, "YoloV5Ncnn", "load_param failed");
+                return JNI_FALSE;
+            }
+        }
+//        22/10/22注释
+//        int ret = yolov5.load_model(mgr, "yolov5s.bin");
+//        int ret = yolov5.load_model(mgr, "bz220416_sim.bin");
+//        if (ret != 0) {
+//            __android_log_print(ANDROID_LOG_DEBUG, "YoloV5Ncnn", "load_model failed");
+//            return JNI_FALSE;
+//        }
     }
 
     // init jni glue
@@ -523,7 +569,7 @@ Java_com_example_lksynthesizeapp_YoloV5Ncnn_Init(JNIEnv *env, jobject thiz, jobj
 // public native Obj[] Detect(Bitmap bitmap, boolean use_gpu);
 JNIEXPORT jobjectArray JNICALL
 Java_com_example_lksynthesizeapp_YoloV5Ncnn_Detect(JNIEnv *env, jobject thiz, jobject bitmap,
-                                                   jboolean use_gpu) {
+                                                   jboolean use_gpu, jint mode) {
     if (use_gpu == JNI_TRUE && ncnn::get_gpu_count() == 0) {
         return NULL;
         //return env->NewStringUTF("no vulkan capable gpu");
@@ -568,8 +614,8 @@ Java_com_example_lksynthesizeapp_YoloV5Ncnn_Detect(JNIEnv *env, jobject thiz, jo
     // yolov5
     std::vector<Object> objects;
     {
-        //置信度prob_threshold
-        const float prob_threshold = 0.45f;
+        //置信度prob_threshold   0.45   0.45
+        const float prob_threshold = 0.55f;
         const float nms_threshold = 0.45f;
 
         const float norm_vals[3] = {1 / 255.f, 1 / 255.f, 1 / 255.f};
@@ -607,7 +653,17 @@ Java_com_example_lksynthesizeapp_YoloV5Ncnn_Detect(JNIEnv *env, jobject thiz, jo
         // stride 16
         {
             ncnn::Mat out;
-            ex.extract("414", out);
+            if (mode == 1){
+                ex.extract("375", out);
+            }
+            if (mode == 2){
+                ex.extract("414", out);
+            }
+            if (mode == 3){
+                ex.extract("414", out);
+            }
+//            22/10/22注释
+//            ex.extract("375", out);
 
             ncnn::Mat anchors(6);
             anchors[0] = 30.f;
@@ -626,7 +682,17 @@ Java_com_example_lksynthesizeapp_YoloV5Ncnn_Detect(JNIEnv *env, jobject thiz, jo
         // stride 32
         {
             ncnn::Mat out;
-            ex.extract("434", out);
+            if (mode == 1){
+                ex.extract("400", out);
+            }
+            if (mode == 2){
+                ex.extract("434", out);
+            }
+            if (mode == 3){
+                ex.extract("434", out);
+            }
+//            22/10/22注释
+//            ex.extract("400", out);
 
             ncnn::Mat anchors(6);
             anchors[0] = 116.f;
