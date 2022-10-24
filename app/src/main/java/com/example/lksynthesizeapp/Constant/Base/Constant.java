@@ -13,6 +13,8 @@ public class Constant {
     public static final int TAG_SEVEN=7;
     public static final int TAG_EIGHT=8;
     public static final int TAG_NINE=9;
+    public static final int TAG_TEN=10;
+    public static final int TWENTYFOUR=24;
     public static final int MODBUS_CODE=1;
 
 
