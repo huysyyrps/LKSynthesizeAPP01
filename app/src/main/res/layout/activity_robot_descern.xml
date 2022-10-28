@@ -368,7 +368,7 @@
                 android:layout_height="60dp"
                 android:background="@drawable/button_select"
                 android:drawableTop="@drawable/ic_finish"
-                android:text="设置"
+                android:text="返回"
                 android:textSize="12dp"
                 android:textColor="@color/whith"/>
         </RadioGroup>

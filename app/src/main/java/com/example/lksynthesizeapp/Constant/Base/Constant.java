@@ -19,7 +19,7 @@ public class Constant {
 
 
     public static final String URL="192.168.43.251";
-    public static final String PASSWORD="88888888";
+    public static final String PASSWORD="12345678";
 
 
 

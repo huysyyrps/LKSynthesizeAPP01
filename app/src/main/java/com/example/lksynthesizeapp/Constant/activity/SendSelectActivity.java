@@ -234,7 +234,7 @@ public class SendSelectActivity extends BaseActivity {
             loadingDialog.close();
             return;
         } else {
-            if (deviceName.equals("爬行器")) {
+            if (deviceName.equals("机器人")) {
                 connect("PXQHAVEDESCERN");
             }
             if (deviceName.equals("磁探机")) {
