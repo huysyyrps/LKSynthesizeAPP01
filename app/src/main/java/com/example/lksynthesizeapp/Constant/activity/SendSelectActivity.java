@@ -10,10 +10,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -59,8 +56,8 @@ public class SendSelectActivity extends BaseActivity {
     EditText etWorkName;
     @BindView(R.id.etWorkCode)
     EditText etWorkCode;
-    @BindView(R.id.spinner)
-    Spinner spinner;
+//    @BindView(R.id.spinner)
+//    Spinner spinner;
     //富有动感的Sheet弹窗
     Intent intent;
     @BindView(R.id.header)
@@ -74,8 +71,8 @@ public class SendSelectActivity extends BaseActivity {
     Disposable disposable;
     LoadingDialog loadingDialog;
     String deviceName;
-    private String[] starArray = {"mode1","mode2","mode3"};
-    private String selectMode = "";
+//    private String[] starArray = {"mode1","mode2","mode3"};
+//    private String selectMode = "";
 //    Timer timer;
 
     //推出程序
@@ -103,7 +100,7 @@ public class SendSelectActivity extends BaseActivity {
         deviceName = sharePreferencesUtils.getString(SendSelectActivity.this, "deviceName", "");
         Toast.makeText(intance, "WIFI名称"+ sharePreferencesUtils.getString(SendSelectActivity.this, "wifiName", "")+"\n"
                 +"WIFI密码"+Constant.PASSWORD, Toast.LENGTH_SHORT).show();
-        initSpinner();
+//        initSpinner();
     }
 
     @OnClick({R.id.tvConfim})
@@ -139,36 +136,36 @@ public class SendSelectActivity extends BaseActivity {
     }
 
 
-    private void initSpinner(){
-        //声明一个下拉列表的数组适配器
-        ArrayAdapter<String> starAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,starArray);
-        //设置数组适配器的布局样式
-        starAdapter.setDropDownViewResource(android.R.layout.simple_list_item_single_choice);
-        //从布局文件中获取名叫sp_dialog的下拉框
-        Spinner sp = findViewById(R.id.spinner);
-        //设置下拉框的标题，不设置就没有难看的标题了
-        sp.setPrompt("模型");
-        //设置下拉框的数组适配器
-        sp.setAdapter(starAdapter);
-        //设置下拉框默认的显示第一项
-        sp.setSelection(0);
-        //给下拉框设置选择监听器，一旦用户选中某一项，就触发监听器的onItemSelected方法
-        sp.setOnItemSelectedListener(new MySelectedListener());
-    }
+//    private void initSpinner(){
+//        //声明一个下拉列表的数组适配器
+//        ArrayAdapter<String> starAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,starArray);
+//        //设置数组适配器的布局样式
+//        starAdapter.setDropDownViewResource(android.R.layout.simple_list_item_single_choice);
+//        //从布局文件中获取名叫sp_dialog的下拉框
+//        Spinner sp = findViewById(R.id.spinner);
+//        //设置下拉框的标题，不设置就没有难看的标题了
+//        sp.setPrompt("模型");
+//        //设置下拉框的数组适配器
+//        sp.setAdapter(starAdapter);
+//        //设置下拉框默认的显示第一项
+//        sp.setSelection(0);
+//        //给下拉框设置选择监听器，一旦用户选中某一项，就触发监听器的onItemSelected方法
+//        sp.setOnItemSelectedListener(new MySelectedListener());
+//    }
 
-    class MySelectedListener implements AdapterView.OnItemSelectedListener{
-
-        @Override
-        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-//            Toast.makeText(SendSelectActivity.this,"您选择的是："+starArray[i],Toast.LENGTH_SHORT).show();
-            selectMode = starArray[i];
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> adapterView) {
-
-        }
-    }
+//    class MySelectedListener implements AdapterView.OnItemSelectedListener{
+//
+//        @Override
+//        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+////            Toast.makeText(SendSelectActivity.this,"您选择的是："+starArray[i],Toast.LENGTH_SHORT).show();
+//            selectMode = starArray[i];
+//        }
+//
+//        @Override
+//        public void onNothingSelected(AdapterView<?> adapterView) {
+//
+//        }
+//    }
 
     private void haveAddress() {
         disposable = Observable.interval(0, 3, TimeUnit.SECONDS)
@@ -251,7 +248,7 @@ public class SendSelectActivity extends BaseActivity {
             intent.putExtra("project", etProject.getText().toString().trim());
             intent.putExtra("etWorkName", etWorkName.getText().toString().trim());
             intent.putExtra("etWorkCode", etWorkCode.getText().toString().trim());
-            intent.putExtra("selectMode",selectMode);
+//            intent.putExtra("selectMode",selectMode);
             startActivity(intent);
         }
         if (tag.equals("CFTSYHAVEDESCERN")) {
@@ -259,7 +256,7 @@ public class SendSelectActivity extends BaseActivity {
             intent.putExtra("project", etProject.getText().toString().trim());
             intent.putExtra("etWorkName", etWorkName.getText().toString().trim());
             intent.putExtra("etWorkCode", etWorkCode.getText().toString().trim());
-            intent.putExtra("selectMode",selectMode);
+//            intent.putExtra("selectMode",selectMode);
             startActivity(intent);
         }
         loadingDialog.close();
