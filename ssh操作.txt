@@ -20,4 +20,23 @@
 	/*读取mac*/
 	ifconfig | grep apcli0 | awk '{ print $5 }'
 
-	
+/*服务重启*/
+/etc/init.d/mjpg-streamer restart
+
+/*关闭AP*/
+wifimode ap
+
+/*关闭设备蜂鸣器*/
+beeper off
+
+/*开启设备蜂鸣器*/
+beeper on
+
+/*重启设备*/
+reboot
+
+/*帧数设置*/
+uci set mjpg-streamer.core.fps= 帧数, "uci commit", "/etc/init.d/mjpg-streamer restart
+
+/*像素设置*/
+uci set mjpg-streamer.core.resolution=像素, "uci commit", "/etc/init.d/mjpg-streamer restart

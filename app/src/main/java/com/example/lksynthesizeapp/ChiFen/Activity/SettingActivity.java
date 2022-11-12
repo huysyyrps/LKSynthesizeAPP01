@@ -99,30 +99,13 @@ public class SettingActivity extends BaseActivity implements VersionInfoContract
 //                            ShowDialog("uci set mjpg-streamer.core.fps=30", "uci commit", "/etc/init.d/mjpg-streamer restart");
                         }
 
-                        //关闭AP
-                        if (setting.getTitle().equals("关闭AP")) {
-                            new AlertDialogUtil(SettingActivity.this).showDialog("您确定要关闭AP吗？", new AlertDialogCallBack() {
-                                @Override
-                                public void confirm(String name) {
-                                    ShowDialog("wifimode ap", "设备关闭中");
-                                }
-
-                                @Override
-                                public void cancel() {
-
-                                }
-
-                                @Override
-                                public void save(String name) {
-
-                                }
-
-                                @Override
-                                public void checkName(String name) {
-
-                                }
-                            });
-//                            ShowDialog("uci set mjpg-streamer.core.fps=30", "uci commit", "/etc/init.d/mjpg-streamer restart");
+                        //关闭设备蜂鸣器
+                        if (setting.getTitle().equals("关闭设备蜂鸣器")) {
+                            ShowDialog("beeper off", "关闭中...");
+                        }
+                        //开启设备蜂鸣器
+                        if (setting.getTitle().equals("开启设备蜂鸣器")) {
+                            ShowDialog("beeper on", "开启中...");
                         }
 
                         //重启设备
@@ -263,9 +246,14 @@ public class SettingActivity extends BaseActivity implements VersionInfoContract
         settingList.add(setting6);
 
         Setting setting8 = new Setting();
-        setting8.setTitle("关闭AP");
+        setting8.setTitle("关闭设备蜂鸣器");
         setting8.setImagePath(R.drawable.ic_service);
         settingList.add(setting8);
+
+        Setting setting9 = new Setting();
+        setting9.setTitle("开启设备蜂鸣器");
+        setting9.setImagePath(R.drawable.ic_open_fengming);
+        settingList.add(setting9);
 
     }
 
@@ -291,7 +279,7 @@ public class SettingActivity extends BaseActivity implements VersionInfoContract
      */
     private void ShowDialog(String data1, String title) {
         try {
-            loadingDialog.setLoadingText(getResources().getString(R.string.device_setting))
+            loadingDialog.setLoadingText(title)
 //                        .setSuccessText("加载成功")//显示加载成功时的文字
                     //.setFailedText("加载失败")
                     .setSize(200)
@@ -455,7 +443,7 @@ public class SettingActivity extends BaseActivity implements VersionInfoContract
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case Constant.TAG_ONE:
-                    Toast.makeText(SettingActivity.this, "重启成功", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SettingActivity.this, "设置成功", Toast.LENGTH_SHORT).show();
                     loadingDialog.close();
                     finish();
                     break;
@@ -464,6 +452,7 @@ public class SettingActivity extends BaseActivity implements VersionInfoContract
                     loadingDialog.close();
                     break;
                 case Constant.TAG_THERE:
+                    Toast.makeText(SettingActivity.this, "重启成功", Toast.LENGTH_SHORT).show();
                     new DescernActivity().intance.finish();
                     new SendSelectActivity().intance.finish();
                     System.exit(0);

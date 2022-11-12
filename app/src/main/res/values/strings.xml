@@ -58,7 +58,7 @@
     <string name="dialog_close">请检查设备是否正常运行</string>
     <string name="device_connect">设备连接中...</string>
     <string name="dialog_loding">数据加载中...</string>
-    <string name="device_setting">设备设置中...</string>
+    <string name="device_setting">设置中...</string>
     <string name="net_error">java.net.ConnectException: Failed to connect</string>
     <string name="conniction">连接</string>
     <string name="discon">断开</string>

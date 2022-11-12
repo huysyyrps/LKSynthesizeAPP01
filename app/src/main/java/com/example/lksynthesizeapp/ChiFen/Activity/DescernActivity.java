@@ -91,6 +91,10 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
     TextView tvState;
     @BindView(R.id.chronometer)
     Chronometer chronometer;
+    @BindView(R.id.rbDescern)
+    RadioButton rbDescern;
+    @BindView(R.id.rbNoDescern)
+    RadioButton rbNoDescern;
     private String url;
     private Bitmap bmp = null;
     private Bitmap rgba;
@@ -117,8 +121,8 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
             Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.FOREGROUND_SERVICE};
     private MediaRecorder mediaRecorder;
     public static DescernActivity intance = null;
-//    private String selectMode;
-    private int  selectnum;
+    //    private String selectMode;
+    private boolean openDescern = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -202,9 +206,22 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
             inputstream = conn.getInputStream();
             //创建出一个bitmap
             bmp = BitmapFactory.decodeStream(inputstream);
+//            int wehit = bmp.getWidth();
+//            int height = bmp.getHeight();
+//            Log.e("XXX",wehit+"~"+height);
+//            Bitmap bitmap = Bitmap.createBitmap(bmp.getWidth() / 2, bmp.getHeight() / 2, Bitmap.Config.ARGB_8888);
+//            Log.e("XXX",bitmap.getWidth()+"~"+bitmap.getHeight());
 //            YoloV5Ncnn.Obj[] objects = yolov5ncnn.Detect(bmp, false,selectnum);
-            YoloV5Ncnn.Obj[] objects = yolov5ncnn.Detect(bmp, false);
-            showObjects(objects);
+            YoloV5Ncnn.Obj[] objects = null;
+            long startTime = System.currentTimeMillis();
+            if (openDescern){
+                objects = yolov5ncnn.Detect(bmp, false);
+                long endTime = System.currentTimeMillis();
+                Log.e("XXX",startTime-endTime+"");
+                showObjects(objects);
+            }else {
+                showObjects(objects);
+            }
             //关闭HttpURLConnection连接
             conn.disconnect();
         } catch (Exception ex) {
@@ -217,7 +234,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
     }
 
     private void showObjects(YoloV5Ncnn.Obj[] objects) {
-        if (objects.length == 0) {
+        if (objects==null||objects.length == 0) {
             Message message = new Message();
             message.what = Constant.TAG_ONE;
             message.obj = bmp;
@@ -268,9 +285,19 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         runing = false;
     }
 
-    @OnClick({R.id.rbCamera, R.id.rbVideo, R.id.rbAlbum, R.id.rbBack, R.id.linearLayoutStop, R.id.rbSetting})
+    @OnClick({R.id.rbCamera, R.id.rbVideo, R.id.rbAlbum, R.id.rbBack, R.id.linearLayoutStop, R.id.rbSetting, R.id.rbDescern, R.id.rbNoDescern})
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.rbDescern:
+                rbDescern.setVisibility(View.GONE);
+                rbNoDescern.setVisibility(View.VISIBLE);
+                openDescern = !openDescern;
+                break;
+            case R.id.rbNoDescern:
+                rbDescern.setVisibility(View.VISIBLE);
+                rbNoDescern.setVisibility(View.GONE);
+                openDescern = !openDescern;
+                break;
             case R.id.rbCamera:
                 if (toast != null) {
                     toast.cancel();
@@ -564,4 +591,5 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
             }
         }
     };
+
 }

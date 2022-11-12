@@ -314,14 +314,34 @@
             android:layout_marginLeft="6dp"
             android:orientation="horizontal">
             <RadioButton
-                android:id="@+id/rbOther"
-                style="@style/MainRadionButton"
-                android:layout_height="60dp"
-                android:background="@drawable/button_select"
-                android:drawableTop="@drawable/ic_other"
-                android:text="其他"
-                android:textSize="12dp"
-                android:textColor="@color/whith"/>
+                    android:id="@+id/rbDescern"
+                    android:visibility="gone"
+                    style="@style/MainRadionButton"
+                    android:layout_height="60dp"
+                    android:background="@drawable/button_select"
+                    android:drawableTop="@drawable/ic_descern_open"
+                    android:text="识别已开启"
+                    android:textSize="11dp"
+                    android:textColor="@color/whith"/>
+
+            <RadioButton
+                    android:id="@+id/rbNoDescern"
+                    style="@style/MainRadionButton"
+                    android:layout_height="60dp"
+                    android:background="@drawable/button_select"
+                    android:drawableTop="@drawable/ic_descern_close"
+                    android:text="识别已关闭"
+                    android:textSize="11dp"
+                    android:textColor="@color/red"/>
+            <RadioButton
+                    android:id="@+id/rbOther"
+                    style="@style/MainRadionButton"
+                    android:layout_height="60dp"
+                    android:background="@drawable/button_select"
+                    android:drawableTop="@drawable/ic_other"
+                    android:text="其他"
+                    android:textSize="12dp"
+                    android:textColor="@color/whith"/>
 
             <RadioButton
                 android:id="@+id/rbCamera"

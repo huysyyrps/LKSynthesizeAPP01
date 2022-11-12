@@ -133,6 +133,10 @@ public class RobotDescernActivity extends AppCompatActivity {
     RadioButton rbOther;
     @BindView(R.id.tvSpace)
     TextView tvSpace;
+    @BindView(R.id.rbDescern)
+    RadioButton rbDescern;
+    @BindView(R.id.rbNoDescern)
+    RadioButton rbNoDescern;
     private String url;
     private Bitmap bmp = null;
     private Thread mythread, saveThread;
@@ -164,6 +168,7 @@ public class RobotDescernActivity extends AppCompatActivity {
     private MediaRecorder mediaRecorder;
     public long saveTime = 0;
     public long currentTmeTime = 0;
+    private boolean openDescern = false;
 //    private String selectMode;
 //    private int selectnum;
 
@@ -339,9 +344,20 @@ public class RobotDescernActivity extends AppCompatActivity {
     @OnClick({R.id.btnStop, R.id.tvSpeed, R.id.tvCHTime,
             R.id.tvCEControl, R.id.tvLightSelect, R.id.tvSearchlightControl,
             R.id.tvCHControl, R.id.rbCamera, R.id.rbVideo, R.id.rbAlbum,
-            R.id.linearLayoutStop, R.id.rbSetting, R.id.tvBattery, R.id.rbBack, R.id.rbOther, R.id.tvSpace})
+            R.id.linearLayoutStop, R.id.rbSetting, R.id.tvBattery, R.id.rbBack,
+            R.id.rbOther, R.id.tvSpace, R.id.rbDescern, R.id.rbNoDescern})
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.rbDescern:
+                rbDescern.setVisibility(View.GONE);
+                rbNoDescern.setVisibility(View.VISIBLE);
+                openDescern = !openDescern;
+                break;
+            case R.id.rbNoDescern:
+                rbDescern.setVisibility(View.VISIBLE);
+                rbNoDescern.setVisibility(View.GONE);
+                openDescern = !openDescern;
+                break;
             case R.id.rbOther:
                 if (linearLayoutWrite.getVisibility() == View.VISIBLE) {
                     linearLayoutWrite.setVisibility(View.GONE);
@@ -791,7 +807,13 @@ public class RobotDescernActivity extends AppCompatActivity {
             //创建出一个bitmap
             bmp = BitmapFactory.decodeStream(inputstream);
 //            YoloV5Ncnn.Obj[] objects = yolov5ncnn.Detect(bmp, false, selectnum);
-            YoloV5Ncnn.Obj[] objects = yolov5ncnn.Detect(bmp, false);
+            YoloV5Ncnn.Obj[] objects = null;
+            if (openDescern){
+                objects = yolov5ncnn.Detect(bmp, false);
+                showObjects(objects);
+            }else {
+                showObjects(objects);
+            }
             showObjects(objects);
             //关闭HttpURLConnection连接
             conn.disconnect();
@@ -806,7 +828,7 @@ public class RobotDescernActivity extends AppCompatActivity {
     }
 
     private void showObjects(YoloV5Ncnn.Obj[] objects) {
-        if (objects.length == 0) {
+        if (objects==null||objects.length == 0) {
             Message message = new Message();
             message.what = TAG_ONE;
             message.obj = bmp;
