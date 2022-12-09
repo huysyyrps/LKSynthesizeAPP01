@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <resources>
-    <string name="app_name">鲁科检测系统</string>
+    <string name="app_name">鲁科智能检测系统</string>
     <string-array name="model_array">
         <item>211223</item>
         <item>5s</item>

@@ -76,6 +76,27 @@ public class ImageSave {
     }
 
     /**
+     * 保存图片方法
+     */
+    public static boolean saveBitmapFile(File file, Context context, Bitmap bitmap) {
+        try {
+            FileOutputStream outputStream = new FileOutputStream(file);     //构建输出流
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);  //compress到输出outputStream
+            Uri uri = Uri.fromFile(file);                                  //获得图片的uri
+            context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri)); //发送广播通知更新图库，这样系统图库可以找到这张图片
+            outputStream.flush();
+            outputStream.close();
+            return true;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
      * 获取当前时间,用来给文件夹命名
      */
     private String getNowDate() {

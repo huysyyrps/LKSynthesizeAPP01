@@ -17,7 +17,6 @@
     <color name="light">#47aaed</color>
     <color name="pink">#EBEBF1</color>
     <color name="editbg">#47aaed</color>
-    <color name="transparent">#000000</color>
     <color name="color_bg_selected_big">#47aaed</color>
     <color name="color_bg_selected1">#0075D2</color>
     <color name="color_bg_selected">#F5B12A</color>
@@ -281,8 +280,8 @@
     <color name="translucent_color2">#4DFFFFFF</color>
     <color name="translucent_color3">#10000000</color>
     <color name="dialog_color">#44444444</color>
-
     <color name="company_color">#f4b129</color>
+    <color name="transparent">#00000000</color>
     <color name="header_color">#262626</color>
 <!--    <color name="black">#000000</color>&lt;!&ndash;黑色 &ndash;&gt;-->
     <color name="black">#000000</color><!--黑色 -->

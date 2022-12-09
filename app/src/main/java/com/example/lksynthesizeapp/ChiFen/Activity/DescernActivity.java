@@ -213,13 +213,13 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
 //            Log.e("XXX",bitmap.getWidth()+"~"+bitmap.getHeight());
 //            YoloV5Ncnn.Obj[] objects = yolov5ncnn.Detect(bmp, false,selectnum);
             YoloV5Ncnn.Obj[] objects = null;
-            long startTime = System.currentTimeMillis();
-            if (openDescern){
+//            long startTime = System.currentTimeMillis();
+            if (openDescern) {
                 objects = yolov5ncnn.Detect(bmp, false);
-                long endTime = System.currentTimeMillis();
-                Log.e("XXX",startTime-endTime+"");
+//                long endTime = System.currentTimeMillis();
+//                Log.e("XXX",startTime-endTime+"");
                 showObjects(objects);
-            }else {
+            } else {
                 showObjects(objects);
             }
             //关闭HttpURLConnection连接
@@ -234,37 +234,53 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
     }
 
     private void showObjects(YoloV5Ncnn.Obj[] objects) {
-        if (objects==null||objects.length == 0) {
-            Message message = new Message();
-            message.what = Constant.TAG_ONE;
-            message.obj = bmp;
-            handlerLoop.sendMessage(message);
+        if (objects == null || objects.length == 0) {
+//            Message message = new Message();
+//            message.what = Constant.TAG_ONE;
+//            message.obj = bmp;
+//            handlerLoop.sendMessage(message);
+            imageView.setImageBitmap(bmp);
             return;
-        } else {
-            Bitmap rgba = bmp.copy(Bitmap.Config.ARGB_8888, true);
-            Canvas canvas = new Canvas(rgba);
-            for (int i = 0; i < objects.length; i++) {
-                canvas.drawRect(objects[i].x, objects[i].y, objects[i].x + objects[i].w, objects[i].y + objects[i].h, new MyPaint().getLinePaint());
-                {
-                    String text = objects[i].label + " = " + String.format("%.1f", objects[i].prob * 100) + "%";
-
-                    float text_width = new MyPaint().getTextpaint().measureText(text) + 10;
-                    float text_height = -new MyPaint().getTextpaint().ascent() + new MyPaint().getTextpaint().descent() + 10;
-
-                    float x = objects[i].x;
-                    float y = objects[i].y - text_height;
-                    if (y < 0)
-                        y = 0;
-                    if (x + text_width > rgba.getWidth())
-                        x = rgba.getWidth() - text_width;
-                    canvas.drawText(text, x, y - new MyPaint().getTextpaint().ascent(), new MyPaint().getTextpaint());
-                }
-            }
-            Message message = new Message();
-            message.what = Constant.TAG_FOUR;
-            message.obj = rgba;
-            handlerLoop.sendMessage(message);
         }
+
+        Bitmap rgba = bmp.copy(Bitmap.Config.ARGB_8888, true);
+        Canvas canvas = new Canvas(rgba);
+        for (int i = 0; i < objects.length; i++) {
+            canvas.drawRect(objects[i].x, objects[i].y, objects[i].x + objects[i].w, objects[i].y + objects[i].h, new MyPaint().getLinePaint());
+            {
+                String text = objects[i].label + " = " + String.format("%.1f", objects[i].prob * 100) + "%";
+
+                float text_width = new MyPaint().getTextpaint().measureText(text) + 10;
+                float text_height = -new MyPaint().getTextpaint().ascent() + new MyPaint().getTextpaint().descent() + 10;
+
+                float x = objects[i].x;
+                float y = objects[i].y - text_height;
+                if (y < 0)
+                    y = 0;
+                if (x + text_width > rgba.getWidth())
+                    x = rgba.getWidth() - text_width;
+                canvas.drawText(text, x, y - new MyPaint().getTextpaint().ascent(), new MyPaint().getTextpaint());
+            }
+        }
+        imageView.setImageBitmap(rgba);
+        mediaPlayer.start();
+        if (isFirst) {
+            saveImageToGallery(DescernActivity.this, rgba);
+            saveTime = System.currentTimeMillis();
+            isFirst = false;
+        } else {
+            currentTmeTime = System.currentTimeMillis();
+            if (currentTmeTime - saveTime > 3000) {
+                saveImageToGallery(DescernActivity.this, rgba);
+                saveTime = currentTmeTime;
+                isFirst = true;
+            }
+        }
+//            Message message = new Message();
+//            message.what = Constant.TAG_FOUR;
+//            message.obj = rgba;
+//            handlerLoop.sendMessage(message);
+
     }
 
     public static void saveImageToGallery(Context context, Bitmap bmp) {
