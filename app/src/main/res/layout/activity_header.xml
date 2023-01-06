@@ -99,30 +99,6 @@
                 android:textSize="14dp" />
 
         </LinearLayout>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="32dp"
-            android:gravity="center"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="连接状态\t:\t"
-                android:textColor="@color/red"
-                android:textSize="14dp" />
-
-            <TextView
-                android:id="@+id/tvState"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:maxLength="15"
-                android:text="@string/conniction"
-                android:textColor="@color/red"
-                android:textSize="14dp" />
-
-        </LinearLayout>
 
     </LinearLayout>
 

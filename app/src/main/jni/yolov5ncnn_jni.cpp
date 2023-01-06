@@ -486,7 +486,7 @@ Java_com_example_lksynthesizeapp_YoloV5Ncnn_Init(JNIEnv *env, jobject thiz, jobj
     yolov5.register_custom_layer("YoloV5Focus", YoloV5Focus_layer_creator);
 
     // init param
-    int ret = yolov5.load_param(mgr, "best221031_sim.param");
+    int ret = yolov5.load_param(mgr, "best221209_sim.param");
     if (ret != 0) {
         __android_log_print(ANDROID_LOG_DEBUG, "YoloV5Ncnn", "load_param failed");
         return JNI_FALSE;
@@ -524,7 +524,7 @@ Java_com_example_lksynthesizeapp_YoloV5Ncnn_Init(JNIEnv *env, jobject thiz, jobj
 
     // init bin
     {
-        int ret = yolov5.load_model(mgr, "best221031_sim.bin");
+        int ret = yolov5.load_model(mgr, "best221209_sim.bin");
         if (ret != 0) {
             __android_log_print(ANDROID_LOG_DEBUG, "YoloV5Ncnn", "load_param failed");
             return JNI_FALSE;
@@ -625,7 +625,7 @@ Java_com_example_lksynthesizeapp_YoloV5Ncnn_Detect(JNIEnv *env, jobject thiz, jo
     std::vector<Object> objects;
     {
         //置信度prob_threshold   0.45   0.45
-        const float prob_threshold = 0.70f;
+        const float prob_threshold = 0.45f;
         const float nms_threshold = 0.45f;
 
         const float norm_vals[3] = {1 / 255.f, 1 / 255.f, 1 / 255.f};
@@ -754,7 +754,7 @@ Java_com_example_lksynthesizeapp_YoloV5Ncnn_Detect(JNIEnv *env, jobject thiz, jo
 
     // objects to Obj[]
     static const char *class_names[] = {
-            "Circulardefect", "crack"
+            "Circulardefect", "crack","inclusion"
     };
 
     jobjectArray jObjArray = env->NewObjectArray(objects.size(), objCls, NULL);

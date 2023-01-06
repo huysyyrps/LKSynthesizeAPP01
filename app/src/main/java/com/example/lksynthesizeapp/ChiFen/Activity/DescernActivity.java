@@ -87,8 +87,6 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
     TextView tvDeviceCode;
     @BindView(R.id.linlayoutData)
     LinearLayout linlayoutData;
-    @BindView(R.id.tvState)
-    TextView tvState;
     @BindView(R.id.chronometer)
     Chronometer chronometer;
     @BindView(R.id.rbDescern)
@@ -559,7 +557,6 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                 case Constant.TAG_ONE:
                     Bitmap bit = (Bitmap) msg.obj;
                     imageView.setImageBitmap(bit);
-                    tvState.setText(getResources().getString(R.string.conniction));
                     break;
                 case Constant.TAG_THERE:
                     String toastString = msg.obj.toString();
@@ -570,14 +567,12 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                         break;
                     } else {
                         Toast.makeText(DescernActivity.this, msg.obj.toString(), Toast.LENGTH_SHORT).show();
-                        tvState.setText(getResources().getString(R.string.discon));
                     }
                     Log.e("XXX", toastString);
                     break;
                 case Constant.TAG_FOUR:
                     Bitmap bitH = (Bitmap) msg.obj;
                     imageView.setImageBitmap(bitH);
-                    tvState.setText(getResources().getString(R.string.conniction));
                     saveThread = new Thread(new Runnable() {
                         @Override
                         public void run() {
