@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.text.InputFilter;
 import android.text.SpannableString;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.lksynthesizeapp.ChiFen.Modbus.ModbusCallBack;
+import com.example.lksynthesizeapp.ChiFen.View.DecimalDigitsInputFilter;
 import com.example.lksynthesizeapp.R;
 
 
@@ -106,7 +108,7 @@ public class AlertDialogUtil {
         }
     }
 
-    public void showWriteDialog(String hint, final ModbusCallBack modbusCallBack) {
+    public void showWriteDialog(String hint, int num, final ModbusCallBack modbusCallBack) {
         if (dialog == null || !dialog.isShowing()) {
             dialog = new Dialog(context);
             dialog.setCancelable(true);
@@ -115,6 +117,7 @@ public class AlertDialogUtil {
             LayoutInflater inflater = LayoutInflater.from(context);
             View view = inflater.inflate(R.layout.dialog_with_write, null, false);
             EditText editText = (EditText) view.findViewById(R.id.edittext);
+            editText.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(num), new InputFilter.LengthFilter(8)});
             SpannableString s = new SpannableString(hint);//这里输入自己想要的提示文字
             editText.setHint(s);
             TextView tvYes = (TextView) view.findViewById(R.id.yes);

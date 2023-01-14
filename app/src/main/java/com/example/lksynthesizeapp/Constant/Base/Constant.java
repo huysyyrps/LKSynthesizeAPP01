@@ -21,7 +21,14 @@ public class Constant {
     public static final String URL="192.168.43.251";
     public static final String PASSWORD="12345678";
 
+//    public static final int STATUS_CONNECT_ERROR = -1;
+//    public static final int STATUS_CONNECT_CLOSED = 0;
+//    public static final int STATUS_CONNECT_SUCCESS = 1;
 
+    //tcp心跳帧头
+    public static final String HEART_FRAME="A1";
+    public static final String HEART_COMMAND="1A";
+    public static final String HEART_DATA="2A";
 
 
     //方向控制

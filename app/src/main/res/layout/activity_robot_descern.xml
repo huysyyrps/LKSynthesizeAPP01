@@ -24,7 +24,7 @@
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="200dp"
+            android:layout_height="180dp"
             android:layout_margin="3dp"
             android:orientation="vertical"
             android:background="@drawable/linelayout_yello_pxqradion">
@@ -62,32 +62,6 @@
 
                 <TextView
                     style="@style/SpideTextView"
-                    android:text="黑白选择  :"
-                    android:layout_width="70dp"/>
-
-                <TextView
-                    android:id="@+id/tvLightSelect"
-                    style="@style/SpideTextView"
-                    android:layout_marginLeft="0dp"
-                    android:text="---"
-                    android:layout_width="80dp"/>
-
-                <ImageView
-                    android:layout_width="12dp"
-                    android:layout_height="12dp"
-                    android:layout_gravity="center|right"
-                    android:layout_marginRight="10dp"
-                    android:src="@drawable/ic_triangle_red" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:orientation="horizontal">
-
-                <TextView
-                    style="@style/SpideTextView"
                     android:text="磁化控制  :"
                     android:layout_width="70dp"/>
 
@@ -105,7 +79,6 @@
                     android:layout_marginRight="10dp"
                     android:src="@drawable/ic_triangle_red" />
             </LinearLayout>
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -118,7 +91,7 @@
                     android:layout_width="70dp"/>
 
                 <TextView
-                    android:id="@+id/tvSearchlightControl"
+                    android:id="@+id/tvLight"
                     style="@style/SpideTextView"
                     android:layout_marginLeft="0dp"
                     android:text="---"
@@ -131,7 +104,6 @@
                     android:layout_marginRight="10dp"
                     android:src="@drawable/ic_triangle_red" />
             </LinearLayout>
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -144,7 +116,7 @@
                     android:layout_width="70dp"/>
 
                 <TextView
-                    android:id="@+id/tvBattery"
+                    android:id="@+id/tvSpary"
                     style="@style/SpideTextView"
                     android:layout_marginLeft="0dp"
                     android:text="---"
@@ -157,146 +129,380 @@
                     android:layout_marginRight="10dp"
                     android:src="@drawable/ic_triangle_red" />
             </LinearLayout>
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
 
+                <TextView
+                        style="@style/SpideTextView"
+                        android:text="黑白选择  :"
+                        android:layout_width="70dp"/>
+
+                <TextView
+                        android:id="@+id/tvLightSelect"
+                        style="@style/SpideTextView"
+                        android:layout_marginLeft="0dp"
+                        android:text="---"
+                        android:layout_width="80dp"/>
+
+                <ImageView
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:layout_gravity="center|right"
+                        android:layout_marginRight="10dp"
+                        android:src="@drawable/ic_triangle_red" />
+            </LinearLayout>
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                <TextView
+                        style="@style/SpideTextView"
+                        android:text="控制模式  :"
+                        android:layout_width="70dp"/>
+
+                <TextView
+                        android:id="@+id/tvControl"
+                        style="@style/SpideTextView"
+                        android:layout_marginLeft="0dp"
+                        android:text="---"
+                        android:layout_width="80dp"/>
+
+                <ImageView
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:visibility="invisible"
+                        android:layout_gravity="center|right"
+                        android:layout_marginRight="10dp"
+                        android:src="@drawable/ic_triangle_red" />
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/linearLayoutWrite"
             android:visibility="invisible"
+                android:layout_margin="3dp"
             android:layout_width="wrap_content"
-            android:layout_height="200dp"
-            android:layout_margin="3dp"
-            android:orientation="vertical"
-            android:background="@drawable/linelayout_yello_pxqradion">
+            android:layout_height="180dp"
+            android:orientation="horizontal">
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:orientation="horizontal">
+                    android:layout_width="wrap_content"
+                    android:layout_height="180dp"
+                    android:orientation="vertical"
+                    android:background="@drawable/linelayout_yello_pxqradion">
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
 
-                <TextView
-                    style="@style/SpideTextView"
-                    android:layout_width="70dp"
-                    android:text="爬行速度  :" />
+                    <TextView
+                            style="@style/SpideTextView"
+                            android:text="保护电压  :"
+                            android:layout_width="70dp"/>
 
-                <TextView
-                    android:id="@+id/tvSpeed"
-                    style="@style/SpideTextView"
-                    android:layout_width="80dp"
-                    android:text="---" />
+                    <TextView
+                            android:id="@+id/tvProtectVoltage"
+                            style="@style/SpideTextView"
+                            android:layout_marginLeft="0dp"
+                            android:text="---"
+                            android:layout_width="80dp"/>
 
-                <ImageView
-                    android:layout_width="12dp"
-                    android:layout_height="12dp"
-                    android:layout_gravity="center|right"
-                    android:layout_marginRight="10dp"
-                    android:src="@drawable/ic_triangle_red" />
+                    <ImageView
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:layout_gravity="center|right"
+                            android:layout_marginRight="10dp"
+                            android:src="@drawable/ic_triangle_red" />
+                </LinearLayout>
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                    <TextView
+                            style="@style/SpideTextView"
+                            android:layout_width="70dp"
+                            android:text="保护电流  :" />
+
+                    <TextView
+                            android:id="@+id/tvProtectCurrent"
+                            style="@style/SpideTextView"
+                            android:layout_width="80dp"
+                            android:text="---" />
+
+                    <ImageView
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:layout_gravity="center|right"
+                            android:layout_marginRight="10dp"
+                            android:src="@drawable/ic_triangle_red" />
+                </LinearLayout>
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                    <TextView
+                            style="@style/SpideTextView"
+                            android:layout_width="70dp"
+                            android:text="运行速度  :" />
+
+                    <TextView
+                            android:id="@+id/tvRunningSpeed"
+                            style="@style/SpideTextView"
+                            android:layout_width="80dp"
+                            android:text="---" />
+
+                    <ImageView
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:layout_gravity="center|right"
+                            android:layout_marginRight="10dp"
+                            android:src="@drawable/ic_triangle_red" />
+                </LinearLayout>
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                    <TextView
+                            style="@style/SpideTextView"
+                            android:text="运行距离  :"
+                            android:layout_width="70dp"/>
+
+                    <TextView
+                            android:id="@+id/tvRunningDistance"
+                            style="@style/SpideTextView"
+                            android:layout_marginLeft="0dp"
+                            android:text="---"
+                            android:layout_width="80dp"/>
+
+                    <ImageView
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:layout_gravity="center|right"
+                            android:layout_marginRight="10dp"
+                            android:src="@drawable/ic_triangle_red" />
+                </LinearLayout>
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                    <TextView
+                            style="@style/SpideTextView"
+                            android:text="磁化间隔  :"
+                            android:layout_width="70dp"/>
+
+                    <TextView
+                            android:id="@+id/tvMagnetizeDistance"
+                            style="@style/SpideTextView"
+                            android:layout_marginLeft="0dp"
+                            android:text="---"
+                            android:layout_width="80dp"/>
+
+                    <ImageView
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:layout_gravity="center|right"
+                            android:layout_marginRight="10dp"
+                            android:src="@drawable/ic_triangle_red" />
+                </LinearLayout>
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                    <TextView
+                            style="@style/SpideTextView"
+                            android:text="行进距离  :"
+                            android:layout_width="70dp"/>
+
+                    <TextView
+                            android:id="@+id/tvDistance"
+                            style="@style/SpideTextView"
+                            android:layout_width="80dp"
+                            android:layout_height="match_parent"
+                            android:text="---" />
+
+                    <ImageView
+                            android:visibility="invisible"
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:layout_gravity="center|right"
+                            android:layout_marginRight="10dp"
+                            android:src="@drawable/ic_triangle_red" />
+                </LinearLayout>
             </LinearLayout>
-
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:orientation="horizontal">
+                    android:layout_width="wrap_content"
+                    android:layout_height="180dp"
+                    android:orientation="vertical"
+                    android:layout_marginLeft="3dp"
+                    android:background="@drawable/linelayout_yello_pxqradion">
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
 
-                <TextView
-                    style="@style/SpideTextView"
-                    android:text="磁化时间  :"
-                    android:layout_width="70dp"/>
+                    <TextView
+                            style="@style/SpideTextView"
+                            android:text="磁化时间  :"
+                            android:layout_width="70dp"/>
 
-                <TextView
-                    android:id="@+id/tvCHTime"
-                    style="@style/SpideTextView"
-                    android:layout_marginLeft="0dp"
-                    android:text="---"
-                    android:layout_width="80dp"/>
+                    <TextView
+                            android:id="@+id/tvMagnetizeTime"
+                            style="@style/SpideTextView"
+                            android:layout_width="80dp"
+                            android:layout_height="match_parent"
+                            android:text="---" />
 
-                <ImageView
-                    android:layout_width="12dp"
-                    android:layout_height="12dp"
-                    android:layout_gravity="center|right"
-                    android:layout_marginRight="10dp"
-                    android:src="@drawable/ic_triangle_red" />
-            </LinearLayout>
+                    <ImageView
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:layout_gravity="center|right"
+                            android:layout_marginRight="10dp"
+                            android:src="@drawable/ic_triangle_red" />
+                </LinearLayout>
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:orientation="horizontal">
+                    <TextView
+                            style="@style/SpideTextView"
+                            android:text="磁化电压  :"
+                            android:layout_width="70dp"/>
 
-                <TextView
-                    style="@style/SpideTextView"
-                    android:text="间隔距离  :"
-                    android:layout_width="70dp"/>
+                    <TextView
+                            android:id="@+id/tvMagnetizeVoltage"
+                            style="@style/SpideTextView"
+                            android:layout_marginLeft="0dp"
+                            android:text="---"
+                            android:layout_width="80dp"/>
 
-                <TextView
-                    android:id="@+id/tvSpace"
-                    style="@style/SpideTextView"
-                    android:layout_marginLeft="0dp"
-                    android:text="---"
-                    android:layout_width="80dp"/>
+                    <ImageView
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:layout_gravity="center|right"
+                            android:layout_marginRight="10dp"
+                            android:src="@drawable/ic_triangle_red" />
+                </LinearLayout>
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
 
-                <ImageView
-                    android:layout_width="12dp"
-                    android:layout_height="12dp"
-                    android:layout_gravity="center|right"
-                    android:layout_marginRight="10dp"
-                    android:src="@drawable/ic_triangle_red" />
-            </LinearLayout>
+                    <TextView
+                            style="@style/SpideTextView"
+                            android:layout_width="70dp"
+                            android:text="磁化频率  :" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:orientation="horizontal">
+                    <TextView
+                            android:id="@+id/tvMagnetizeRate"
+                            style="@style/SpideTextView"
+                            android:layout_width="80dp"
+                            android:text="---" />
 
-                <TextView
-                    style="@style/SpideTextView"
-                    android:text="行走距离  :"
-                    android:layout_width="70dp"/>
+                    <ImageView
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:layout_gravity="center|right"
+                            android:layout_marginRight="10dp"
+                            android:src="@drawable/ic_triangle_red" />
+                </LinearLayout>
+                <LinearLayout
+                        android:visibility="gone"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/tvDistance"
-                    style="@style/SpideTextView"
-                    android:layout_width="80dp"
-                    android:layout_height="match_parent"
-                    android:text="---" />
+                    <TextView
+                            style="@style/SpideTextView"
+                            android:text="电池电压  :"
+                            android:layout_width="70dp"/>
 
-                <ImageView
-                    android:visibility="invisible"
-                    android:layout_width="12dp"
-                    android:layout_height="12dp"
-                    android:layout_gravity="center|right"
-                    android:layout_marginRight="10dp"
-                    android:src="@drawable/ic_triangle_red" />
-            </LinearLayout>
+                    <TextView
+                            android:id="@+id/tvVoltage"
+                            style="@style/SpideTextView"
+                            android:layout_marginLeft="0dp"
+                            android:text="---"
+                            android:layout_width="80dp"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:orientation="horizontal">
+                    <ImageView
+                            android:visibility="invisible"
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:layout_gravity="center|right"
+                            android:layout_marginRight="10dp"
+                            android:src="@drawable/ic_triangle_red" />
+                </LinearLayout>
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
 
-                <TextView
-                    style="@style/SpideTextView"
-                    android:text="电池电压  :"
-                    android:layout_width="70dp"/>
+                    <TextView
+                            style="@style/SpideTextView"
+                            android:text="电池电压  :"
+                            android:layout_width="70dp"/>
 
-                <TextView
-                    android:id="@+id/tvVoltage"
-                    style="@style/SpideTextView"
-                    android:layout_marginLeft="0dp"
-                    android:text="---"
-                    android:layout_width="80dp"/>
+                    <TextView
+                            android:id="@+id/tvBatteryVoltage"
+                            style="@style/SpideTextView"
+                            android:layout_marginLeft="0dp"
+                            android:text="---"
+                            android:layout_width="80dp"/>
 
-                <ImageView
-                    android:visibility="invisible"
-                    android:layout_width="12dp"
-                    android:layout_height="12dp"
-                    android:layout_gravity="center|right"
-                    android:layout_marginRight="10dp"
-                    android:src="@drawable/ic_triangle_red" />
+                    <ImageView
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:visibility="invisible"
+                            android:layout_gravity="center|right"
+                            android:layout_marginRight="10dp"
+                            android:src="@drawable/ic_triangle_red" />
+                </LinearLayout>
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                    <TextView
+                            style="@style/SpideTextView"
+                            android:text="工作电流  :"
+                            android:layout_width="70dp"/>
+
+                    <TextView
+                            android:id="@+id/tvBatterycurrent"
+                            style="@style/SpideTextView"
+                            android:layout_marginLeft="0dp"
+                            android:text="---"
+                            android:layout_width="80dp"/>
+
+                    <ImageView
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:visibility="invisible"
+                            android:layout_gravity="center|right"
+                            android:layout_marginRight="10dp"
+                            android:src="@drawable/ic_triangle_red" />
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
@@ -312,27 +518,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="right"
             android:layout_marginLeft="6dp"
-            android:orientation="horizontal">
-            <RadioButton
-                    android:id="@+id/rbDescern"
-                    android:visibility="gone"
-                    style="@style/MainRadionButton"
-                    android:layout_height="60dp"
-                    android:background="@drawable/button_select"
-                    android:drawableTop="@drawable/ic_descern_open"
-                    android:text="识别已开启"
-                    android:textSize="11dp"
-                    android:textColor="@color/whith"/>
+            android:orientation="vertical">
 
-            <RadioButton
-                    android:id="@+id/rbNoDescern"
-                    style="@style/MainRadionButton"
-                    android:layout_height="60dp"
-                    android:background="@drawable/button_select"
-                    android:drawableTop="@drawable/ic_descern_close"
-                    android:text="识别已关闭"
-                    android:textSize="11dp"
-                    android:textColor="@color/red"/>
             <RadioButton
                     android:id="@+id/rbOther"
                     style="@style/MainRadionButton"

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/add"
-        android:title="探照灯开启" />
-    <item
-        android:id="@+id/remove"
-        android:title="探照灯关闭" />
-</menu>

@@ -2,8 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/add"
-        android:title="黑光模式" />
+        android:title="黑光" />
     <item
         android:id="@+id/remove"
-        android:title="白光模式" />
+        android:title="白光" />
 </menu>

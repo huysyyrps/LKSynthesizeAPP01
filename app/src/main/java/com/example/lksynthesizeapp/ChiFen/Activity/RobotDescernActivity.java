@@ -2,17 +2,15 @@ package com.example.lksynthesizeapp.ChiFen.Activity;
 
 import static com.example.lksynthesizeapp.ChiFen.Robot.RobotData.itemName;
 import static com.example.lksynthesizeapp.ChiFen.Robot.RobotData.mItemImgs;
-import static com.example.lksynthesizeapp.Constant.Base.Constant.MODBUS_CODE;
-import static com.example.lksynthesizeapp.Constant.Base.Constant.TAG_FIVE;
 import static com.example.lksynthesizeapp.Constant.Base.Constant.TAG_FOUR;
 import static com.example.lksynthesizeapp.Constant.Base.Constant.TAG_ONE;
-import static com.example.lksynthesizeapp.Constant.Base.Constant.TAG_SEVEN;
-import static com.example.lksynthesizeapp.Constant.Base.Constant.TAG_SIX;
 import static com.example.lksynthesizeapp.Constant.Base.Constant.TAG_THERE;
 import static com.example.lksynthesizeapp.Constant.Base.Constant.TAG_TWO;
-import static com.example.lksynthesizeapp.Constant.Base.Constant.TWENTYFOUR;
+import static com.littlegreens.netty.client.status.ConnectState.STATUS_CONNECT_CLOSED;
+import static com.littlegreens.netty.client.status.ConnectState.STATUS_CONNECT_ERROR;
+import static com.littlegreens.netty.client.status.ConnectState.STATUS_CONNECT_SUCCESS;
 
-import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -51,9 +49,11 @@ import com.example.lksynthesizeapp.ChiFen.Base.MainUI;
 import com.example.lksynthesizeapp.ChiFen.Base.MyMediaRecorder;
 import com.example.lksynthesizeapp.ChiFen.Base.MyPaint;
 import com.example.lksynthesizeapp.ChiFen.Base.TirenSet;
+import com.example.lksynthesizeapp.ChiFen.Modbus.BytesHexChange;
 import com.example.lksynthesizeapp.ChiFen.Modbus.ModbusCallBack;
-import com.example.lksynthesizeapp.ChiFen.Modbus.ModbusContion;
-import com.example.lksynthesizeapp.ChiFen.Modbus.ModbusFloatCallBack;
+import com.example.lksynthesizeapp.ChiFen.Netty.BaseTcpClient;
+import com.example.lksynthesizeapp.ChiFen.Netty.NettyTcpClient;
+import com.example.lksynthesizeapp.ChiFen.Netty.SendCallBack;
 import com.example.lksynthesizeapp.ChiFen.Robot.View.CircleMenu;
 import com.example.lksynthesizeapp.ChiFen.Robot.View.CircleMenuAdapter;
 import com.example.lksynthesizeapp.ChiFen.bean.ItemInfo;
@@ -63,38 +63,30 @@ import com.example.lksynthesizeapp.Constant.activity.SendSelectActivity;
 import com.example.lksynthesizeapp.R;
 import com.example.lksynthesizeapp.SharePreferencesUtils;
 import com.example.lksynthesizeapp.YoloV5Ncnn;
-import com.zgkxzx.modbus4And.requset.ModbusParam;
+import com.littlegreens.netty.client.listener.NettyClientListener;
 import com.zgkxzx.modbus4And.requset.ModbusReq;
-import com.zgkxzx.modbus4And.requset.OnRequestBack;
 
 import java.io.InputStream;
-import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import pub.devrel.easypermissions.EasyPermissions;
 
-public class RobotDescernActivity extends AppCompatActivity {
+public class RobotDescernActivity extends AppCompatActivity implements NettyClientListener<String> {
     @BindView(R.id.imageView)
     ImageView imageView;
-    @BindView(R.id.tvSpeed)
-    TextView tvSpeed;
     @BindView(R.id.tvDistance)
     TextView tvDistance;
-    @BindView(R.id.tvCHTime)
-    TextView tvCHTime;
     @BindView(R.id.tvCEControl)
     TextView tvCEControl;
     @BindView(R.id.tvLightSelect)
     TextView tvLightSelect;
-    @BindView(R.id.tvSearchlightControl)
-    TextView tvSearchlightControl;
+    @BindView(R.id.tvLight)
+    TextView tvLight;
     @BindView(R.id.tvCHControl)
     TextView tvCHControl;
     @BindView(R.id.linearLayout)
@@ -121,8 +113,8 @@ public class RobotDescernActivity extends AppCompatActivity {
     RadioButton rbSetting;
     @BindView(R.id.chronometer)
     Chronometer chronometer;
-    @BindView(R.id.tvBattery)
-    TextView tvBattery;
+    @BindView(R.id.tvSpary)
+    TextView tvSpary;
     @BindView(R.id.rbBack)
     RadioButton rbBack;
     @BindView(R.id.tvVoltage)
@@ -131,12 +123,28 @@ public class RobotDescernActivity extends AppCompatActivity {
     LinearLayout linearLayoutWrite;
     @BindView(R.id.rbOther)
     RadioButton rbOther;
-    @BindView(R.id.tvSpace)
-    TextView tvSpace;
-    @BindView(R.id.rbDescern)
-    RadioButton rbDescern;
-    @BindView(R.id.rbNoDescern)
-    RadioButton rbNoDescern;
+    @BindView(R.id.tvProtectVoltage)
+    TextView tvProtectVoltage;
+    @BindView(R.id.tvRunningDistance)
+    TextView tvRunningDistance;
+    @BindView(R.id.tvMagnetizeDistance)
+    TextView tvMagnetizeDistance;
+    @BindView(R.id.tvMagnetizeTime)
+    TextView tvMagnetizeTime;
+    @BindView(R.id.tvMagnetizeVoltage)
+    TextView tvMagnetizeVoltage;
+    @BindView(R.id.tvMagnetizeRate)
+    TextView tvMagnetizeRate;
+    @BindView(R.id.tvBatteryVoltage)
+    TextView tvBatteryVoltage;
+    @BindView(R.id.tvBatterycurrent)
+    TextView tvBatterycurrent;
+    @BindView(R.id.tvProtectCurrent)
+    TextView tvProtectCurrent;
+    @BindView(R.id.tvRunningSpeed)
+    TextView tvRunningSpeed;
+    @BindView(R.id.tvControl)
+    TextView tvControl;
     private String url;
     private Bitmap bmp = null;
     private Thread mythread, saveThread;
@@ -153,8 +161,6 @@ public class RobotDescernActivity extends AppCompatActivity {
     List<ItemInfo> data = new ArrayList<>();
     private CircleMenuAdapter circleMenuAdapternew;
     private boolean isConnect = false;
-    ModbusContion modbusContion = new ModbusContion();
-    public static String TAG = "RobotActivitytest";
     private Handler handlerData = new Handler();
     ModbusReq modbusReq = ModbusReq.getInstance();
     public static String project = "", workName = "", workCode = "";
@@ -162,16 +168,43 @@ public class RobotDescernActivity extends AppCompatActivity {
     //获取电源锁
     private MediaProjection mMediaProjection;
     private MediaProjectionManager mMediaProjectionManager;
-    String[] PERMS = {Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.FOREGROUND_SERVICE};
     private MediaRecorder mediaRecorder;
     public long saveTime = 0;
     public long currentTmeTime = 0;
     private boolean openDescern = false;
-//    private String selectMode;
-//    private int selectnum;
-
+    NettyTcpClient mNettyTcpClient;
+    BaseTcpClient baseTcpClient;
+    //方向指令
+    private String direction = "00";
+    //磁化指令
+    private String magnetize = "0";
+    //喷涂指令
+    private String spray = "0";
+    //照明状态
+    private String lighting = "0";
+    //磁轭状态
+    private String chie = "1";
+    //磁轭黑白光
+    private String chieLight = "00";
+    //10倍的保护电压设定值
+    private String protectVoltage = "00";
+    //10倍的保护电流设定值
+    private String protectCurrent = "00";
+    //10倍的运行速度
+    private String protectSpeed = "00";
+    //运行距离
+    private String runningDistance = "00000000";
+    //磁化间隔距离
+    private String magnetizeDistance = "0000";
+    //单次磁化时间
+    private String magnetizeTime = "0000";
+    //10倍磁化电压
+    private String magnetizeVoltage = "0000";
+    //磁化频率
+    private String magnetizeRate = "14";
+    private String spinnerData = "";
+    BytesHexChange bytesHexChange = BytesHexChange.getInstance();
+    byte[] hexArray = new byte[19];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -189,20 +222,12 @@ public class RobotDescernActivity extends AppCompatActivity {
         project = intent.getStringExtra("project");
         workName = intent.getStringExtra("etWorkName");
         workCode = intent.getStringExtra("etWorkCode");
-//        selectMode = intent.getStringExtra("selectMode");
-//        if (selectMode.equals("mode1")) {
-//            selectnum = 1;
-//        } else if (selectMode.equals("mode2")) {
-//            selectnum = 2;
-//        } else if (selectMode.equals("mode3")) {
-//            selectnum = 3;
-//        }
-//        boolean ret_init = yolov5ncnn.Init(getAssets(), selectnum);
         boolean ret_init = yolov5ncnn.Init(getAssets());
         if (!ret_init) {
             Log.e("MainActivity", "yolov5ncnn Init failed");
         }
-        url = "http://" + Constant.URL + ":8080?action=snapshot";
+//        url = "http://" + Constant.URL + ":8080?action=snapshot";
+        url = "http://192.168.43.251" + ":8080?action=snapshot";
         mythread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -213,46 +238,187 @@ public class RobotDescernActivity extends AppCompatActivity {
             }
         });
         mythread.start();
-
         new BottomUI().hideBottomUIMenu(this.getWindow());
-
-        modbusConnect();
+        baseTcpClient = BaseTcpClient.getInstance();
         setUiData();
+        settingNetty();
     }
 
-    /**
-     * 连接
-     */
-    private void modbusConnect() {
-        modbusReq.setParam(new ModbusParam()
-//                .setHost("172.16.16.68")
-                .setHost(Constant.URL)
-                .setPort(502)
-                .setEncapsulated(true)
-                .setKeepAlive(true)
-                .setTimeout(2000)
-                .setRetries(0))
-                .init(new OnRequestBack<String>() {
-                    @Override
-                    public void onSuccess(String s) {
-                        isConnect = true;
-                        handlerData.postDelayed(runnable, TIME);//触发定时器
-                        Log.e(TAG, "onSuccess " + s);
-                        message = new Message();
-                        message.what = TAG_ONE;
-                        handler.sendMessage(message);
-                    }
-
-                    @Override
-                    public void onFailed(String msg) {
-                        Log.e(TAG, "onFailed " + msg);
-                        message = new Message();
-                        message.what = TAG_TWO;
-                        handler.sendMessage(message);
-                        return;
-                    }
-                });
+    //--------------tcp----------------
+    private void settingNetty() {
+        mNettyTcpClient = baseTcpClient.initTcpClient("192.168.43.251", 502);
+//        mNettyTcpClient = baseTcpClient.initTcpClient("172.16.20.5", 5000);
+        mNettyTcpClient.setListener(this); //设置TCP监听
+        baseTcpClient.tcpClientConntion(mNettyTcpClient);
     }
+
+    //数据回调监听
+    @Override
+    public void onMessageResponseClient(String msg, int index) {
+        //6为帧头、命令码、检验的长度和
+        Log.e("XXX", msg);
+        if (msg.length() > 6) {
+            String first = msg.substring(2, msg.length() - 2);
+            String end = msg.substring(msg.length() - 2);
+            String checkData = bytesHexChange.hexStringToBytes(first);
+            if (checkData.length() >= 2) {
+                String checkDataLow = checkData.substring(checkData.length() - 2, checkData.length()).toUpperCase();
+                if (checkDataLow.equals(end)) {
+                    String[] backHeartData = bytesHexChange.HexToByteArr(msg);
+                    //循环返回数据
+                    if (backHeartData[0].equals("B1") && backHeartData[1].equals("1B")) {
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                setHeaderData(backHeartData);
+                            }
+                        });
+                    }
+                    //单次返回数据
+                    if (backHeartData[0].equals("B1") && backHeartData[1].equals("2B")) {
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                setOnlyBackData(backHeartData);
+                            }
+                        });
+                    }
+                }
+            } else {
+                handler.sendEmptyMessage(TAG_THERE);
+            }
+        }
+    }
+
+    private void setHeaderData(String[] backHeartData) {
+        String controlData = bytesHexChange.HexToBinary(backHeartData[2]);
+        if (controlData.length() == 8) {
+            String mode = controlData.substring(6, 8);
+            if (mode.equals("00")) {
+                tvControl.setText("安全模式");
+            } else if (mode.equals("01")) {
+                tvControl.setText("手动模式");
+            } else if (mode.equals("02")) {
+                tvControl.setText("自动模式");
+            } else if (mode.equals("03")) {
+                tvControl.setText("工程模式");
+            }
+            if (controlData.substring(5, 6).equals("0")) {
+                tvLight.setText("关闭");
+                lighting = "0";
+            } else if (controlData.substring(5, 6).equals("1")) {
+                tvLight.setText("开启");
+                lighting = "1";
+            }
+            if (controlData.substring(4, 5).equals("0")) {
+                tvSpary.setText("关闭");
+                spray = "0";
+            } else if (controlData.substring(4, 5).equals("1")) {
+                tvSpary.setText("开启");
+                spray = "1";
+            }
+            if (controlData.substring(3, 4).equals("0")) {
+                tvCEControl.setText("落下");
+                chie = "0";
+            } else if (controlData.substring(3, 4).equals("1")) {
+                tvCEControl.setText("抬起");
+                chie = "1";
+            }
+            if (controlData.substring(2, 3).equals("0")) {
+                tvCHControl.setText("关闭");
+                magnetize = "0";
+            } else if (controlData.substring(2, 3).equals("1")) {
+                tvCHControl.setText("开启");
+                magnetize = "1";
+            }
+            String selectLight = controlData.substring(0, 2);
+            if (selectLight.equals("01")) {
+                tvLightSelect.setText("黑光");
+                chieLight = "01";
+            } else if (selectLight.equals("10")) {
+                tvLightSelect.setText("白光");
+                chieLight = "10";
+            }
+        }
+
+        tvBatteryVoltage.setText(bytesHexChange.dataChange(backHeartData[3], true) + "V");
+        tvBatterycurrent.setText(bytesHexChange.dataChange(backHeartData[4], true) + "A");
+        tvDistance.setText(bytesHexChange.dataChange(backHeartData[11] + backHeartData[10] + backHeartData[9] + backHeartData[8], false) + "mm");
+    }
+
+    private void setOnlyBackData(String[] backHeartData) {
+        protectVoltage = backHeartData[2];
+        tvProtectVoltage.setText(bytesHexChange.dataChange(backHeartData[2], true) + "V");
+
+        protectCurrent = backHeartData[3];
+        tvProtectCurrent.setText(bytesHexChange.dataChange(backHeartData[3], true) + "A");
+
+        protectSpeed = backHeartData[4];
+        tvRunningSpeed.setText(bytesHexChange.dataChange(backHeartData[4], runing) + "m/min");
+
+        runningDistance = backHeartData[8] + backHeartData[7] + backHeartData[6] + backHeartData[5];
+        tvRunningDistance.setText(bytesHexChange.dataChange(backHeartData[8] + backHeartData[7] + backHeartData[6] + backHeartData[5], false) + "mm");
+
+        magnetizeDistance = backHeartData[10] + backHeartData[9];
+        tvMagnetizeDistance.setText(bytesHexChange.dataChange(backHeartData[10] + backHeartData[9], false) + "mm");
+
+        magnetizeTime = backHeartData[12] + backHeartData[11];
+        tvMagnetizeTime.setText(bytesHexChange.dataChange(backHeartData[12] + backHeartData[11], false) + "s");
+
+        magnetizeVoltage = backHeartData[14] + backHeartData[13];
+        tvMagnetizeVoltage.setText(bytesHexChange.dataChange(backHeartData[14] + backHeartData[13], true) + "V");
+
+        magnetizeRate = backHeartData[15];
+        tvMagnetizeRate.setText(bytesHexChange.dataChange(backHeartData[15], false) + "HZ");
+    }
+
+    //状态监听
+    @Override
+    public void onClientStatusConnectChanged(int statusCode, int index) {
+        //连接状态回调
+        if (statusCode == STATUS_CONNECT_SUCCESS) {
+            Log.e("XXX", "成功");
+            isConnect = true;
+            handler.sendEmptyMessage(TAG_ONE);
+        } else if (statusCode == STATUS_CONNECT_CLOSED) {
+            Log.e("XXX", "断开");
+            isConnect = false;
+            handler.sendEmptyMessage(TAG_TWO);
+        } else if (statusCode == STATUS_CONNECT_ERROR) {
+            Log.e("XXX", "失败");
+            isConnect = false;
+            handler.sendEmptyMessage(TAG_TWO);
+        }
+    }
+
+    //组装数据
+    private void makeData() {
+        String sendData = "";
+        String bitData = "00"+spray + magnetize + chieLight + chie + lighting;
+        int ten = Integer.parseInt(bitData, 2);
+        String strHex2 = String.format("%02x", ten).toUpperCase();//高位补0
+        sendData = Constant.HEART_DATA + direction + strHex2 + protectVoltage + protectCurrent +
+                protectSpeed + runningDistance + magnetizeDistance + magnetizeTime + magnetizeVoltage + magnetizeRate;
+        sendData = Constant.HEART_FRAME + sendData+bytesHexChange.hexStringToBytes(sendData);
+        Log.e("XXXX",sendData);
+        byte[] s = bytesHexChange.HexStringToByteArr(sendData);
+        sendData(s);
+    }
+
+    //发送数据
+    private void sendData(byte[] data) {
+        baseTcpClient.sendTcpData(data, new SendCallBack() {
+            @Override
+            public void success(String success) {
+                handler.sendEmptyMessage(TAG_ONE);
+            }
+
+            @Override
+            public void faild(String message) {
+                handler.sendEmptyMessage(TAG_TWO);
+            }
+        });
+    }
+
+    //--------------tcp----------------
 
     /**
      * 方向键
@@ -274,16 +440,20 @@ public class RobotDescernActivity extends AppCompatActivity {
             public void onClick(View view, int position) {
                 if (isConnect) {
                     if (itemName[position].equals("上")) {
-                        modbusContion.writeRegisterClickEvent(MODBUS_CODE, 4, TAG_ONE);
+                        direction = "01";
+                        makeData();
                     }
                     if (itemName[position].equals("左")) {
-                        modbusContion.writeRegisterClickEvent(MODBUS_CODE, 4, TAG_THERE);
+                        direction = "03";
+                        makeData();
                     }
                     if (itemName[position].equals("右")) {
-                        modbusContion.writeRegisterClickEvent(MODBUS_CODE, 4, TAG_FOUR);
+                        direction = "04";
+                        makeData();
                     }
                     if (itemName[position].equals("下")) {
-                        modbusContion.writeRegisterClickEvent(MODBUS_CODE, 4, TAG_TWO);
+                        direction = "02";
+                        makeData();
                     }
                 } else {
                     message = new Message();
@@ -294,70 +464,12 @@ public class RobotDescernActivity extends AppCompatActivity {
         });
     }
 
-    private Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            //todo what you want
-            modbusContion.readInputRegistersClickEvent(MODBUS_CODE, 3, TAG_SIX, new ModbusCallBack() {
-                @Override
-                public void success(String s) {
-                    message = new Message();
-                    message.what = TAG_THERE;
-                    message.obj = s;
-                    handler.sendMessage(message);
-                    if (linearLayoutWrite.getVisibility() == View.VISIBLE) {
-                        modbusContion.readHoldingRegistersClickEvent(MODBUS_CODE, 0, TWENTYFOUR, new ModbusFloatCallBack() {
-                            @Override
-                            public void success(short[] s) {
-                                message = new Message();
-                                message.what = TAG_FOUR;
-                                message.obj = s;
-                                handler.sendMessage(message);
-                            }
-
-                            @Override
-                            public void fail(String s) {
-                                message = new Message();
-                                message.what = TAG_FIVE;
-                                message.obj = s;
-                                handler.sendMessage(message);
-                                return;
-                            }
-                        });
-                    }
-                }
-
-                @Override
-                public void fail(String s) {
-                    message = new Message();
-                    message.what = TAG_FIVE;
-                    message.obj = s;
-                    handler.sendMessage(message);
-                    return;
-                }
-            });
-            handlerData.postDelayed(runnable, 1000);
-        }
-    };
-
-
-    @OnClick({R.id.btnStop, R.id.tvSpeed, R.id.tvCHTime,
-            R.id.tvCEControl, R.id.tvLightSelect, R.id.tvSearchlightControl,
-            R.id.tvCHControl, R.id.rbCamera, R.id.rbVideo, R.id.rbAlbum,
-            R.id.linearLayoutStop, R.id.rbSetting, R.id.tvBattery, R.id.rbBack,
-            R.id.rbOther, R.id.tvSpace, R.id.rbDescern, R.id.rbNoDescern})
+    @OnClick({R.id.btnStop, R.id.tvCEControl, R.id.tvLightSelect, R.id.tvLight, R.id.tvCHControl,
+            R.id.tvProtectVoltage, R.id.tvRunningDistance, R.id.tvMagnetizeDistance, R.id.tvMagnetizeTime,
+            R.id.tvMagnetizeVoltage, R.id.tvMagnetizeRate, R.id.tvProtectCurrent, R.id.tvRunningSpeed,
+            R.id.rbCamera, R.id.rbVideo, R.id.rbAlbum, R.id.linearLayoutStop, R.id.rbSetting, R.id.tvSpary, R.id.rbBack, R.id.rbOther})
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.rbDescern:
-                rbDescern.setVisibility(View.GONE);
-                rbNoDescern.setVisibility(View.VISIBLE);
-                openDescern = !openDescern;
-                break;
-            case R.id.rbNoDescern:
-                rbDescern.setVisibility(View.VISIBLE);
-                rbNoDescern.setVisibility(View.GONE);
-                openDescern = !openDescern;
-                break;
             case R.id.rbOther:
                 if (linearLayoutWrite.getVisibility() == View.VISIBLE) {
                     linearLayoutWrite.setVisibility(View.GONE);
@@ -366,38 +478,53 @@ public class RobotDescernActivity extends AppCompatActivity {
                 }
                 break;
             case R.id.btnStop:
-                modbusContion.writeRegisterClickEvent(MODBUS_CODE, 4, TAG_SEVEN);
-                break;
-            case R.id.tvSpace:
-                showFDialog("Space");
-                break;
-            case R.id.tvSpeed:
-                //爬行速度
-                showFDialog("Speed");
-                break;
-            case R.id.tvCHTime:
-                //磁化时间
-                showFDialog("Time");
+                direction = "00";
+                makeData();
                 break;
             case R.id.tvCEControl:
-                CEControl(tvCEControl);
+                spinnerData(tvCEControl, "CEControl");
                 //磁轭控制
                 break;
             case R.id.tvLightSelect:
-                LightSelect(tvLightSelect);
+                spinnerData(tvLightSelect, "BlackOrWhiteLight");
                 //黑白选择
                 break;
-            case R.id.tvSearchlightControl:
-                SearchlightControl(tvSearchlightControl);
+            case R.id.tvLight:
                 //探  照  灯
+                spinnerData(tvLight, "Light");
                 break;
             case R.id.tvCHControl:
-                CHControl(tvCHControl);
                 //磁化控制
+                spinnerData(tvCHControl, "CHControl");
                 break;
-            case R.id.tvBattery:
-                BatteryControl(tvBattery);
+            case R.id.tvSpary:
                 //电池阀
+                spinnerData(tvSpary, "Battery");
+                break;
+            case R.id.tvMagnetizeRate:
+                //磁化频率
+                spinnerData(tvMagnetizeRate, "MagnetizeRate");
+                break;
+            case R.id.tvProtectVoltage:
+                showFDialog("protectVoltage", 1);
+                break;
+            case R.id.tvProtectCurrent:
+                showFDialog("protectCurrent", 1);
+                break;
+            case R.id.tvRunningSpeed:
+                showFDialog("runningSpeed", 1);
+                break;
+            case R.id.tvRunningDistance:
+                showFDialog("runningDistance", 0);
+                break;
+            case R.id.tvMagnetizeDistance:
+                showFDialog("magnetizeDistance", 0);
+                break;
+            case R.id.tvMagnetizeTime:
+                showFDialog("magnetizeTime", 0);
+                break;
+            case R.id.tvMagnetizeVoltage:
+                showFDialog("magnetizeVoltage", 1);
                 break;
             case R.id.rbCamera:
                 if (toast != null) {
@@ -432,13 +559,8 @@ public class RobotDescernActivity extends AppCompatActivity {
                 if (mMediaProjection == null) {
                     requestMediaProjection();
                 } else {
-                    if (EasyPermissions.hasPermissions(this, PERMS)) {
-                        new TirenSet().checkTirem(ivTimer);
-                        startMedia();
-                    } else {
-                        // 没有申请过权限，现在去申请
-                        EasyPermissions.requestPermissions(this, "PERMISSION_STORAGE_MSG", TAG_ONE, PERMS);
-                    }
+                    new TirenSet().checkTirem(ivTimer);
+                    startMedia();
                 }
                 break;
             case R.id.linearLayoutStop:
@@ -544,125 +666,134 @@ public class RobotDescernActivity extends AppCompatActivity {
         mediaRecorder.stop();
     }
 
-    /**
-     * 黑白选择
-     */
-    private void LightSelect(View view) {
-        new MainUI().showPopupMenuLight(view, this, new ModbusCallBack() {
+    //下拉选择监听
+    private String spinnerData(View view, String tvCHControl) {
+        new MainUI().showPopupMenu(view, tvCHControl, this, new ModbusCallBack() {
             @Override
-            public void success(String s) {
-                modbusContion.writeRegisterClickEvent(MODBUS_CODE, 6, TAG_THERE);
+            public void success(String sData) {
+                spinnerBackData(tvCHControl, sData);
             }
 
             @Override
-            public void fail(String s) {
-                modbusContion.writeRegisterClickEvent(MODBUS_CODE, 6, TAG_ONE);
+            public void fail(String fData) {
+                spinnerBackData(tvCHControl, fData);
             }
         });
+        return spinnerData;
     }
 
-    /**
-     * 探  照  灯
-     */
-    private void SearchlightControl(View view) {
-        new MainUI().showPopupMenu(view, "SearchlightControl", this, new ModbusCallBack() {
-            @Override
-            public void success(String s) {
-                modbusContion.writeRegisterClickEvent(MODBUS_CODE, 7, TAG_ONE);
-            }
-
-            @Override
-            public void fail(String s) {
-                modbusContion.writeRegisterClickEvent(MODBUS_CODE, 7, TAG_THERE);
-            }
-        });
+    private void spinnerBackData(String tvCHControl, String sData) {
+        if (tvCHControl.equals("CEControl")) {
+            chie = sData;
+            makeData();
+        } else if (tvCHControl.equals("BlackOrWhiteLight")) {
+            chieLight = sData;
+            makeData();
+        } else if (tvCHControl.equals("Light")) {
+            lighting = sData;
+            makeData();
+        } else if (tvCHControl.equals("CHControl")) {
+            magnetize = sData;
+            makeData();
+        } else if (tvCHControl.equals("Battery")) {
+            spray = sData;
+            makeData();
+        } else if (tvCHControl.equals("MagnetizeRate")) {
+            magnetizeRate = sData;
+            makeData();
+        }
     }
 
-    /**
-     * 磁化控制
-     */
-    private void CHControl(View view) {
-        new MainUI().showPopupMenu(view, "CHControl", this, new ModbusCallBack() {
-            @Override
-            public void success(String s) {
-                modbusContion.writeRegisterClickEvent(MODBUS_CODE, 3, TAG_ONE);
-            }
-
-            @Override
-            public void fail(String s) {
-                modbusContion.writeRegisterClickEvent(MODBUS_CODE, 3, TAG_THERE);
-            }
-        });
-    }
-
-    /**
-     * 磁轭控制
-     */
-    private void CEControl(View view) {
-        new MainUI().showPopupMenu(view, "CEControl", this, new ModbusCallBack() {
-            @Override
-            public void success(String s) {
-                modbusContion.writeRegisterClickEvent(MODBUS_CODE, 5, TAG_THERE);
-            }
-
-            @Override
-            public void fail(String s) {
-                modbusContion.writeRegisterClickEvent(MODBUS_CODE, 5, TAG_ONE);
-            }
-        });
-    }
-
-    /**
-     * 电池阀控制
-     */
-    private void BatteryControl(View view) {
-        new MainUI().showPopupMenu(view, "BatteryControl", this, new ModbusCallBack() {
-            @Override
-            public void success(String s) {
-                modbusContion.writeRegisterClickEvent(MODBUS_CODE, 8, TAG_ONE);
-            }
-
-            @Override
-            public void fail(String s) {
-                modbusContion.writeRegisterClickEvent(MODBUS_CODE, 8, TAG_THERE);
-            }
-        });
-    }
 
     /**
      * 弹窗数据设置
      */
-    private void showFDialog(String tag) {
+    private void showFDialog(String tag, int num) {
+        //protectVoltage
         String hint = "";
-        if (tag.equals("Speed")) {
-            hint = "请输入爬行速度";
-        } else if (tag.equals("Time")) {
-            hint = "请输入磁化时间";
-        }else if (tag.equals("Space")) {
-            hint = "请输入间隔距离";
+        if (tag.equals("protectVoltage")) {
+            hint = "保护电压设定值";
+        } else if (tag.equals("protectCurrent")) {
+            hint = "保护电流设定值";
+        } else if (tag.equals("runningSpeed")) {
+            hint = "运行速度设定值";
+        } else if (tag.equals("runningDistance")) {
+            hint = "运行距离设定值";
+        } else if (tag.equals("magnetizeDistance")) {
+            hint = "磁化间隔距离设定值";
+        } else if (tag.equals("magnetizeTime")) {
+            hint = "磁化时间设定值";
+        } else if (tag.equals("magnetizeVoltage")) {
+            hint = "磁化电压";
         }
-        new AlertDialogUtil(this).showWriteDialog(hint, new ModbusCallBack() {
+        new AlertDialogUtil(this).showWriteDialog(hint, num, new ModbusCallBack() {
             @Override
             public void success(String backData) {
                 if (backData != null && !backData.trim().equals("")) {
-                    float distanceData = Float.parseFloat(backData);
-                    if (tag.equals("Speed")) {
-//                        String hex = new ByteUtil().singleToHex(distanceData);
-//                        short[] shorts = new short[2];
-//                        if (hex.length() == 8) {
-//                            short shortH = Short.parseShort(hexStringToAlgorism(hex.substring(4, 8)) + "");
-//                            short shortL = Short.parseShort(hexStringToAlgorism(hex.substring(0, 4)) + "");
-//                            shorts[0] = shortH;
-//                            shorts[1] = shortL;
-//                        }
-                        new ModbusContion().writeRegistersClickEvent(MODBUS_CODE, 0, byte2ShortArray(float2byte(distanceData)));
+                    int distanceData = (int) (Float.parseFloat(backData) * 10);
+                    String hex = Integer.toHexString(distanceData);
+                    switch (tag) {
+                        case "protectVoltage":
+                            if (dataCheck(backData, 18, 22)) {
+                                protectVoltage = baseTcpClient.StringToHex(backData, 2,true);
+                                Log.e("XXXX",protectVoltage+"保护电压");
+                                makeData();
+                            } else {
+                                Toast.makeText(RobotDescernActivity.this, "请输入正确的保护电压", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            break;
+                        case "protectCurrent":
+                            protectCurrent = baseTcpClient.StringToHex(backData, 2,true);
+                            makeData();
+                            break;
+                        case "runningSpeed":
+                            if (dataCheck(backData, 0, 6)) {
+                                protectSpeed = baseTcpClient.StringToHex(backData, 2,true);
+                                makeData();
+                            } else {
+                                Toast.makeText(RobotDescernActivity.this, "请输入正确的运行速度", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            break;
+                        case "runningDistance":
+                            if (dataCheck(backData, 0, 4294967295L)) {
+                                runningDistance = baseTcpClient.StringToHex(backData, 8,false);
+                                makeData();
+                            } else {
+                                Toast.makeText(RobotDescernActivity.this, "请输入正确的运行距离", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            break;
+                        case "magnetizeDistance":
+                            if (dataCheck(backData, 0, 65535)) {
+                                magnetizeDistance = baseTcpClient.StringToHex(backData, 4,false);
+                                makeData();
+                            } else {
+                                Toast.makeText(RobotDescernActivity.this, "请输入正确的磁化间隔距离", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            break;
+                        case "magnetizeTime":
+                            if (dataCheck(backData, 0, 65535)) {
+                                magnetizeTime = baseTcpClient.StringToHex(backData, 4,false);
+                                makeData();
+                            } else {
+                                Toast.makeText(RobotDescernActivity.this, "请输入正确的磁化时间", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            break;
+                        case "magnetizeVoltage":
+                            if (dataCheck(backData, 0, 400)) {
+                                magnetizeVoltage = baseTcpClient.StringToHex(backData, 4,true);
+                                makeData();
+                            } else {
+                                Toast.makeText(RobotDescernActivity.this, "请输入正确的磁化间隔距离", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            break;
                     }
-                    if (tag.equals("Time")) {
-                        modbusContion.writeRegistersClickEvent(MODBUS_CODE, 2, byte2ShortArray(float2byte(distanceData)));
-                    }
-                    if (tag.equals("Space")) {
-                        modbusContion.writeRegistersClickEvent(MODBUS_CODE, 1, byte2ShortArray(float2byte(distanceData)));
-                    }
+                    Log.e("XXX", hex);
                 }
             }
 
@@ -673,119 +804,11 @@ public class RobotDescernActivity extends AppCompatActivity {
         });
     }
 
-    public static byte[] float2byte(float f) {
-        // 把float转换为byte[]
-        int fbit = Float.floatToIntBits(f);
-        byte[] b = new byte[4];
-        for (int i = 0; i < 4; i++) {
-            b[i] = (byte) (fbit >> (24 - i * 8));
+    private boolean dataCheck(String data, double startData, long endData) {
+        if (startData <= Float.parseFloat(data) && Float.parseFloat(data) <= endData) {
+            return true;
         }
-
-        // 翻转数组
-        int len = b.length;
-        // 建立一个与源数组元素类型相同的数组
-        byte[] dest = new byte[len];
-        // 为了防止修改源数组，将源数组拷贝一份副本
-        System.arraycopy(b, 0, dest, 0, len);
-        byte temp;
-        // 将顺位第i个与倒数第i个交换
-        for (int i = 0; i < len / 2; ++i) {
-            temp = dest[i];
-            dest[i] = dest[len - i - 1];
-            dest[len - i - 1] = temp;
-        }
-        return dest;
-    }
-
-    // byte数组转short数组
-    public static short[] byte2ShortArray(byte[] data) {
-        short[] retVal = new short[data.length / 2];
-        for (int i = 0; i < retVal.length; i++)
-            retVal[i] = (short) ((data[i * 2] & 0xff) | (data[i * 2 + 1] & 0xff) << 8);
-
-        return retVal;
-    }
-
-    //显示16进制数据
-    private void set16Data(String[] strs) {
-        Log.e("XXX", String.join(",", strs));
-        //磁化
-        if (strs[0] != null && strs[0].trim().equals("1")) {
-            tvCHControl.setText(R.string.ch_control_open);
-        } else if (strs[0] != null && strs[0].trim().equals("3")) {
-            tvCHControl.setText(R.string.ch_control_close);
-        }
-
-        //磁轭
-        if (strs[2] != null && strs[2].trim().equals("2")) {
-            tvCEControl.setText(R.string.ce_up);
-        } else if (strs[2] != null && strs[2].trim().equals("4")) {
-            tvCEControl.setText(R.string.ce_down);
-        }
-
-        //黑白灯光
-        if (strs[3] != null && strs[3].trim().equals("1")) {
-            tvLightSelect.setText(R.string.light_black);
-        } else if (strs[3] != null && strs[3].trim().equals("3")) {
-            tvLightSelect.setText(R.string.light_wither);
-        }
-
-        //探照灯
-        if (strs[4] != null && strs[4].trim().equals("1")) {
-            tvSearchlightControl.setText(R.string.search_light_open);
-        } else if (strs[4] != null && strs[4].trim().equals("3")) {
-            tvSearchlightControl.setText(R.string.search_light_close);
-        }
-
-        //电池阀
-        if (strs[5] != null && strs[5].trim().equals("1")) {
-            tvBattery.setText(R.string.battery_open);
-        } else if (strs[5] != null && strs[5].trim().equals("3")) {
-            tvBattery.setText(R.string.battery_close);
-        }
-
-    }
-
-    //显示Float数据
-    private void setFloatData(String[] typeData) {
-        if (typeData[0] != null && typeData[1] != null) {
-            String actualDistanceHex = typeData[1] + typeData[0];
-            tvVoltage.setText(dataChange(actualDistanceHex) + "V");
-        }
-
-        if (typeData[20] != null && typeData[21] != null) {
-            String cHTimeHex = typeData[21] + typeData[20];
-            tvSpace.setText(dataChange(cHTimeHex) + "mm");
-        }
-
-        Log.e("XXX", String.join(",", typeData));
-        if (typeData[18] != null && typeData[19] != null) {
-            String speenHex = typeData[19] + typeData[18];
-            tvSpeed.setText(dataChange(speenHex) + "m/min");
-        }
-        if (typeData[16] != null && typeData[17] != null) {
-            String distanceHex = typeData[17] + typeData[16];
-            tvDistance.setText(dataChange(distanceHex) + "mm");
-        }
-        if (typeData[22] != null && typeData[23] != null) {
-            String cHTimeHex = typeData[23] + typeData[22];
-            tvCHTime.setText(dataChange(cHTimeHex) + "s");
-        }
-    }
-
-    private float dataChange(String hex) {
-        Float valueVoltage = Float.intBitsToFloat(new BigInteger(hex, 16).intValue());
-        DecimalFormat df = new DecimalFormat("#.00");
-        Float floatData = Float.valueOf(df.format(valueVoltage));
-        return floatData;
-    }
-
-    //切割数据
-    private String[] substringData(String data) {
-        String data1 = data.substring(1, data.length());
-        String data2 = data1.substring(0, data1.length() - 1);
-        String[] strs = data2.split(",");
-        return strs;
+        return false;
     }
 
     private void draw() {
@@ -808,17 +831,17 @@ public class RobotDescernActivity extends AppCompatActivity {
             bmp = BitmapFactory.decodeStream(inputstream);
 //            YoloV5Ncnn.Obj[] objects = yolov5ncnn.Detect(bmp, false, selectnum);
             YoloV5Ncnn.Obj[] objects = null;
-            if (openDescern){
+            if (openDescern) {
                 objects = yolov5ncnn.Detect(bmp, false);
                 showObjects(objects);
-            }else {
+            } else {
                 showObjects(objects);
             }
             showObjects(objects);
             //关闭HttpURLConnection连接
             conn.disconnect();
         } catch (Exception ex) {
-            Log.e("XXX", ex.toString());
+//            Log.e("XXX", ex.toString());
             Message message = new Message();
             message.what = TAG_THERE;
             message.obj = ex.toString();
@@ -828,7 +851,7 @@ public class RobotDescernActivity extends AppCompatActivity {
     }
 
     private void showObjects(YoloV5Ncnn.Obj[] objects) {
-        if (objects==null||objects.length == 0) {
+        if (objects == null || objects.length == 0) {
             Message message = new Message();
             message.what = TAG_ONE;
             message.obj = bmp;
@@ -926,7 +949,6 @@ public class RobotDescernActivity extends AppCompatActivity {
         if (audio.equals("dh")) {
             mediaPlayer = MediaPlayer.create(RobotDescernActivity.this, R.raw.dh);
         }
-        Log.e("XXXXX", "onResume");
     }
 
     Handler handlerLoop = new Handler() {
@@ -946,11 +968,9 @@ public class RobotDescernActivity extends AppCompatActivity {
                             || toastString.contains("java.lang.NullPointerException: Attempt to get length of null array")) {
                         break;
                     } else {
-                        Toast.makeText(RobotDescernActivity.this, msg.obj.toString(), Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(RobotDescernActivity.this, msg.obj.toString(), Toast.LENGTH_SHORT).show();
                     }
-                    Log.e("XXX", toastString);
-//                    Toast.makeText(DescernActivity.this, getResources().getString(R.string.dialog_close), Toast.LENGTH_SHORT).show();
-//                    finish();
+//                    Log.e("XXX", toastString);
                     break;
                 case TAG_FOUR:
                     Bitmap bitH = (Bitmap) msg.obj;
@@ -986,39 +1006,22 @@ public class RobotDescernActivity extends AppCompatActivity {
 
     //消息处理者,创建一个Handler的子类对象,目的是重写Handler的处理消息的方法(handleMessage())
     private Handler handler = new Handler() {
+        @SuppressLint("HandlerLeak")
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case TAG_ONE:
-                    Toast.makeText(RobotDescernActivity.this, R.string.connect_success, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RobotDescernActivity.this, R.string.send_success, Toast.LENGTH_SHORT).show();
                     break;
                 case TAG_TWO:
-                    Toast.makeText(RobotDescernActivity.this, R.string.connect_faile, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RobotDescernActivity.this, R.string.send_faile, Toast.LENGTH_SHORT).show();
                     break;
                 case TAG_THERE:
-                    String data = msg.obj.toString();
-                    set16Data(substringData(data));
+                    Toast.makeText(RobotDescernActivity.this, R.string.receive_faile, Toast.LENGTH_SHORT).show();
                     break;
-                case TAG_FOUR:
-                    short[] dataArray = (short[]) msg.obj;
-                    String[] typeData = new String[dataArray.length];
-                    for (int i = 0; i < dataArray.length; i++) {
-                        String strHex2 = String.format("%04x", dataArray[i]).toUpperCase();//高位补0
-                        typeData[i] = strHex2;
-                    }
-                    setFloatData(typeData);
-                    break;
-                case TAG_FIVE:
-                    String message = msg.obj.toString();
-                    Toast.makeText(RobotDescernActivity.this, message, Toast.LENGTH_SHORT).show();
-                    break;
-
             }
         }
 
     };
 
-    @OnClick(R.id.tvSpace)
-    public void onClick() {
-    }
 }

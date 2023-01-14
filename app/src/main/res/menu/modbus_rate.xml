@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+            android:id="@+id/ITwo"
+            android:title="20" />
+    <item
+            android:id="@+id/IThree"
+            android:title="30" />
+    <item
+            android:id="@+id/IFour"
+            android:title="40" />
+    <item
+            android:id="@+id/IFive"
+            android:title="50" />
+    <item
+            android:id="@+id/ISix"
+            android:title="60" />
+    <item
+            android:id="@+id/ISever"
+            android:title="70" />
+    <item
+            android:id="@+id/IEnght"
+            android:title="80" />
+    <item
+            android:id="@+id/INine"
+            android:title="90" />
+</menu>
