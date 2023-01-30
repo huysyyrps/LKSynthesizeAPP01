@@ -171,7 +171,6 @@ public class RobotDescernActivity extends AppCompatActivity implements NettyClie
     private MediaRecorder mediaRecorder;
     public long saveTime = 0;
     public long currentTmeTime = 0;
-    private boolean openDescern = false;
     NettyTcpClient mNettyTcpClient;
     BaseTcpClient baseTcpClient;
     //方向指令
@@ -233,7 +232,7 @@ public class RobotDescernActivity extends AppCompatActivity implements NettyClie
             public void run() {
                 while (runing) {
                     draw();
-                    currentTme = System.currentTimeMillis();
+//                    currentTme = System.currentTimeMillis();
                 }
             }
         });
@@ -408,12 +407,10 @@ public class RobotDescernActivity extends AppCompatActivity implements NettyClie
         baseTcpClient.sendTcpData(data, new SendCallBack() {
             @Override
             public void success(String success) {
-                handler.sendEmptyMessage(TAG_ONE);
             }
 
             @Override
             public void faild(String message) {
-                handler.sendEmptyMessage(TAG_TWO);
             }
         });
     }
@@ -831,7 +828,7 @@ public class RobotDescernActivity extends AppCompatActivity implements NettyClie
             bmp = BitmapFactory.decodeStream(inputstream);
 //            YoloV5Ncnn.Obj[] objects = yolov5ncnn.Detect(bmp, false, selectnum);
             YoloV5Ncnn.Obj[] objects = null;
-            if (openDescern) {
+            if (magnetize.equals("1")) {
                 objects = yolov5ncnn.Detect(bmp, false);
                 showObjects(objects);
             } else {
@@ -1011,10 +1008,10 @@ public class RobotDescernActivity extends AppCompatActivity implements NettyClie
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case TAG_ONE:
-                    Toast.makeText(RobotDescernActivity.this, R.string.send_success, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RobotDescernActivity.this, R.string.connect_success, Toast.LENGTH_SHORT).show();
                     break;
                 case TAG_TWO:
-                    Toast.makeText(RobotDescernActivity.this, R.string.send_faile, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RobotDescernActivity.this, R.string.connect_faile, Toast.LENGTH_SHORT).show();
                     break;
                 case TAG_THERE:
                     Toast.makeText(RobotDescernActivity.this, R.string.receive_faile, Toast.LENGTH_SHORT).show();

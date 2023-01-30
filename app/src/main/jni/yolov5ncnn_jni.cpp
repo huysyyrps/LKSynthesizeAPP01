@@ -491,28 +491,6 @@ Java_com_example_lksynthesizeapp_YoloV5Ncnn_Init(JNIEnv *env, jobject thiz, jobj
         __android_log_print(ANDROID_LOG_DEBUG, "YoloV5Ncnn", "load_param failed");
         return JNI_FALSE;
     }
-//    {
-//        if (mode == 1){
-//            int ret = yolov5.load_param(mgr, "best221031_sim.param");
-//            if (ret != 0) {
-//                __android_log_print(ANDROID_LOG_DEBUG, "YoloV5Ncnn", "load_param failed");
-//                return JNI_FALSE;
-//            }
-//        }
-//        if (mode == 2){
-//            int ret = yolov5.load_param(mgr, "xy211223.param");
-//            if (ret != 0) {
-//                __android_log_print(ANDROID_LOG_DEBUG, "YoloV5Ncnn", "load_param failed");
-//                return JNI_FALSE;
-//            }
-//        }
-//        if (mode == 3){
-//            int ret = yolov5.load_param(mgr, "yolov5s.param");
-//            if (ret != 0) {
-//                __android_log_print(ANDROID_LOG_DEBUG, "YoloV5Ncnn", "load_param failed");
-//                return JNI_FALSE;
-//            }
-//        }
 ////        22/10/22注释
 ////        int ret = yolov5.load_param(mgr, "yolov5s.param");
 ////        int ret = yolov5.load_param(mgr, "bz220416_sim.param");
