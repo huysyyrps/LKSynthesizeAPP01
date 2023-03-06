@@ -58,9 +58,7 @@
             android:usesCleartextTraffic="true">
         <activity
                 android:name=".TestActivity"
-                android:exported="true" >
-
-        </activity>
+                android:exported="true"></activity>
 
         <service android:name=".ChiFen.service.WhiteService" />
 
@@ -93,8 +91,7 @@
         <activity
                 android:name=".ChiFen.Activity.RobotDescernActivity"
                 android:exported="true"
-                android:screenOrientation="landscape" >
-        </activity>
+                android:screenOrientation="landscape"></activity>
         <activity android:name=".Constant.activity.DefinedActivity" />
         <activity android:name=".Constant.activity.SendSelectActivity" />
         <activity

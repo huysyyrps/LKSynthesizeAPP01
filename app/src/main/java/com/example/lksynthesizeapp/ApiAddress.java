@@ -10,7 +10,7 @@ public class ApiAddress {
 
     //生成环境
 //    public final static String  api = "https://www.944414275.top:6060/";
-    public final static String  api = "http://43.138.64.119:5000/";
+    public final static String  api = "http://101.43.237.219:5000/";
  
 
     /**************************************个人中心************************************************/
@@ -35,5 +35,5 @@ public class ApiAddress {
     //根据派工单获取信息
     public final static String defined = "api/GetDeviceInfo/GetDeviceInfo";
     //版本信息
-    public final static String versioninfo = "app-api/client/init";
+    public final static String versioninfo = "app_api/client/init";
 }

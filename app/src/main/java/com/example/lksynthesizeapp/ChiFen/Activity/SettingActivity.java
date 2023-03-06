@@ -22,37 +22,28 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.lksynthesizeapp.ChiFen.Base.MobileButlerUtil;
 import com.example.lksynthesizeapp.ChiFen.Base.MyCallBack;
 import com.example.lksynthesizeapp.ChiFen.Base.RegionalChooseUtil;
-import com.example.lksynthesizeapp.ChiFen.Module.VersionInfoContract;
 import com.example.lksynthesizeapp.ChiFen.Presenter.VersionInfoPresenter;
 import com.example.lksynthesizeapp.ChiFen.bean.Setting;
-import com.example.lksynthesizeapp.ChiFen.bean.VersionInfo;
 import com.example.lksynthesizeapp.Constant.Base.AlertDialogCallBack;
 import com.example.lksynthesizeapp.Constant.Base.AlertDialogUtil;
 import com.example.lksynthesizeapp.Constant.Base.BaseActivity;
 import com.example.lksynthesizeapp.Constant.Base.BaseRecyclerAdapter;
 import com.example.lksynthesizeapp.Constant.Base.BaseViewHolder;
 import com.example.lksynthesizeapp.Constant.Base.Constant;
-import com.example.lksynthesizeapp.Constant.Base.NetStat;
 import com.example.lksynthesizeapp.Constant.Net.SSHCallBack;
 import com.example.lksynthesizeapp.Constant.Net.SSHExcuteCommandHelper;
 import com.example.lksynthesizeapp.Constant.activity.SendSelectActivity;
 import com.example.lksynthesizeapp.R;
 import com.example.lksynthesizeapp.SharePreferencesUtils;
-import com.google.gson.Gson;
-import com.message.update.fileview.DialogUpdate;
-import com.message.update.fileview.FileDownLoadTask;
 import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
 
-public class SettingActivity extends BaseActivity implements VersionInfoContract.View {
+public class SettingActivity extends BaseActivity{
 
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
@@ -62,14 +53,11 @@ public class SettingActivity extends BaseActivity implements VersionInfoContract
     List<Setting> settingList = new ArrayList<>();
     LoadingDialog loadingDialog;
     VersionInfoPresenter versionInfoPresenter;
-    private DialogUpdate dialogUpdate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
-        dialogUpdate = new DialogUpdate(this);
-        versionInfoPresenter = new VersionInfoPresenter(this, this);
         //数据组装
         setData();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(SettingActivity.this);
@@ -156,35 +144,15 @@ public class SettingActivity extends BaseActivity implements VersionInfoContract
                             });
                         }
 
-                        if (setting.getTitle().equals("版本检测")) {
-                            upDataClient();
-                        }
+//                        if (setting.getTitle().equals("版本检测")) {
+//                            upDataClient();
+//                        }
                     }
                 });
             }
         };
         recyclerView.setAdapter(baseRecyclerAdapter);
         loadingDialog = new LoadingDialog(this);
-    }
-
-    private void upDataClient() {
-        if (new NetStat().isNetworkConnected(SettingActivity.this)) {
-            HashMap<String, String> params = new HashMap<String, String>();
-            params.put("projectName", "济宁鲁科");
-            params.put("actionName", "test");
-            params.put("appVersion", "1.0.0");
-            params.put("channel", "default");
-            params.put("appType", "android");
-            params.put("clientType", "机器人");
-            params.put("phoneSystemVersion", "10.0.1");
-            params.put("phoneType", "华为");
-            Gson gson = new Gson();
-            String s = gson.toJson(params);
-            RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), gson.toJson(params));
-            versionInfoPresenter.getVersionInfo(requestBody);
-        } else {
-            Toast.makeText(this, getResources().getString(R.string.change_net), Toast.LENGTH_SHORT).show();
-        }
     }
 
     //获取当前应用的版本号
@@ -207,13 +175,6 @@ public class SettingActivity extends BaseActivity implements VersionInfoContract
         setting.setTitle("当前版本");
         setting.setImagePath(R.drawable.ic_appversion);
         settingList.add(setting);
-
-        Setting setting7 = new Setting();
-        setting7.setTitle("版本检测");
-        setting7.setData("");
-        setting7.setImagePath(R.drawable.ic_version);
-        settingList.add(setting7);
-
 
         Setting setting1 = new Setting();
         setting1.setTitle("报警音设置");
@@ -461,38 +422,4 @@ public class SettingActivity extends BaseActivity implements VersionInfoContract
         }
     };
 
-    @Override
-    public void setVersionInfo(VersionInfo versionInfo) throws Exception {
-        String netVersion = versionInfo.getData().getVersion();
-        String[] netVersionArray = netVersion.split("\\.");
-        String[] localVersionArray = getVersionName().split("\\.");
-        for (int i = 0; i < netVersionArray.length; i++) {
-            if (Integer.parseInt(netVersionArray[i]) > Integer.parseInt(localVersionArray[i])) {
-                dialogUpdate.setMessage("版本号 "
-                        + versionInfo.getData().getVersion()
-                        + "\n"
-                        + versionInfo.getData().getUpdateInfo());
-                dialogUpdate.show();
-                dialogUpdate.setOnDialogUpdateOkListener(new DialogUpdate.OnDialogUpdateOkListener() {
-                    @Override
-                    public void onDialogUpdateOk() {
-                        new FileDownLoadTask(SettingActivity.this, versionInfo.getData().getApkUrl()).execute();
-                    }
-
-                    @Override
-                    public void onDialogUpdateCancel() {
-                    }
-                });
-            } else {
-                if (i == netVersionArray.length - 1) {
-                    Toast.makeText(this, getResources().getString(R.string.bast_version), Toast.LENGTH_SHORT).show();
-                }
-            }
-        }
-    }
-
-    @Override
-    public void setVersionInfoMessage(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
 }

@@ -30,6 +30,10 @@ android {
                 GETUI_APPID       : "iinLTplUFn7b8Zy2dl8755",
         ]
     }
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
 
     buildTypes {
         release {

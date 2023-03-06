@@ -39,7 +39,7 @@ public class ScaleImageView extends AppCompatImageView implements View.OnTouchLi
     private float downY2 = 0;
 
     boolean tag = false;
-    float scale, touchScale = 1;
+    float scale = 1, touchScale = 1;
     private Paint mBitmapPaint;
     private Canvas mCanvas;
     private Bitmap mBitmap;
@@ -308,7 +308,9 @@ public class ScaleImageView extends AppCompatImageView implements View.OnTouchLi
                     mPath.moveTo(pointLists.get(i).getStartX(), pointLists.get(i).getStartY());
                     mPath.lineTo(pointLists.get(i).getEndX(), pointLists.get(i).getEndY());
                     canvas.drawPath(mPath, paint);
-                    BigDecimal bigDecimal = new BigDecimal(length * scale / touchScale).setScale(2, RoundingMode.HALF_UP);
+                    //40.12 = 69/tan60  69为摄像头到试块的距离  60为摄像头角度
+                    BigDecimal bigDecimal = new BigDecimal(length  * (40.12/1280)*scale).setScale(2, RoundingMode.HALF_UP);
+//                    BigDecimal bigDecimal = new BigDecimal(length * scale / touchScale).setScale(2, RoundingMode.HALF_UP);
 //                    BigDecimal bigDecimal1 = new BigDecimal(length*scale1).setScale(2, RoundingMode.HALF_UP);
 //                    Toast.makeText(MyApplication.getContext(), bigDecimal1.toString(), Toast.LENGTH_SHORT).show();
                     canvas.drawTextOnPath(bigDecimal.toString() + "mm", mPath, 0, -15, paint);
@@ -357,11 +359,11 @@ public class ScaleImageView extends AppCompatImageView implements View.OnTouchLi
         widthPixels = dm.widthPixels;
         Bitmap resized1 = Bitmap.createScaledBitmap(bitmap, widthPixels, heightPixels, true);
         //Math.tan(Math.PI/6);30度正切值
-        if (widthPixels > width) {
-            scale = (float) (72 / Math.tan(Math.PI / 6) / widthPixels * (widthPixels / width));
-        } else {
-            scale = (float) (72 / Math.tan(Math.PI / 6) / widthPixels);
-        }
+//        if (widthPixels > width) {
+//            scale = (float) (72 / Math.tan(Math.PI / 6) / widthPixels * (widthPixels / width));
+//        } else {
+//            scale = (float) (72 / Math.tan(Math.PI / 6) / widthPixels);
+//        }
 
 //        scale1 = 72/Math.tan(Math.PI/6)/2400;
         Log.e("TAG1", width + "__________" + height);

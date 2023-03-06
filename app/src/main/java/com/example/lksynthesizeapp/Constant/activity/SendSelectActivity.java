@@ -1,6 +1,8 @@
 package com.example.lksynthesizeapp.Constant.activity;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.projection.MediaProjectionManager;
@@ -18,14 +20,21 @@ import androidx.annotation.RequiresApi;
 
 import com.example.lksynthesizeapp.ChiFen.Activity.DescernActivity;
 import com.example.lksynthesizeapp.ChiFen.Activity.RobotDescernActivity;
+import com.example.lksynthesizeapp.ChiFen.Module.VersionInfoContract;
+import com.example.lksynthesizeapp.ChiFen.Presenter.VersionInfoPresenter;
+import com.example.lksynthesizeapp.ChiFen.bean.VersionInfo;
 import com.example.lksynthesizeapp.Constant.Base.AlertDialogUtil;
 import com.example.lksynthesizeapp.Constant.Base.BaseActivity;
 import com.example.lksynthesizeapp.Constant.Base.Constant;
 import com.example.lksynthesizeapp.Constant.Base.EditTextLengClient;
 import com.example.lksynthesizeapp.Constant.Base.ExitApp;
+import com.example.lksynthesizeapp.Constant.Base.NetStat;
 import com.example.lksynthesizeapp.Constant.View.Header;
 import com.example.lksynthesizeapp.R;
 import com.example.lksynthesizeapp.SharePreferencesUtils;
+import com.google.gson.Gson;
+import com.message.update.fileview.DialogUpdate;
+import com.message.update.fileview.FileDownLoadTask;
 import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
 import java.io.IOException;
@@ -33,6 +42,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -43,11 +53,13 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 
 /**
  * 磁粉检测上传方式选择页
  */
-public class SendSelectActivity extends BaseActivity {
+public class SendSelectActivity extends BaseActivity implements VersionInfoContract.View  {
     @BindView(R.id.tvConfim)
     TextView tvConfim;
     @BindView(R.id.etProject)
@@ -71,9 +83,8 @@ public class SendSelectActivity extends BaseActivity {
     Disposable disposable;
     LoadingDialog loadingDialog;
     String deviceName;
-//    private String[] starArray = {"mode1","mode2","mode3"};
-//    private String selectMode = "";
-//    Timer timer;
+    VersionInfoPresenter versionInfoPresenter;
+    private DialogUpdate dialogUpdate;
 
     //推出程序
     @Override
@@ -92,6 +103,8 @@ public class SendSelectActivity extends BaseActivity {
         ButterKnife.bind(this);
         intance = this;
         loadingDialog = new LoadingDialog(this);
+        dialogUpdate = new DialogUpdate(this);
+        versionInfoPresenter = new VersionInfoPresenter(this, this);
         projectionManager = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
         alertDialogUtil = new AlertDialogUtil(this);
         new EditTextLengClient().textLeng(etProject, this);
@@ -101,6 +114,42 @@ public class SendSelectActivity extends BaseActivity {
         Toast.makeText(intance, "WIFI名称"+ sharePreferencesUtils.getString(SendSelectActivity.this, "wifiName", "")+"\n"
                 +"WIFI密码"+Constant.PASSWORD, Toast.LENGTH_SHORT).show();
 //        initSpinner();
+        upDataClient();
+    }
+
+    private void upDataClient() {
+        if (new NetStat().isNetworkConnected(SendSelectActivity.this)) {
+            HashMap<String, String> params = new HashMap<String, String>();
+            params.put("projectName", "济宁鲁科");
+            params.put("actionName", "鲁科自能检测系统");
+            params.put("appVersion", getVersionName());
+            params.put("channel", "default");
+            params.put("appType", "android");
+            params.put("clientType", "磁探机");
+            params.put("phoneSystemVersion", "10.0.1");
+            params.put("phoneType", "华为");
+            Gson gson = new Gson();
+            String s = gson.toJson(params);
+            RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), gson.toJson(params));
+            versionInfoPresenter.getVersionInfo(requestBody);
+        } else {
+            Toast.makeText(this, getResources().getString(R.string.change_net), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    //获取当前应用的版本号
+    private String getVersionName() {
+        // 获取packagemanager的实例
+        PackageManager packageManager = getPackageManager();
+        // getPackageName()是你当前类的包名，0代表是获取版本信息
+        PackageInfo packInfo = null;
+        try {
+            packInfo = packageManager.getPackageInfo(getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        String version = packInfo.versionName;
+        return version;
     }
 
     @OnClick({R.id.tvConfim})
@@ -287,5 +336,36 @@ public class SendSelectActivity extends BaseActivity {
             }
         }
     };
+
+    @Override
+    public void setVersionInfo(VersionInfo versionInfo) throws Exception {
+        String netVersion = versionInfo.getData().getVersion();
+        String[] netVersionArray = netVersion.split("\\.");
+        String[] localVersionArray = getVersionName().split("\\.");
+        for (int i = 0; i < netVersionArray.length; i++) {
+            if (Integer.parseInt(netVersionArray[i]) > Integer.parseInt(localVersionArray[i])) {
+                dialogUpdate.setMessage("版本号 "
+                        + versionInfo.getData().getVersion()
+                        + "\n"
+                        + versionInfo.getData().getUpdateInfo());
+                dialogUpdate.show();
+                dialogUpdate.setOnDialogUpdateOkListener(new DialogUpdate.OnDialogUpdateOkListener() {
+                    @Override
+                    public void onDialogUpdateOk() {
+                        new FileDownLoadTask(SendSelectActivity.this, versionInfo.getData().getApkUrl()).execute();
+                    }
+
+                    @Override
+                    public void onDialogUpdateCancel() {
+                    }
+                });
+            }
+        }
+    }
+
+    @Override
+    public void setVersionInfoMessage(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
 
 }

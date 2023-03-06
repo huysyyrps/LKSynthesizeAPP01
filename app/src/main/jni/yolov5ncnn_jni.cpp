@@ -486,12 +486,13 @@ Java_com_example_lksynthesizeapp_YoloV5Ncnn_Init(JNIEnv *env, jobject thiz, jobj
     yolov5.register_custom_layer("YoloV5Focus", YoloV5Focus_layer_creator);
 
     // init param
-    int ret = yolov5.load_param(mgr, "best221209_sim.param");
+    int ret = yolov5.load_param(mgr, "best221209_sim-sim-opt-fp16.param");
     if (ret != 0) {
         __android_log_print(ANDROID_LOG_DEBUG, "YoloV5Ncnn", "load_param failed");
         return JNI_FALSE;
     }
 ////        22/10/22注释
+
 ////        int ret = yolov5.load_param(mgr, "yolov5s.param");
 ////        int ret = yolov5.load_param(mgr, "bz220416_sim.param");
 ////        if (ret != 0) {
@@ -502,7 +503,7 @@ Java_com_example_lksynthesizeapp_YoloV5Ncnn_Init(JNIEnv *env, jobject thiz, jobj
 
     // init bin
     {
-        int ret = yolov5.load_model(mgr, "best221209_sim.bin");
+        int ret = yolov5.load_model(mgr, "best221209_sim-sim-opt-fp16.bin");
         if (ret != 0) {
             __android_log_print(ANDROID_LOG_DEBUG, "YoloV5Ncnn", "load_param failed");
             return JNI_FALSE;

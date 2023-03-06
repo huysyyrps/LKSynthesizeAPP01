@@ -41,12 +41,17 @@ public class SeeImageOrVideoActivity extends BaseActivity implements View.OnClic
     RadioButton rbRemoke;
     @BindView(R.id.rbSave)
     RadioButton rbSave;
+    @BindView(R.id.rbAdd)
+    RadioButton rbAdd;
+    @BindView(R.id.rbSmall)
+    RadioButton rbSmall;
     @BindView(R.id.linBar)
     RelativeLayout linBar;
     @BindView(R.id.frameLayout)
     FrameLayout frameLayout;
     AlertDialogUtil alertDialogUtil;
     Bitmap bitmap;
+    int scale = 1;
 
 
     @Override
@@ -160,7 +165,7 @@ public class SeeImageOrVideoActivity extends BaseActivity implements View.OnClic
         }
     }
 
-    @OnClick({R.id.rbRemoke, R.id.rbSave})
+    @OnClick({R.id.rbRemoke, R.id.rbSave,R.id.rbAdd, R.id.rbSmall})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.rbSave:
@@ -187,6 +192,16 @@ public class SeeImageOrVideoActivity extends BaseActivity implements View.OnClic
                 break;
             case R.id.rbRemoke:
                 drawLineView.remoke(this);
+                break;
+            case R.id.rbAdd:
+                scale+=1;
+                drawLineView.setScale(scale);
+                break;
+            case R.id.rbSmall:
+                if (scale>1){
+                    scale-=1;
+                    drawLineView.setScale(scale);
+                }
                 break;
         }
     }
