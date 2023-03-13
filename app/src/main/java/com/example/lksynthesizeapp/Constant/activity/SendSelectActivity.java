@@ -10,6 +10,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -18,17 +20,21 @@ import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 
+import com.example.lksynthesizeapp.ApiAddress;
 import com.example.lksynthesizeapp.ChiFen.Activity.DescernActivity;
 import com.example.lksynthesizeapp.ChiFen.Activity.RobotDescernActivity;
 import com.example.lksynthesizeapp.ChiFen.Module.VersionInfoContract;
 import com.example.lksynthesizeapp.ChiFen.Presenter.VersionInfoPresenter;
 import com.example.lksynthesizeapp.ChiFen.bean.VersionInfo;
+import com.example.lksynthesizeapp.Constant.Base.AlertDialogCallBack;
 import com.example.lksynthesizeapp.Constant.Base.AlertDialogUtil;
 import com.example.lksynthesizeapp.Constant.Base.BaseActivity;
 import com.example.lksynthesizeapp.Constant.Base.Constant;
 import com.example.lksynthesizeapp.Constant.Base.EditTextLengClient;
 import com.example.lksynthesizeapp.Constant.Base.ExitApp;
 import com.example.lksynthesizeapp.Constant.Base.NetStat;
+import com.example.lksynthesizeapp.Constant.Net.BaseDialogProgress;
+import com.example.lksynthesizeapp.Constant.Net.DownloadUtil;
 import com.example.lksynthesizeapp.Constant.View.Header;
 import com.example.lksynthesizeapp.R;
 import com.example.lksynthesizeapp.SharePreferencesUtils;
@@ -42,6 +48,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -59,7 +66,7 @@ import okhttp3.RequestBody;
 /**
  * 磁粉检测上传方式选择页
  */
-public class SendSelectActivity extends BaseActivity implements VersionInfoContract.View  {
+public class SendSelectActivity extends BaseActivity implements VersionInfoContract.View {
     @BindView(R.id.tvConfim)
     TextView tvConfim;
     @BindView(R.id.etProject)
@@ -68,7 +75,7 @@ public class SendSelectActivity extends BaseActivity implements VersionInfoContr
     EditText etWorkName;
     @BindView(R.id.etWorkCode)
     EditText etWorkCode;
-//    @BindView(R.id.spinner)
+    //    @BindView(R.id.spinner)
 //    Spinner spinner;
     //富有动感的Sheet弹窗
     Intent intent;
@@ -85,6 +92,7 @@ public class SendSelectActivity extends BaseActivity implements VersionInfoContr
     String deviceName;
     VersionInfoPresenter versionInfoPresenter;
     private DialogUpdate dialogUpdate;
+    BaseDialogProgress dialogProgress;
 
     //推出程序
     @Override
@@ -101,6 +109,7 @@ public class SendSelectActivity extends BaseActivity implements VersionInfoContr
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
+        dialogProgress = new BaseDialogProgress(this);
         intance = this;
         loadingDialog = new LoadingDialog(this);
         dialogUpdate = new DialogUpdate(this);
@@ -111,9 +120,6 @@ public class SendSelectActivity extends BaseActivity implements VersionInfoContr
         new EditTextLengClient().textLeng(etWorkCode, this);
         new EditTextLengClient().textLeng(etWorkName, this);
         deviceName = sharePreferencesUtils.getString(SendSelectActivity.this, "deviceName", "");
-        Toast.makeText(intance, "WIFI名称"+ sharePreferencesUtils.getString(SendSelectActivity.this, "wifiName", "")+"\n"
-                +"WIFI密码"+Constant.PASSWORD, Toast.LENGTH_SHORT).show();
-//        initSpinner();
         upDataClient();
     }
 
@@ -121,7 +127,7 @@ public class SendSelectActivity extends BaseActivity implements VersionInfoContr
         if (new NetStat().isNetworkConnected(SendSelectActivity.this)) {
             HashMap<String, String> params = new HashMap<String, String>();
             params.put("projectName", "济宁鲁科");
-            params.put("actionName", "鲁科自能检测系统");
+            params.put("actionName", "鲁科智能检测系统");
             params.put("appVersion", getVersionName());
             params.put("channel", "default");
             params.put("appType", "android");
@@ -342,30 +348,144 @@ public class SendSelectActivity extends BaseActivity implements VersionInfoContr
         String netVersion = versionInfo.getData().getVersion();
         String[] netVersionArray = netVersion.split("\\.");
         String[] localVersionArray = getVersionName().split("\\.");
+
         for (int i = 0; i < netVersionArray.length; i++) {
             if (Integer.parseInt(netVersionArray[i]) > Integer.parseInt(localVersionArray[i])) {
-                dialogUpdate.setMessage("版本号 "
-                        + versionInfo.getData().getVersion()
-                        + "\n"
-                        + versionInfo.getData().getUpdateInfo());
-                dialogUpdate.show();
-                dialogUpdate.setOnDialogUpdateOkListener(new DialogUpdate.OnDialogUpdateOkListener() {
-                    @Override
-                    public void onDialogUpdateOk() {
-                        new FileDownLoadTask(SendSelectActivity.this, versionInfo.getData().getApkUrl()).execute();
-                    }
-
-                    @Override
-                    public void onDialogUpdateCancel() {
-                    }
-                });
+                if (versionInfo.getData().getUpdateFlag() == 0) {
+                    //无需SSH升级,APK需要升级时值为0
+                    showDialog(versionInfo, 0);
+                    break;
+                } else if (versionInfo.getData().getUpdateFlag() == 1) {
+                    //SSH需要升级APK不需要升级
+                    showDialog(versionInfo, 1);
+                    break;
+//                    downloadSSHFile(versionInfo,0);
+                } else if (versionInfo.getData().getUpdateFlag() == 2) {
+                    showDialog(versionInfo, 2);
+                    break;
+//                    downloadSSHFile(versionInfo,1);
+                }
             }
+        }
+        if ( Arrays.equals(netVersionArray,localVersionArray)){
+            alertDialogUtil.showDialog("请链接网络" + sharePreferencesUtils.getString(SendSelectActivity.this, "wifiName", ""),
+                    new AlertDialogCallBack() {
+                        @Override
+                        public void confirm(String name) {
+                            Intent intent = new Intent(Settings.ACTION_WIFI_SETTINGS);
+                            startActivity(intent);
+                        }
+
+                        @Override
+                        public void cancel() {
+
+                        }
+
+                        @Override
+                        public void save(String name) {
+
+                        }
+
+                        @Override
+                        public void checkName(String name) {
+
+                        }
+                    });
         }
     }
 
     @Override
     public void setVersionInfoMessage(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        Log.e("TAG", message);
+        alertDialogUtil.showDialog("请链接网络" + sharePreferencesUtils.getString(SendSelectActivity.this, "wifiName", ""),
+                new AlertDialogCallBack() {
+                    @Override
+                    public void confirm(String name) {
+                        Intent intent = new Intent(Settings.ACTION_WIFI_SETTINGS);
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void cancel() {
+
+                    }
+
+                    @Override
+                    public void save(String name) {
+
+                    }
+
+                    @Override
+                    public void checkName(String name) {
+
+                    }
+                });
     }
 
+
+    private void showDialog(VersionInfo versionInfo, int tag) {
+        dialogUpdate.setMessage("版本号 "
+                + versionInfo.getData().getVersion()
+                + "\n"
+                + versionInfo.getData().getUpdateInfo());
+        dialogUpdate.show();
+        dialogUpdate.setOnDialogUpdateOkListener(new DialogUpdate.OnDialogUpdateOkListener() {
+            @Override
+            public void onDialogUpdateOk() {
+                if (tag == 0) {
+                    new FileDownLoadTask(SendSelectActivity.this, versionInfo.getData().getApkUrl()).execute();
+                } else if (tag == 1) {
+                    downloadSSHFile(versionInfo, 0);
+                } else if (tag == 2) {
+                    downloadSSHFile(versionInfo, 1);
+                }
+
+            }
+
+            @Override
+            public void onDialogUpdateCancel() {
+                Log.e("XXXXXXXXXX", "XXXXXXXXXXXXXXXXXXXXXXX");
+            }
+        });
+    }
+
+    private void downloadSSHFile(VersionInfo versionInfo, int tag) {
+        String url = ApiAddress.api + "app_api/files/luke-ssh.bin";
+        dialogProgress.show();
+        dialogProgress.setFileSize(versionInfo.getData().getApkSize() + "MB");
+        DownloadUtil.get().download(url, "LUKESSH", new DownloadUtil.OnDownloadListener() {
+            @Override
+            public void onDownloadSuccess() {
+                //成功
+                Log.i("注意", "下载成功");
+                if (tag == 0) {
+                    dialogProgress.dismiss();
+                } else if (tag == 1) {
+                    dialogProgress.dismiss();
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            new FileDownLoadTask(SendSelectActivity.this, versionInfo.getData().getApkUrl()).execute();
+                        }
+                    });
+
+
+                }
+
+            }
+
+            @Override
+            public void onDownloading(int progress) {
+                //进度
+                Log.i("注意", progress + "%");
+                dialogProgress.setProgress(progress);
+            }
+
+            @Override
+            public void onDownloadFailed() {
+                //失败
+                Log.i("注意", "下载失败");
+                dialogProgress.dismiss();
+            }
+        });
+    }
 }

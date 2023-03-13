@@ -22,25 +22,6 @@
         android:background="@color/header_color">
 
         <RadioButton
-                android:id="@+id/rbDescern"
-                android:visibility="gone"
-                style="@style/MainRadionButton"
-                android:background="@drawable/button_select"
-                android:drawableTop="@drawable/ic_descern_open"
-                android:text="识别已开启"
-                android:textSize="11dp"
-                android:textColor="@color/whith"/>
-
-        <RadioButton
-                android:id="@+id/rbNoDescern"
-                style="@style/MainRadionButton"
-                android:background="@drawable/button_select"
-                android:drawableTop="@drawable/ic_descern_close"
-                android:text="识别已关闭"
-                android:textSize="11dp"
-                android:textColor="@color/red"/>
-
-        <RadioButton
             android:id="@+id/rbCamera"
             style="@style/MainRadionButton"
             android:background="@drawable/button_select"

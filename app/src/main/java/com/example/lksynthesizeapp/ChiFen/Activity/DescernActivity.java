@@ -1,6 +1,14 @@
 package com.example.lksynthesizeapp.ChiFen.Activity;
 
+import static com.example.lksynthesizeapp.Constant.Base.Constant.TAG_ONE;
+import static com.example.lksynthesizeapp.Constant.Base.Constant.TAG_THERE;
+import static com.example.lksynthesizeapp.Constant.Base.Constant.TAG_TWO;
+import static com.littlegreens.netty.client.status.ConnectState.STATUS_CONNECT_CLOSED;
+import static com.littlegreens.netty.client.status.ConnectState.STATUS_CONNECT_ERROR;
+import static com.littlegreens.netty.client.status.ConnectState.STATUS_CONNECT_SUCCESS;
+
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -39,12 +47,17 @@ import com.example.lksynthesizeapp.ChiFen.Base.MyMediaRecorder;
 import com.example.lksynthesizeapp.ChiFen.Base.MyPaint;
 import com.example.lksynthesizeapp.ChiFen.Base.TirenSet;
 import com.example.lksynthesizeapp.ChiFen.Media.Notifications;
+import com.example.lksynthesizeapp.ChiFen.Modbus.BytesHexChange;
+import com.example.lksynthesizeapp.ChiFen.Netty.BaseTcpClient;
+import com.example.lksynthesizeapp.ChiFen.Netty.NettyTcpClient;
+import com.example.lksynthesizeapp.ChiFen.Netty.SendCallBack;
 import com.example.lksynthesizeapp.ChiFen.service.WhiteService;
 import com.example.lksynthesizeapp.Constant.Base.Constant;
 import com.example.lksynthesizeapp.Constant.activity.SendSelectActivity;
 import com.example.lksynthesizeapp.R;
 import com.example.lksynthesizeapp.SharePreferencesUtils;
 import com.example.lksynthesizeapp.YoloV5Ncnn;
+import com.littlegreens.netty.client.listener.NettyClientListener;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -56,7 +69,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class DescernActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
+public class DescernActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks, NettyClientListener<String> {
     @BindView(R.id.rbCamera)
     RadioButton rbCamera;
     @BindView(R.id.rbVideo)
@@ -89,10 +102,6 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
     LinearLayout linlayoutData;
     @BindView(R.id.chronometer)
     Chronometer chronometer;
-    @BindView(R.id.rbDescern)
-    RadioButton rbDescern;
-    @BindView(R.id.rbNoDescern)
-    RadioButton rbNoDescern;
     private String url;
     private Bitmap bmp = null;
     private Bitmap rgba;
@@ -119,8 +128,10 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
             Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.FOREGROUND_SERVICE};
     private MediaRecorder mediaRecorder;
     public static DescernActivity intance = null;
-    //    private String selectMode;
-    private boolean openDescern = false;
+    NettyTcpClient mNettyTcpClient;
+    BaseTcpClient baseTcpClient;
+    BytesHexChange bytesHexChange = BytesHexChange.getInstance();
+    boolean descernTag = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,15 +150,6 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         project = intent.getStringExtra("project");
         workName = intent.getStringExtra("etWorkName");
         workCode = intent.getStringExtra("etWorkCode");
-//        selectMode = intent.getStringExtra("selectMode");
-//        if (selectMode.equals("mode1")){
-//            selectnum = 1;
-//        }else if (selectMode.equals("mode2")){
-//            selectnum = 2;
-//        }else if (selectMode.equals("mode3")){
-//            selectnum = 3;
-//        }
-//        boolean ret_init = yolov5ncnn.Init(getAssets(),selectnum);
         boolean ret_init = yolov5ncnn.Init(getAssets());
         if (!ret_init) {
             Toast.makeText(this, "yolov5ncnn Init failed", Toast.LENGTH_SHORT).show();
@@ -184,8 +186,10 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                 startService(intent);
             }
         }
+        //获取磁化状态的连接
+        baseTcpClient = BaseTcpClient.getInstance();
+        settingNetty();
     }
-
     private void draw() {
         // TODO Auto-generated method stub
         try {
@@ -212,7 +216,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
 //            YoloV5Ncnn.Obj[] objects = yolov5ncnn.Detect(bmp, false,selectnum);
             YoloV5Ncnn.Obj[] objects = null;
 //            long startTime = System.currentTimeMillis();
-            if (openDescern) {
+            if (descernTag) {
                 objects = yolov5ncnn.Detect(bmp, false);
 //                long endTime = System.currentTimeMillis();
 //                Log.e("XXX",startTime-endTime+"");
@@ -237,6 +241,8 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
 //            message.what = Constant.TAG_ONE;
 //            message.obj = bmp;
 //            handlerLoop.sendMessage(message);
+            //发送报警信息
+            makeData("300A");
             imageView.setImageBitmap(bmp);
             return;
         }
@@ -262,6 +268,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         }
         imageView.setImageBitmap(rgba);
         mediaPlayer.start();
+        makeData("310A");
         if (isFirst) {
             saveImageToGallery(DescernActivity.this, rgba);
             saveTime = System.currentTimeMillis();
@@ -299,19 +306,9 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         runing = false;
     }
 
-    @OnClick({R.id.rbCamera, R.id.rbVideo, R.id.rbAlbum, R.id.rbBack, R.id.linearLayoutStop, R.id.rbSetting, R.id.rbDescern, R.id.rbNoDescern})
+    @OnClick({R.id.rbCamera, R.id.rbVideo, R.id.rbAlbum, R.id.rbBack, R.id.linearLayoutStop, R.id.rbSetting})
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.rbDescern:
-                rbDescern.setVisibility(View.GONE);
-                rbNoDescern.setVisibility(View.VISIBLE);
-                openDescern = !openDescern;
-                break;
-            case R.id.rbNoDescern:
-                rbDescern.setVisibility(View.VISIBLE);
-                rbNoDescern.setVisibility(View.GONE);
-                openDescern = !openDescern;
-                break;
             case R.id.rbCamera:
                 if (toast != null) {
                     toast.cancel();
@@ -603,4 +600,70 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         }
     };
 
+    private void settingNetty() {
+        mNettyTcpClient = baseTcpClient.initTcpClient("192.168.43.251", 4000);
+//        mNettyTcpClient = baseTcpClient.initTcpClient("172.16.20.5", 5000);
+        mNettyTcpClient.setListener(this); //设置TCP监听
+        baseTcpClient.tcpClientConntion(mNettyTcpClient);
+    }
+
+    //组装数据
+    private void makeData(String tag) {
+        byte[] s = bytesHexChange.HexStringToByteArr(tag);
+        sendData(s);
+    }
+
+    //发送数据
+    private void sendData(byte[] data) {
+        baseTcpClient.sendTcpData(data, new SendCallBack() {
+            @Override
+            public void success(String success) {
+            }
+
+            @Override
+            public void faild(String message) {
+            }
+        });
+    }
+
+    @Override
+    public void onMessageResponseClient(String msg, int index) {
+        //6为帧头、命令码、检验的长度和
+        Log.e("XXX接收", msg);
+        if (msg.equals("300A")){
+            descernTag = false;
+        }else if (msg.equals("310A")){
+            descernTag = true;
+        }
+    }
+
+    @Override
+    public void onClientStatusConnectChanged(int statusCode, int index) {
+        //连接状态回调
+        if (statusCode == STATUS_CONNECT_SUCCESS) {
+            handler.sendEmptyMessage(TAG_ONE);
+        } else if (statusCode == STATUS_CONNECT_CLOSED) {
+            handler.sendEmptyMessage(TAG_TWO);
+        } else if (statusCode == STATUS_CONNECT_ERROR) {
+            handler.sendEmptyMessage(TAG_TWO);
+        }
+    }
+    private Handler handler = new Handler() {
+        @SuppressLint("HandlerLeak")
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case TAG_ONE:
+                    Toast.makeText(DescernActivity.this, R.string.connect_success, Toast.LENGTH_SHORT).show();
+                    break;
+                case TAG_TWO:
+                    Toast.makeText(DescernActivity.this, R.string.connect_faile, Toast.LENGTH_SHORT).show();
+                    break;
+                case TAG_THERE:
+                    Toast.makeText(DescernActivity.this, R.string.receive_faile, Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+
+    };
 }

@@ -1,0 +1,5 @@
+1. client_type  project_name  action_name app_type 必须和数据库一致。
+
+2. update_flag:当无需SSH升级APK升级时值为0，当SSH需要升级APK不需要升级时值为1，当SSH和APK同时需要升级时值为2。
+
+3. apk_size: 表示SSH升级.bin文件的下载地址

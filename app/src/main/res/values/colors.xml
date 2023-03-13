@@ -285,4 +285,8 @@
     <color name="header_color">#262626</color>
 <!--    <color name="black">#000000</color>&lt;!&ndash;黑色 &ndash;&gt;-->
     <color name="black">#000000</color><!--黑色 -->
+
+    <color name="color_grey_2">#ff222222</color>
+    <color name="rect_color">#cc000000</color>
+    <color name="color_grey_9">#ff999999</color>
 </resources>

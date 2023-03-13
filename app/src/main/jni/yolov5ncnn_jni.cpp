@@ -486,7 +486,7 @@ Java_com_example_lksynthesizeapp_YoloV5Ncnn_Init(JNIEnv *env, jobject thiz, jobj
     yolov5.register_custom_layer("YoloV5Focus", YoloV5Focus_layer_creator);
 
     // init param
-    int ret = yolov5.load_param(mgr, "best221209_sim-sim-opt-fp16.param");
+    int ret = yolov5.load_param(mgr, "sim-opt-fp16.param");
     if (ret != 0) {
         __android_log_print(ANDROID_LOG_DEBUG, "YoloV5Ncnn", "load_param failed");
         return JNI_FALSE;
@@ -503,39 +503,11 @@ Java_com_example_lksynthesizeapp_YoloV5Ncnn_Init(JNIEnv *env, jobject thiz, jobj
 
     // init bin
     {
-        int ret = yolov5.load_model(mgr, "best221209_sim-sim-opt-fp16.bin");
+        int ret = yolov5.load_model(mgr, "sim-opt-fp16.bin");
         if (ret != 0) {
             __android_log_print(ANDROID_LOG_DEBUG, "YoloV5Ncnn", "load_param failed");
             return JNI_FALSE;
         }
-//        if (mode == 1){
-//            int ret = yolov5.load_model(mgr, "best221031_sim.bin");
-//            if (ret != 0) {
-//                __android_log_print(ANDROID_LOG_DEBUG, "YoloV5Ncnn", "load_param failed");
-//                return JNI_FALSE;
-//            }
-//        }
-//        if (mode == 2){
-//            int ret = yolov5.load_model(mgr, "xy211223.bin");
-//            if (ret != 0) {
-//                __android_log_print(ANDROID_LOG_DEBUG, "YoloV5Ncnn", "load_param failed");
-//                return JNI_FALSE;
-//            }
-//        }
-//        if (mode == 3){
-//            int ret = yolov5.load_model(mgr, "yolov5s.bin");
-//            if (ret != 0) {
-//                __android_log_print(ANDROID_LOG_DEBUG, "YoloV5Ncnn", "load_param failed");
-//                return JNI_FALSE;
-//            }
-//        }
-//        22/10/22注释
-//        int ret = yolov5.load_model(mgr, "yolov5s.bin");
-//        int ret = yolov5.load_model(mgr, "bz220416_sim.bin");
-//        if (ret != 0) {
-//            __android_log_print(ANDROID_LOG_DEBUG, "YoloV5Ncnn", "load_model failed");
-//            return JNI_FALSE;
-//        }
     }
 
     // init jni glue
@@ -604,7 +576,7 @@ Java_com_example_lksynthesizeapp_YoloV5Ncnn_Detect(JNIEnv *env, jobject thiz, jo
     std::vector<Object> objects;
     {
         //置信度prob_threshold   0.45   0.45
-        const float prob_threshold = 0.45f;
+        const float prob_threshold = 0.65f;
         const float nms_threshold = 0.45f;
 
         const float norm_vals[3] = {1 / 255.f, 1 / 255.f, 1 / 255.f};

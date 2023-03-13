@@ -25,6 +25,7 @@ import com.example.lksynthesizeapp.Constant.Base.Constant;
 import com.example.lksynthesizeapp.Constant.Bean.Defined;
 import com.example.lksynthesizeapp.Constant.Module.DefinedContract;
 import com.example.lksynthesizeapp.Constant.Presenter.DefinedPresenter;
+import com.example.lksynthesizeapp.Constant.wifi.deal.ConnectionManager;
 import com.example.lksynthesizeapp.R;
 import com.example.lksynthesizeapp.SharePreferencesUtils;
 import com.huawei.hms.hmsscankit.OnResultCallback;
@@ -59,7 +60,7 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
     String[] PERMS = {Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.FOREGROUND_SERVICE,
-            Manifest.permission.ACCESS_WIFI_STATE};
+            Manifest.permission.ACCESS_WIFI_STATE,Manifest.permission.ACCESS_COARSE_LOCATION};
     SharePreferencesUtils sharePreferencesUtils;
     private int[] img = {R.drawable.ic_light_close, R.drawable.ic_light_open};
     private AlertDialogUtil alertDialogUtil;
@@ -136,6 +137,12 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
                 }
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        new ConnectionManager(DefinedActivity.this).openWithWAP();
     }
 
     /**
@@ -309,6 +316,7 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
         sharePreferencesUtils.setString(DefinedActivity.this, "deviceName", deviceName);
         sharePreferencesUtils.setString(DefinedActivity.this, "deviceCode", deviceCode);
         startActivity(new Intent(this, SendSelectActivity.class));
+//        startActivity(new Intent(this, WiFiActivity.class));
     }
 
     @Override
@@ -382,4 +390,5 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
             }
         }
     }
+
 }

@@ -27,6 +27,8 @@
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission android:name="com.huawei.permission.external_app_settings.USE_COMPONENT" />
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" ></uses-permission>
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" ></uses-permission>
     <uses-permission
             android:name="android.permission.DEVICE_POWER"
             tools:ignore="ProtectedPermissions" />
@@ -56,9 +58,10 @@
             android:supportsRtl="true"
             android:theme="@style/NoAction"
             android:usesCleartextTraffic="true">
+
         <activity
                 android:name=".TestActivity"
-                android:exported="true"></activity>
+                android:exported="true" />
 
         <service android:name=".ChiFen.service.WhiteService" />
 
@@ -91,7 +94,7 @@
         <activity
                 android:name=".ChiFen.Activity.RobotDescernActivity"
                 android:exported="true"
-                android:screenOrientation="landscape"></activity>
+                android:screenOrientation="landscape" />
         <activity android:name=".Constant.activity.DefinedActivity" />
         <activity android:name=".Constant.activity.SendSelectActivity" />
         <activity

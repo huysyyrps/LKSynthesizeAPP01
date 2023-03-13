@@ -8,10 +8,12 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.PowerManager;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -22,7 +24,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.lksynthesizeapp.ChiFen.Base.MobileButlerUtil;
 import com.example.lksynthesizeapp.ChiFen.Base.MyCallBack;
 import com.example.lksynthesizeapp.ChiFen.Base.RegionalChooseUtil;
-import com.example.lksynthesizeapp.ChiFen.Presenter.VersionInfoPresenter;
 import com.example.lksynthesizeapp.ChiFen.bean.Setting;
 import com.example.lksynthesizeapp.Constant.Base.AlertDialogCallBack;
 import com.example.lksynthesizeapp.Constant.Base.AlertDialogUtil;
@@ -32,18 +33,21 @@ import com.example.lksynthesizeapp.Constant.Base.BaseViewHolder;
 import com.example.lksynthesizeapp.Constant.Base.Constant;
 import com.example.lksynthesizeapp.Constant.Net.SSHCallBack;
 import com.example.lksynthesizeapp.Constant.Net.SSHExcuteCommandHelper;
+import com.example.lksynthesizeapp.Constant.Net.SshScpClient;
 import com.example.lksynthesizeapp.Constant.activity.SendSelectActivity;
 import com.example.lksynthesizeapp.R;
 import com.example.lksynthesizeapp.SharePreferencesUtils;
 import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class SettingActivity extends BaseActivity{
+public class SettingActivity extends BaseActivity {
 
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
@@ -52,7 +56,6 @@ public class SettingActivity extends BaseActivity{
     SharePreferencesUtils sharePreferencesUtils;
     List<Setting> settingList = new ArrayList<>();
     LoadingDialog loadingDialog;
-    VersionInfoPresenter versionInfoPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +79,41 @@ public class SettingActivity extends BaseActivity{
                     public void onClick(View v) {
                         if (setting.getTitle().equals("息屏运行")) {
                             requestIgnoreBatteryOptimizations();
+                        }
+                        //设备升级
+                        if (setting.getTitle().equals("设备升级")) {
+                            if (fileIsExists(Environment.getExternalStorageDirectory()+"/LUKESSH/luke-ssh.bin")){
+                                new AlertDialogUtil(SettingActivity.this).showDialog("您确定要升级设备吗？", new AlertDialogCallBack() {
+                                    @Override
+                                    public void confirm(String name) {
+                                        new Thread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                try {
+                                                    new SshScpClient().scpFile();
+                                                } catch (IOException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                        }).start();
+                                    }
+
+                                    @Override
+                                    public void cancel() {
+
+                                    }
+
+                                    @Override
+                                    public void save(String name) {
+
+                                    }
+
+                                    @Override
+                                    public void checkName(String name) {
+
+                                    }
+                                });
+                            }
                         }
                         if (setting.getTitle().equals("报警音设置")) {
                             startActivity(new Intent(SettingActivity.this, AudioActivity.class));
@@ -155,6 +193,25 @@ public class SettingActivity extends BaseActivity{
         loadingDialog = new LoadingDialog(this);
     }
 
+    //判断文件是否存在
+    //fileName 为文件名称 返回true为存在
+    public boolean fileIsExists(String fileName) {
+        try {
+            File f=new File(fileName);
+            if(f.exists()) {
+                Log.i("测试", "有这个文件");
+                return true;
+            }else{
+                Log.i("测试", "没有这个文件");
+                return false;
+            }
+        } catch (Exception e) {
+            Log.i("测试", "崩溃");
+            return false;
+        }
+    }
+
+
     //获取当前应用的版本号
     private String getVersionName() {
         // 获取packagemanager的实例
@@ -175,6 +232,12 @@ public class SettingActivity extends BaseActivity{
         setting.setTitle("当前版本");
         setting.setImagePath(R.drawable.ic_appversion);
         settingList.add(setting);
+
+        Setting setting7 = new Setting();
+        setting7.setTitle("设备升级");
+        setting7.setData("");
+        setting7.setImagePath(R.drawable.ic_version);
+        settingList.add(setting7);
 
         Setting setting1 = new Setting();
         setting1.setTitle("报警音设置");
@@ -257,6 +320,8 @@ public class SettingActivity extends BaseActivity{
                         public void confirm(String data) {
                             if (title.equals("设备重启中")) {
                                 handlerSetting.sendEmptyMessage(Constant.TAG_THERE);
+                            }else if (title.equals("升级文件下载中")){
+                                Log.e("升级文件下载中",data);
                             } else {
                                 handlerSetting.sendEmptyMessage(Constant.TAG_ONE);
                             }

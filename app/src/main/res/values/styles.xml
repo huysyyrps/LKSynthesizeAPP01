@@ -142,4 +142,15 @@
         <item name="android:textSize">16dp</item>
     </style>
 
+    <!--加载动画属性-->
+    <style name="dialogStyle" parent="Theme.AppCompat.Dialog">
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:windowBackground">@color/color_grey_2</item>
+    </style>
+
+    <style name="dialogWindowAnim_ok" mce_bogus="1" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/dialog_enter_anim</item>
+        <item name="android:windowExitAnimation">@anim/dialog_exit_anim</item>
+    </style>
+
 </resources>
