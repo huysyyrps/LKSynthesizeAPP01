@@ -30,17 +30,18 @@ import com.example.lksynthesizeapp.Constant.Base.AlertDialogUtil;
 import com.example.lksynthesizeapp.Constant.Base.BaseActivity;
 import com.example.lksynthesizeapp.Constant.Base.BaseRecyclerAdapter;
 import com.example.lksynthesizeapp.Constant.Base.BaseViewHolder;
+import com.example.lksynthesizeapp.Constant.Base.CallBack;
 import com.example.lksynthesizeapp.Constant.Base.Constant;
 import com.example.lksynthesizeapp.Constant.Net.SSHCallBack;
 import com.example.lksynthesizeapp.Constant.Net.SSHExcuteCommandHelper;
 import com.example.lksynthesizeapp.Constant.Net.SshScpClient;
 import com.example.lksynthesizeapp.Constant.activity.SendSelectActivity;
+import com.example.lksynthesizeapp.Constant.wifi.deal.LoginDialogUtil;
 import com.example.lksynthesizeapp.R;
 import com.example.lksynthesizeapp.SharePreferencesUtils;
 import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,8 +71,16 @@ public class SettingActivity extends BaseActivity {
             public void convert(BaseViewHolder holder, final Setting setting) {
                 holder.setText(R.id.tvTitle, setting.getTitle());
                 if (setting.getTitle().equals("当前版本")) {
+                    holder.setVisitionTextView(R.id.tvData);
                     holder.setText(R.id.tvData, getVersionName());
                     holder.setInImage(R.id.ivGo);
+                }
+                if (setting.getTitle().equals("设备升级")) {
+                    if (fileIsExists(Environment.getExternalStorageDirectory()+"/LUKESSH/luke-ssh.bin")){
+                        holder.setVisitionTextView(R.id.tvData);
+                        holder.setText(R.id.tvData, "有新的升级文件");
+                        holder.setInImage(R.id.ivGo);
+                    }
                 }
                 holder.setImage(SettingActivity.this, R.id.imageView, setting.getImagePath());
                 holder.setOnClickListener(R.id.linearLayout, new View.OnClickListener() {
@@ -86,14 +95,21 @@ public class SettingActivity extends BaseActivity {
                                 new AlertDialogUtil(SettingActivity.this).showDialog("您确定要升级设备吗？", new AlertDialogCallBack() {
                                     @Override
                                     public void confirm(String name) {
+                                        LoginDialogUtil.getInstance().showLoadingDialog(SettingActivity.this, "系统升级中...");
                                         new Thread(new Runnable() {
                                             @Override
                                             public void run() {
-                                                try {
-                                                    new SshScpClient().scpFile();
-                                                } catch (IOException e) {
-                                                    e.printStackTrace();
-                                                }
+                                                new SshScpClient().scpFile(new CallBack() {
+                                                    @Override
+                                                    public void confirm(String name) {
+                                                        handlerSetting.sendEmptyMessage(Constant.TAG_FOUR);
+                                                    }
+
+                                                    @Override
+                                                    public void cancel() {
+                                                        handlerSetting.sendEmptyMessage(Constant.TAG_FIVE);
+                                                    }
+                                                });
                                             }
                                         }).start();
                                     }
@@ -482,6 +498,18 @@ public class SettingActivity extends BaseActivity {
                     new DescernActivity().intance.finish();
                     new SendSelectActivity().intance.finish();
                     System.exit(0);
+                    break;
+                case Constant.TAG_FOUR:
+                    Toast.makeText(SettingActivity.this, "升级成功，请重新连接", Toast.LENGTH_LONG).show();
+                    if (fileIsExists(Environment.getExternalStorageDirectory()+"/LUKESSH/luke-ssh.bin")){
+                        File file = new File(Environment.getExternalStorageDirectory()+"/LUKESSH/luke-ssh.bin");
+                        file.delete();
+                    }
+                    LoginDialogUtil.getInstance().closeLoadingDialog();
+                    break;
+                case Constant.TAG_FIVE:
+                    Toast.makeText(SettingActivity.this, "升级失败，请重新连接", Toast.LENGTH_LONG).show();
+                    LoginDialogUtil.getInstance().closeLoadingDialog();
                     break;
             }
         }

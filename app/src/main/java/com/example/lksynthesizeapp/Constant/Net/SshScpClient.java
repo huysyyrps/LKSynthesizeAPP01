@@ -3,6 +3,7 @@ package com.example.lksynthesizeapp.Constant.Net;
 import android.os.Environment;
 import android.util.Log;
 
+import com.example.lksynthesizeapp.Constant.Base.CallBack;
 import com.jcraft.jsch.ChannelShell;
 import com.jcraft.jsch.JSch;
 
@@ -19,27 +20,27 @@ import ch.ethz.ssh2.Session;
 import ch.ethz.ssh2.StreamGobbler;
 
 public class SshScpClient {
-    public void scpFile() throws IOException {
+    public void scpFile(CallBack allBack){
         Connection con = new Connection("192.168.43.251", 22); //可以不输入端口号
         //连接
-        con.connect();
-        //远程服务器的用户名密码
-        boolean isAuthed = con.authenticateWithPassword("root", "root");
-        //建立SCP客户端
-        SCPClient scpClient = con.createSCPClient();
-        //服务器端的文件下载到本地的目录下
-        //scpClient.get("/home/test/11.txt", "C:/");
-        //将本地文件上传到服务器端的目录下
-        scpClient.put(Environment.getExternalStorageDirectory() + "/LUKESSH/luke-ssh.bin", "/tmp");
-        //建立会话，一个会话内只能执行一个linux命令
-        Session session = null;
-        session = con.openSession();
-        //利用会话可以操作远程服务器
-        //例如：删除远程目录下的文件
-        //session.execCommand("rm -f".concat(remotePath).concat(qrCodeFileMode));
-        //显示执行命令后的信息
-        InputStream stdout = new StreamGobbler(session.getStdout());
-        BufferedReader br = new BufferedReader(new InputStreamReader(stdout));
+        try {
+            con.connect();
+            boolean isAuthed = con.authenticateWithPassword("root", "root");
+            //建立SCP客户端
+            SCPClient scpClient = con.createSCPClient();
+            //服务器端的文件下载到本地的目录下
+            //scpClient.get("/home/test/11.txt", "C:/");
+            //将本地文件上传到服务器端的目录下
+            scpClient.put(Environment.getExternalStorageDirectory() + "/LUKESSH/luke-ssh.bin", "/tmp");
+            //建立会话，一个会话内只能执行一个linux命令
+            Session session = null;
+            session = con.openSession();
+            //利用会话可以操作远程服务器
+            //例如：删除远程目录下的文件
+            //session.execCommand("rm -f".concat(remotePath).concat(qrCodeFileMode));
+            //显示执行命令后的信息
+            InputStream stdout = new StreamGobbler(session.getStdout());
+            BufferedReader br = new BufferedReader(new InputStreamReader(stdout));
 //        while (true) {
 //            String line = br.readLine()+"";
 //            if (line == null) {
@@ -48,9 +49,16 @@ public class SshScpClient {
 //            }
 //            Log.e("SCP", line);
 //        }
-        session.close();
-        con.close();
-        execute("sysupgrade /tmp/luke-ssh.bin \n");
+            session.close();
+            con.close();
+            execute("sysupgrade /tmp/luke-ssh.bin \n");
+            allBack.confirm("升级成功");
+        } catch (IOException e) {
+            e.printStackTrace();
+            allBack.cancel();
+        }
+        //远程服务器的用户名密码
+
 //        SSHExcuteCommandHelper.writeBefor(Constant.URL, "sysupgrade /tmp/luke-ssh.bin\n", new SSHCallBack() {
 //            @Override
 //            public void confirm(String data) {
