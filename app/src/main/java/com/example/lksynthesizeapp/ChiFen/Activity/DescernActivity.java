@@ -1,5 +1,6 @@
 package com.example.lksynthesizeapp.ChiFen.Activity;
 
+import static com.example.lksynthesizeapp.Constant.Base.Constant.TAG_FOUR;
 import static com.example.lksynthesizeapp.Constant.Base.Constant.TAG_ONE;
 import static com.example.lksynthesizeapp.Constant.Base.Constant.TAG_THERE;
 import static com.example.lksynthesizeapp.Constant.Base.Constant.TAG_TWO;
@@ -132,6 +133,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
     BaseTcpClient baseTcpClient;
     BytesHexChange bytesHexChange = BytesHexChange.getInstance();
     boolean descernTag = false;
+    String devicesModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,6 +153,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         workName = intent.getStringExtra("etWorkName");
         workCode = intent.getStringExtra("etWorkCode");
         boolean ret_init = yolov5ncnn.Init(getAssets());
+        devicesModel = new SharePreferencesUtils().getString(this,"deviceModel","");
         if (!ret_init) {
             Toast.makeText(this, "yolov5ncnn Init failed", Toast.LENGTH_SHORT).show();
         }
@@ -227,20 +230,13 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
             //关闭HttpURLConnection连接
             conn.disconnect();
         } catch (Exception ex) {
-            Message message = new Message();
-            message.what = Constant.TAG_THERE;
-            message.obj = ex.toString();
-            handlerLoop.sendMessage(message);
+           Log.e("XXX",ex.toString());
         } finally {
         }
     }
 
     private void showObjects(YoloV5Ncnn.Obj[] objects) {
         if (objects == null || objects.length == 0) {
-//            Message message = new Message();
-//            message.what = Constant.TAG_ONE;
-//            message.obj = bmp;
-//            handlerLoop.sendMessage(message);
             //发送报警信息
             makeData("300A");
             imageView.setImageBitmap(bmp);
@@ -281,10 +277,6 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                 isFirst = true;
             }
         }
-//            Message message = new Message();
-//            message.what = Constant.TAG_FOUR;
-//            message.obj = rgba;
-//            handlerLoop.sendMessage(message);
 
     }
 
@@ -545,64 +537,12 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         Log.e("info", "stop");
     }
 
-
-    Handler handlerLoop = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case Constant.TAG_ONE:
-                    Bitmap bit = (Bitmap) msg.obj;
-                    imageView.setImageBitmap(bit);
-                    break;
-                case Constant.TAG_THERE:
-                    String toastString = msg.obj.toString();
-                    if (toastString.contains("java.net.ConnectException: Failed to connect")
-                            || toastString.contains("java.io.IOException: unexpected end")
-                            || toastString.contains("java.io.InterruptedIOException: thread interrupted")
-                            || toastString.contains("java.lang.NullPointerException: Attempt to get length of null array")) {
-                        break;
-                    } else {
-                        Toast.makeText(DescernActivity.this, msg.obj.toString(), Toast.LENGTH_SHORT).show();
-                    }
-                    Log.e("XXX", toastString);
-                    break;
-                case Constant.TAG_FOUR:
-                    Bitmap bitH = (Bitmap) msg.obj;
-                    imageView.setImageBitmap(bitH);
-                    saveThread = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Bitmap rgba1 = bitH.copy(Bitmap.Config.ARGB_8888, true);
-                            Canvas canvas1 = new Canvas(rgba1);
-                            canvas1.drawText("工程名称:" + project, 15, 30, new MyPaint().getTextpaint());
-                            canvas1.drawText("工件名称:" + workName, 15, 70, new MyPaint().getTextpaint());
-                            canvas1.drawText("工件编号:" + workCode, 15, 110, new MyPaint().getTextpaint());
-                            canvas1.drawText("连接设备:" + deviceCode, 15, 150, new MyPaint().getTextpaint());
-                            mediaPlayer.start();
-                            if (isFirst) {
-                                saveImageToGallery(DescernActivity.this, rgba1);
-                                saveTime = System.currentTimeMillis();
-                                isFirst = false;
-                            } else {
-                                currentTmeTime = System.currentTimeMillis();
-                                if (currentTmeTime - saveTime > 3000) {
-                                    saveImageToGallery(DescernActivity.this, rgba1);
-                                    saveTime = currentTmeTime;
-                                    isFirst = true;
-                                }
-                            }
-                        }
-                    });
-                    saveThread.start();
-                    break;
-            }
-        }
-    };
-
     private void settingNetty() {
-        mNettyTcpClient = baseTcpClient.initTcpClient("192.168.43.251", 4000);
-//        mNettyTcpClient = baseTcpClient.initTcpClient("172.16.20.5", 5000);
+        if(devicesModel.equals("LKMT-D3S")||devicesModel.equals("LKMT-E3S")){
+            mNettyTcpClient = baseTcpClient.initTcpClient(Constant.URL, 502);
+        }else {
+            mNettyTcpClient = baseTcpClient.initTcpClient(Constant.URL, 4000);
+        }
         mNettyTcpClient.setListener(this); //设置TCP监听
         baseTcpClient.tcpClientConntion(mNettyTcpClient);
     }
@@ -630,10 +570,57 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
     public void onMessageResponseClient(String msg, int index) {
         //6为帧头、命令码、检验的长度和
         Log.e("XXX接收", msg);
-        if (msg.equals("300A")){
-            descernTag = false;
-        }else if (msg.equals("310A")){
-            descernTag = true;
+        Message message = new Message();
+        message.what = TAG_FOUR;
+        message.obj = msg;
+        handler.sendMessage(message);
+        //如果型号为D3/E3 返回数据如果为空，则默认开启识别
+        if(devicesModel.equals("LKMT-D3S")||devicesModel.equals("LKMT-E3S")){
+            if(msg==null||msg.equals("")){
+                descernTag = true;
+            }else {
+                String first = msg.substring(2, msg.length() - 2);
+                String end = msg.substring(msg.length() - 2);
+                String checkData = bytesHexChange.hexStringToBytes(first);
+                if (checkData.length() >= 2) {
+                    String checkDataLow = checkData.substring(checkData.length() - 2).toUpperCase();
+                    if (checkDataLow.equals(end)) {
+                        String[] backHeartData = bytesHexChange.HexToByteArr(msg);
+                        //循环返回数据
+                        if (backHeartData[0].equals("D3")|| backHeartData[0].equals("E3")) {
+                            if (backHeartData[1].equals("1B")){
+                                runOnUiThread(new Runnable() {
+                                    public void run() {
+                                        String controlData = bytesHexChange.HexToBinary(backHeartData[2]);
+                                        if (controlData.length() == 8) {
+                                            String mode = controlData.substring(7, 8);
+                                            if (mode.equals("1")){
+                                                descernTag = true;
+                                            }else if (mode.equals("0")){
+                                                descernTag = false;
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    }else {
+                        if (devicesModel.equals("LKMT-D3S")){
+                            makeData("D3220000000000000000000022");
+                        }else if (devicesModel.equals("LKMT-E3S")){
+                            makeData("E3220000000000000000000022");
+                        }
+                    }
+                } else {
+                    handler.sendEmptyMessage(TAG_THERE);
+                }
+            }
+        }else {
+            if (msg.equals("300A")){
+                descernTag = false;
+            }else if (msg.equals("310A")){
+                descernTag = true;
+            }
         }
     }
 
@@ -642,10 +629,25 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         //连接状态回调
         if (statusCode == STATUS_CONNECT_SUCCESS) {
             handler.sendEmptyMessage(TAG_ONE);
+            if (devicesModel.equals("LKMT-D3S")){
+                makeData("D3220000000000000000000022");
+            }else if (devicesModel.equals("LKMT-E3S")){
+                makeData("E3220000000000000000000022");
+            }
         } else if (statusCode == STATUS_CONNECT_CLOSED) {
             handler.sendEmptyMessage(TAG_TWO);
+            descernTag = false;
+            D2OrE2ConnectTag();
         } else if (statusCode == STATUS_CONNECT_ERROR) {
             handler.sendEmptyMessage(TAG_TWO);
+            descernTag = false;
+            D2OrE2ConnectTag();
+        }
+    }
+    //如果型号为D2/E2 连接失败默认开启识别
+    private void D2OrE2ConnectTag(){
+        if(devicesModel.equals("LKMT-D3S")||devicesModel.equals("LKMT-E3S")){
+            descernTag = true;
         }
     }
     private Handler handler = new Handler() {
@@ -661,6 +663,9 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                     break;
                 case TAG_THERE:
                     Toast.makeText(DescernActivity.this, R.string.receive_faile, Toast.LENGTH_SHORT).show();
+                    break;
+                case TAG_FOUR:
+                    Toast.makeText(DescernActivity.this, msg.obj.toString(), Toast.LENGTH_SHORT).show();
                     break;
             }
         }

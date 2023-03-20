@@ -22,7 +22,7 @@ public class BaseTcpClient {
         mNettyTcpClient = new NettyTcpClient.Builder()
                 .setHost(host)    //设置服务端地址
                 .setTcpPort(port) //设置服务端端口号
-                .setMaxReconnectTimes(5)    //设置最大重连次数
+                .setMaxReconnectTimes(2)    //设置最大重连次数
                 .setReconnectIntervalTime(5)    //设置重连间隔时间。单位：秒
                 .setSendheartBeat(true) //设置是否发送心跳
                 .setHeartBeatInterval(1)    //设置心跳间隔时间。单位：秒

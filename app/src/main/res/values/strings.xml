@@ -70,4 +70,6 @@
     <string name="send_success">发送成功</string>
     <string name="send_faile">发送失败</string>
     <string name="receive_faile">接收数据错误</string>
+
+    <string name="in_project">进入程序</string>
 </resources>

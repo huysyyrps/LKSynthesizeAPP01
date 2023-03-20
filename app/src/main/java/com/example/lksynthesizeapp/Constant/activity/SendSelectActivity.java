@@ -3,13 +3,9 @@ package com.example.lksynthesizeapp.Constant.activity;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.projection.MediaProjectionManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -29,7 +25,6 @@ import com.example.lksynthesizeapp.ChiFen.bean.VersionInfo;
 import com.example.lksynthesizeapp.Constant.Base.AlertDialogCallBack;
 import com.example.lksynthesizeapp.Constant.Base.AlertDialogUtil;
 import com.example.lksynthesizeapp.Constant.Base.BaseActivity;
-import com.example.lksynthesizeapp.Constant.Base.Constant;
 import com.example.lksynthesizeapp.Constant.Base.EditTextLengClient;
 import com.example.lksynthesizeapp.Constant.Base.ExitApp;
 import com.example.lksynthesizeapp.Constant.Base.NetStat;
@@ -43,23 +38,13 @@ import com.message.update.fileview.DialogUpdate;
 import com.message.update.fileview.FileDownLoadTask;
 import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
@@ -85,8 +70,8 @@ public class SendSelectActivity extends BaseActivity implements VersionInfoContr
     SharePreferencesUtils sharePreferencesUtils;
     MediaProjectionManager projectionManager;
     public static SendSelectActivity intance = null;
-    private Thread mythread;
-    private String url;
+//    private Thread mythread;
+//    private String url;
     Disposable disposable;
     LoadingDialog loadingDialog;
     String deviceName;
@@ -138,8 +123,6 @@ public class SendSelectActivity extends BaseActivity implements VersionInfoContr
             String s = gson.toJson(params);
             RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), gson.toJson(params));
             versionInfoPresenter.getVersionInfo(requestBody);
-        } else {
-            Toast.makeText(this, getResources().getString(R.string.change_net), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -162,16 +145,17 @@ public class SendSelectActivity extends BaseActivity implements VersionInfoContr
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tvConfim:
-                haveAddress();
-                loadingDialog.setLoadingText(getResources().getString(R.string.device_connect))
-//                        .setSuccessText("加载成功")//显示加载成功时的文字
-                        //.setFailedText("加载失败")
-                        .setSize(200)
-                        .setShowTime(1)
-                        .setInterceptBack(false)
-                        .setLoadSpeed(LoadingDialog.Speed.SPEED_ONE)
-                        .setRepeatCount(1)
-                        .show();
+//                haveAddress();
+//                loadingDialog.setLoadingText(getResources().getString(R.string.device_connect))
+////                        .setSuccessText("加载成功")//显示加载成功时的文字
+//                        //.setFailedText("加载失败")
+//                        .setSize(200)
+//                        .setShowTime(1)
+//                        .setInterceptBack(false)
+//                        .setLoadSpeed(LoadingDialog.Speed.SPEED_ONE)
+//                        .setRepeatCount(1)
+//                        .show();
+                SelectActivity("");
                 break;
         }
     }
@@ -189,82 +173,49 @@ public class SendSelectActivity extends BaseActivity implements VersionInfoContr
     @Override
     protected void rightClient() {
     }
-
-
-//    private void initSpinner(){
-//        //声明一个下拉列表的数组适配器
-//        ArrayAdapter<String> starAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,starArray);
-//        //设置数组适配器的布局样式
-//        starAdapter.setDropDownViewResource(android.R.layout.simple_list_item_single_choice);
-//        //从布局文件中获取名叫sp_dialog的下拉框
-//        Spinner sp = findViewById(R.id.spinner);
-//        //设置下拉框的标题，不设置就没有难看的标题了
-//        sp.setPrompt("模型");
-//        //设置下拉框的数组适配器
-//        sp.setAdapter(starAdapter);
-//        //设置下拉框默认的显示第一项
-//        sp.setSelection(0);
-//        //给下拉框设置选择监听器，一旦用户选中某一项，就触发监听器的onItemSelected方法
-//        sp.setOnItemSelectedListener(new MySelectedListener());
+//    private void haveAddress() {
+//        disposable = Observable.interval(0, 3, TimeUnit.SECONDS)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(new Consumer<Long>() {
+//                    @Override
+//                    public void accept(Long aLong) throws Exception {
+//                        url = "http://" + Constant.URL + ":8080?action=snapshot";
+//                        mythread = new Thread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                InputStream inputstream = null;
+//                                //创建一个URL对象
+//                                URL videoUrl = null;
+//                                try {
+//                                    videoUrl = new URL(url);
+//                                    //利用HttpURLConnection对象从网络中获取网页数据
+//                                    HttpURLConnection conn = (HttpURLConnection) videoUrl.openConnection();
+//                                    //设置输入流
+//                                    conn.setDoInput(true);
+//                                    conn.setConnectTimeout(5 * 1000);
+//                                    //连接
+//                                    conn.connect();
+//                                    //得到网络返回的输入流
+//                                    inputstream = conn.getInputStream();
+//                                    //创建出一个bitmap
+//                                    Bitmap bmp = BitmapFactory.decodeStream(inputstream);
+//                                    if (bmp != null && !bmp.equals("")) {
+//                                        Message message = new Message();
+//                                        message.what = Constant.TAG_ONE;
+//                                        handler.sendMessage(message);
+//                                    }
+//                                } catch (MalformedURLException e) {
+//                                    e.printStackTrace();
+//                                } catch (IOException e) {
+//                                    e.printStackTrace();
+//                                }
+//                            }
+//                        });
+//                        mythread.start();
+//                    }
+//                });
 //    }
-
-//    class MySelectedListener implements AdapterView.OnItemSelectedListener{
-//
-//        @Override
-//        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-////            Toast.makeText(SendSelectActivity.this,"您选择的是："+starArray[i],Toast.LENGTH_SHORT).show();
-//            selectMode = starArray[i];
-//        }
-//
-//        @Override
-//        public void onNothingSelected(AdapterView<?> adapterView) {
-//
-//        }
-//    }
-
-    private void haveAddress() {
-        disposable = Observable.interval(0, 3, TimeUnit.SECONDS)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<Long>() {
-                    @Override
-                    public void accept(Long aLong) throws Exception {
-                        url = "http://" + Constant.URL + ":8080?action=snapshot";
-                        mythread = new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                InputStream inputstream = null;
-                                //创建一个URL对象
-                                URL videoUrl = null;
-                                try {
-                                    videoUrl = new URL(url);
-                                    //利用HttpURLConnection对象从网络中获取网页数据
-                                    HttpURLConnection conn = (HttpURLConnection) videoUrl.openConnection();
-                                    //设置输入流
-                                    conn.setDoInput(true);
-                                    conn.setConnectTimeout(5 * 1000);
-                                    //连接
-                                    conn.connect();
-                                    //得到网络返回的输入流
-                                    inputstream = conn.getInputStream();
-                                    //创建出一个bitmap
-                                    Bitmap bmp = BitmapFactory.decodeStream(inputstream);
-                                    if (bmp != null && !bmp.equals("")) {
-                                        Message message = new Message();
-                                        message.what = Constant.TAG_ONE;
-                                        handler.sendMessage(message);
-                                    }
-                                } catch (MalformedURLException e) {
-                                    e.printStackTrace();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-                        mythread.start();
-                    }
-                });
-    }
 
     public void seSPData() {
         sharePreferencesUtils.setString(SendSelectActivity.this, "project", etProject.getText().toString());
@@ -321,27 +272,27 @@ public class SendSelectActivity extends BaseActivity implements VersionInfoContr
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        try {
-//            timer.cancel();
-            mythread.interrupt();
-        } catch (Exception e) {
-
-        }
+//        try {
+////            timer.cancel();
+//            mythread.interrupt();
+//        } catch (Exception e) {
+//
+//        }
     }
 
-    Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case Constant.TAG_ONE:
-                    disposable.dispose();
-                    mythread.interrupt();
-                    SelectActivity("");
-                    break;
-            }
-        }
-    };
+//    Handler handler = new Handler() {
+//        @Override
+//        public void handleMessage(Message msg) {
+//            super.handleMessage(msg);
+//            switch (msg.what) {
+//                case Constant.TAG_ONE:
+//                    disposable.dispose();
+////                    mythread.interrupt();
+//                    SelectActivity("");
+//                    break;
+//            }
+//        }
+//    };
 
     @Override
     public void setVersionInfo(VersionInfo versionInfo) throws Exception {

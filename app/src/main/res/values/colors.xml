@@ -289,4 +289,8 @@
     <color name="color_grey_2">#ff222222</color>
     <color name="rect_color">#cc000000</color>
     <color name="color_grey_9">#ff999999</color>
+
+    <color name="theme_back_color">#262626</color>
+    <color name="theme_color">#F5B12A</color>
+    <color name="back_color">#181818</color>
 </resources>

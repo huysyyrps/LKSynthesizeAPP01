@@ -130,5 +130,7 @@ dependencies {
     //wifi
     implementation 'com.thanosfisherman.elvis:elvis:3.0'
     api 'com.thanosfisherman.wifiutils:wifiutils:1.6.2'
+    //banner
+    implementation 'io.github.youth5201314:banner:2.2.2'
 
 }

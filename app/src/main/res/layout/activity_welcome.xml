@@ -6,82 +6,20 @@
     android:layout_height="match_parent"
     android:background="@color/black">
 
+
+    <com.youth.banner.Banner
+            android:id="@+id/banner"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:banner_indicator_selected_color="@color/red" />
+
+
     <com.example.lksynthesizeapp.View.CircleTextProgressbar
-        android:id="@+id/tvProgress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:layout_margin="10dp"
-        android:text="跳过" />
-
-
-    <ImageView
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_gravity="center"
-        android:layout_marginBottom="140dp"
-        android:background="@drawable/linelayout_color_pxqradion"
-        android:padding="30dp"
-        android:src="@drawable/login" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="180dp"
-        android:layout_gravity="bottom"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:orientation="horizontal">
-
-            <TextView
-                style="@style/TextView"
-                android:text="质量我保证"
-                android:layout_marginLeft="60dp"
-                android:textColor="@color/company_color" />
-
-            <TextView
-                style="@style/TextView"
-                android:text="价格您来定"
-                android:layout_marginRight="60dp"
-                android:textColor="@color/company_color" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal">
-
-            <TextView
-                style="@style/TextView"
-                android:text="服务请放心"
-                android:layout_marginLeft="60dp"
-                android:textColor="@color/company_color" />
-
-            <TextView
-                style="@style/TextView"
-                android:text="顾虑帮您消"
-                android:layout_marginRight="60dp"
-                android:textColor="@color/company_color" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="45dp"
-            android:orientation="horizontal"
-            android:layout_marginTop="40dp">
-
-            <TextView
-                style="@style/TextView"
-                android:layout_height="45dp"
-                android:text="济宁鲁科检测器材有限公司"
-                android:textSize="20dp"
-                android:textColor="@color/company_color" />
-        </LinearLayout>
-
-    </LinearLayout>
-
-
+            android:id="@+id/tvProgress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_margin="10dp"
+            android:text="跳过" />
 </FrameLayout>
