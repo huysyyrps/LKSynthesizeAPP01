@@ -9,7 +9,6 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -22,9 +21,6 @@ import com.example.lksynthesizeapp.Constant.Base.AlertDialogCallBack;
 import com.example.lksynthesizeapp.Constant.Base.AlertDialogUtil;
 import com.example.lksynthesizeapp.Constant.Base.BaseActivity;
 import com.example.lksynthesizeapp.Constant.Base.Constant;
-import com.example.lksynthesizeapp.Constant.Bean.Defined;
-import com.example.lksynthesizeapp.Constant.Module.DefinedContract;
-import com.example.lksynthesizeapp.Constant.Presenter.DefinedPresenter;
 import com.example.lksynthesizeapp.Constant.wifi.deal.ConnectionManager;
 import com.example.lksynthesizeapp.R;
 import com.example.lksynthesizeapp.SharePreferencesUtils;
@@ -35,7 +31,6 @@ import com.huawei.hms.ml.scan.HmsScan;
 import com.huawei.hms.ml.scan.HmsScanAnalyzerOptions;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import butterknife.BindView;
@@ -43,7 +38,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class DefinedActivity extends BaseActivity implements EasyPermissions.PermissionCallbacks, DefinedContract.View {
+public class DefinedActivity extends BaseActivity implements EasyPermissions.PermissionCallbacks {
     @BindView(R.id.rbLightClose)
     RadioButton rbLightClose;
     @BindView(R.id.rbLightOpen)
@@ -55,7 +50,6 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
     int mScreenHeight;
     String tag = "first";
     private RemoteView remoteView;
-    DefinedPresenter definedPresenter;
     final int SCAN_FRAME_SIZE = 240;
     String[] PERMS = {Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -72,7 +66,6 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
         // Bind the camera preview screen.
         alertDialogUtil = new AlertDialogUtil(this);
         sharePreferencesUtils = new SharePreferencesUtils();
-        definedPresenter = new DefinedPresenter(this, this);
         frameLayout = findViewById(R.id.rim);
         //设置扫码识别区域，您可以按照需求调整参数
         DisplayMetrics dm = getResources().getDisplayMetrics();
@@ -126,8 +119,8 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
                                 sharePreferencesUtils.setString(DefinedActivity.this, "wifiName", dataArray[4]);
                                 sharePreferencesUtils.setString(DefinedActivity.this, "haveDescern", dataArray[5]);
                                 startActivity(new Intent(DefinedActivity.this, SendSelectActivity.class));
-                                finish();
                                 tag = "second";
+                                finish();
                                 return;
                             } else {
                                 Toast.makeText(DefinedActivity.this, "二维码数据错误", Toast.LENGTH_SHORT).show();
@@ -138,61 +131,8 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
                 }
             }
         });
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
         new ConnectionManager(DefinedActivity.this).openWithWAP();
-    }
-
-    /**
-     * 字符Base64加密
-     *
-     * @param str
-     * @return
-     */
-    public static String encodeToString(String str) {
-        try {
-            return Base64.encodeToString(str.getBytes("UTF-8"), Base64.DEFAULT);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return "";
-    }
-
-    /**
-     * 字符Base64解密
-     *
-     * @param str
-     * @return
-     */
-    public static String decodeToString(String str) {
-        try {
-            return new String(Base64.decode(str.getBytes("UTF-8"), Base64.DEFAULT));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return "";
-    }
-
-
-    /**
-     * short数组转byte数组
-     *
-     * @param src
-     * @return
-     */
-    public byte[] toByteArray(short[] src) {
-
-        int count = src.length;
-        byte[] dest = new byte[count << 1];
-        for (int i = 0; i < count; i++) {
-            dest[i * 2] = (byte) ((src[i] >> 8) & 0xFF);
-            dest[i * 2 + 1] = (byte) (src[i] & 0xFF);
-        }
-
-        return dest;
     }
 
     @Override
@@ -253,28 +193,6 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
 
             }
         });
-//        // 请求权限被拒
-//        DialogUpdate dialogUpdate = new DialogUpdate(DefinedActivity.this);
-//        dialogUpdate.setButtonText("确定","取消");
-//        dialogUpdate.setMessage("为了您正常使用此程序，请您 "
-//                + "\n"
-//                + "到设置界面手动开启程序所需权限。");
-//        dialogUpdate.show();
-//        dialogUpdate.setOnDialogUpdateOkListener(new DialogUpdate.OnDialogUpdateOkListener() {
-//            @Override
-//            public void onDialogUpdateOk() {
-//                Intent intent = new Intent();
-//                intent.setAction(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-//                intent.setData(Uri.parse("package:" + DefinedActivity.this.getPackageName()));
-//                startActivityForResult(intent,Constant.TAG_ONE);
-//                finish();
-//            }
-//
-//            @Override
-//            public void onDialogUpdateCancel() {
-//                finish();
-//            }
-//        });
     }
 
     /**
@@ -302,27 +220,6 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
     protected void onStop() {
         super.onStop();
         remoteView.onStop();
-    }
-
-    @Override
-    public void setDefined(Defined defined) {
-        if (defined.getResult() == null) {
-            Toast.makeText(this, "派工单为空", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        String company = defined.getResult().getCompanyName();
-        String deviceName = defined.getResult().getDeviceName();
-        String deviceCode = defined.getResult().getDeviceCode();
-        sharePreferencesUtils.setString(DefinedActivity.this, "company", company);
-        sharePreferencesUtils.setString(DefinedActivity.this, "deviceName", deviceName);
-        sharePreferencesUtils.setString(DefinedActivity.this, "deviceCode", deviceCode);
-        startActivity(new Intent(this, SendSelectActivity.class));
-//        startActivity(new Intent(this, WiFiActivity.class));
-    }
-
-    @Override
-    public void setDefinedMessage(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     @OnClick({R.id.rbLightClose, R.id.rbLightOpen, R.id.rbPhoto})

@@ -266,33 +266,12 @@ public class SendSelectActivity extends BaseActivity implements VersionInfoContr
             startActivity(intent);
         }
         loadingDialog.close();
-        finish();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-//        try {
-////            timer.cancel();
-//            mythread.interrupt();
-//        } catch (Exception e) {
-//
-//        }
     }
-
-//    Handler handler = new Handler() {
-//        @Override
-//        public void handleMessage(Message msg) {
-//            super.handleMessage(msg);
-//            switch (msg.what) {
-//                case Constant.TAG_ONE:
-//                    disposable.dispose();
-////                    mythread.interrupt();
-//                    SelectActivity("");
-//                    break;
-//            }
-//        }
-//    };
 
     @Override
     public void setVersionInfo(VersionInfo versionInfo) throws Exception {

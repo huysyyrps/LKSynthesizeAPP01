@@ -1,6 +1,5 @@
 package com.example.lksynthesizeapp.ChiFen.Activity;
 
-import static com.example.lksynthesizeapp.Constant.Base.Constant.TAG_FOUR;
 import static com.example.lksynthesizeapp.Constant.Base.Constant.TAG_ONE;
 import static com.example.lksynthesizeapp.Constant.Base.Constant.TAG_THERE;
 import static com.example.lksynthesizeapp.Constant.Base.Constant.TAG_TWO;
@@ -54,7 +53,6 @@ import com.example.lksynthesizeapp.ChiFen.Netty.NettyTcpClient;
 import com.example.lksynthesizeapp.ChiFen.Netty.SendCallBack;
 import com.example.lksynthesizeapp.ChiFen.service.WhiteService;
 import com.example.lksynthesizeapp.Constant.Base.Constant;
-import com.example.lksynthesizeapp.Constant.activity.SendSelectActivity;
 import com.example.lksynthesizeapp.R;
 import com.example.lksynthesizeapp.SharePreferencesUtils;
 import com.example.lksynthesizeapp.YoloV5Ncnn;
@@ -239,6 +237,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         if (objects == null || objects.length == 0) {
             //发送报警信息
             makeData("300A");
+//            Log.e("TAG","发送数据300A");
             imageView.setImageBitmap(bmp);
             return;
         }
@@ -265,6 +264,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         imageView.setImageBitmap(rgba);
         mediaPlayer.start();
         makeData("310A");
+//        Log.e("TAG","发送数据310A");
         if (isFirst) {
             saveImageToGallery(DescernActivity.this, rgba);
             saveTime = System.currentTimeMillis();
@@ -296,6 +296,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
             mythread.interrupt();
         }
         runing = false;
+        mNettyTcpClient.disconnect();
     }
 
     @OnClick({R.id.rbCamera, R.id.rbVideo, R.id.rbAlbum, R.id.rbBack, R.id.linearLayoutStop, R.id.rbSetting})
@@ -392,7 +393,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                     mythread.interrupt();
                     mythread = null;
                 }
-                startActivity(new Intent(this, SendSelectActivity.class));
+//                startActivity(new Intent(this, SendSelectActivity.class));
                 finish();
                 break;
         }
@@ -568,12 +569,6 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
 
     @Override
     public void onMessageResponseClient(String msg, int index) {
-        //6为帧头、命令码、检验的长度和
-        Log.e("XXX接收", msg);
-        Message message = new Message();
-        message.what = TAG_FOUR;
-        message.obj = msg;
-        handler.sendMessage(message);
         //如果型号为D3/E3 返回数据如果为空，则默认开启识别
         if(devicesModel.equals("LKMT-D3S")||devicesModel.equals("LKMT-E3S")){
             if(msg==null||msg.equals("")){
@@ -611,15 +606,15 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                             makeData("E3220000000000000000000022");
                         }
                     }
-                } else {
-                    handler.sendEmptyMessage(TAG_THERE);
                 }
             }
         }else {
             if (msg.equals("300A")){
-                descernTag = false;
-            }else if (msg.equals("310A")){
                 descernTag = true;
+//                Log.e("TAG",msg);
+            }else if (msg.equals("310A")){
+                descernTag = false;
+//                Log.e("TAG",msg);
             }
         }
     }
@@ -635,21 +630,21 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                 makeData("E3220000000000000000000022");
             }
         } else if (statusCode == STATUS_CONNECT_CLOSED) {
-            handler.sendEmptyMessage(TAG_TWO);
-            descernTag = false;
-            D2OrE2ConnectTag();
+            if(devicesModel.equals("LKMT-D3S")||devicesModel.equals("LKMT-E3S")){
+                handler.sendEmptyMessage(TAG_TWO);
+            }else if(devicesModel.equals("LKMT-D2S")||devicesModel.equals("LKMT-E2S")){
+                descernTag = true;
+            }
         } else if (statusCode == STATUS_CONNECT_ERROR) {
-            handler.sendEmptyMessage(TAG_TWO);
-            descernTag = false;
-            D2OrE2ConnectTag();
+            if(devicesModel.equals("LKMT-D3S")||devicesModel.equals("LKMT-E3S")){
+                //设备断电后结束当前界面 先erroe 后close
+                handler.sendEmptyMessage(TAG_THERE);
+            }else if(devicesModel.equals("LKMT-D2S")||devicesModel.equals("LKMT-E2S")){
+                descernTag = true;
+            }
         }
     }
-    //如果型号为D2/E2 连接失败默认开启识别
-    private void D2OrE2ConnectTag(){
-        if(devicesModel.equals("LKMT-D3S")||devicesModel.equals("LKMT-E3S")){
-            descernTag = true;
-        }
-    }
+
     private Handler handler = new Handler() {
         @SuppressLint("HandlerLeak")
         @Override
@@ -659,13 +654,12 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                     Toast.makeText(DescernActivity.this, R.string.connect_success, Toast.LENGTH_SHORT).show();
                     break;
                 case TAG_TWO:
-                    Toast.makeText(DescernActivity.this, R.string.connect_faile, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DescernActivity.this, R.string.connect_colse, Toast.LENGTH_SHORT).show();
+                    descernTag = true;
                     break;
                 case TAG_THERE:
-                    Toast.makeText(DescernActivity.this, R.string.receive_faile, Toast.LENGTH_SHORT).show();
-                    break;
-                case TAG_FOUR:
-                    Toast.makeText(DescernActivity.this, msg.obj.toString(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DescernActivity.this, R.string.connect_faile, Toast.LENGTH_SHORT).show();
+                    finish();
                     break;
             }
         }
