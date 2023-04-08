@@ -71,8 +71,6 @@ public class LocalActivity extends AppCompatActivity implements EasyPermissions.
     LinearLayout linlayoutData;
     @BindView(R.id.rbBack)
     RadioButton rbBack;
-    @BindView(R.id.tvDeviceCode)
-    TextView tvDeviceCode;
 
     private Toast toast;
     String address;

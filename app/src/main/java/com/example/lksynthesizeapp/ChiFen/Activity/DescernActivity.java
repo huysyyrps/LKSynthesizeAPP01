@@ -93,10 +93,10 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
     LinearLayout linearLayoutStop;
     @BindView(R.id.frameLayout)
     FrameLayout frameLayout;
+    @BindView(R.id.frameLayout1)
+    FrameLayout frameLayout1;
     @BindView(R.id.rbSetting)
     RadioButton rbSetting;
-    @BindView(R.id.tvDeviceCode)
-    TextView tvDeviceCode;
     @BindView(R.id.linlayoutData)
     LinearLayout linlayoutData;
     @BindView(R.id.chronometer)
@@ -165,7 +165,6 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         if (!workCode.trim().equals("")) {
             tvWorkCode.setText(workCode);
         }
-        tvDeviceCode.setText(deviceCode);
 
         url = "http://" + Constant.URL + ":8080?action=snapshot";
         mythread = new Thread(new Runnable() {
@@ -266,27 +265,36 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         makeData("310A");
 //        Log.e("TAG","发送数据310A");
         if (isFirst) {
-            saveImageToGallery(DescernActivity.this, rgba);
+//            radioGroup.setVisibility(View.GONE);
+            saveImageToGallery(DescernActivity.this, screenImage());
+//            radioGroup.setVisibility(View.VISIBLE);
             saveTime = System.currentTimeMillis();
             isFirst = false;
         } else {
             currentTmeTime = System.currentTimeMillis();
             if (currentTmeTime - saveTime > 3000) {
-                saveImageToGallery(DescernActivity.this, rgba);
+//                radioGroup.setVisibility(View.GONE);
+                saveImageToGallery(DescernActivity.this, screenImage());
+//                radioGroup.setVisibility(View.VISIBLE);
                 saveTime = currentTmeTime;
                 isFirst = true;
             }
         }
-
     }
 
-    public static void saveImageToGallery(Context context, Bitmap bmp) {
+    //截图
+    private Bitmap screenImage(){
+        View view1 = frameLayout1;
+        view1.setDrawingCacheEnabled(true);
+        view1.buildDrawingCache();
+        Bitmap bitmap = Bitmap.createBitmap(view1.getDrawingCache());
+        return bitmap;
+    }
+
+
+    public static boolean saveImageToGallery(Context context, Bitmap bmp) {
         boolean backstate = new ImageSave().saveBitmap("/LUKEDescImage/", project, workName, workCode, context, bmp);
-        if (backstate) {
-            Log.e("XXX", "保存成功");
-        } else {
-            Log.e("XXX", "保存失败");
-        }
+        return backstate;
     }
 
     @Override
@@ -306,23 +314,15 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                 if (toast != null) {
                     toast.cancel();
                 }
-                radioGroup.setVisibility(View.GONE);
-                View view1 = frameLayout;
-                view1.setDrawingCacheEnabled(true);
-                view1.buildDrawingCache();
-                Bitmap bitmap = Bitmap.createBitmap(view1.getDrawingCache());
+                Bitmap bitmap = screenImage();
                 if (bitmap != null) {
-                    boolean backstate = new ImageSave().saveBitmap("/LUKEDescImage/", project, workName, workCode, this, bitmap);
+                    boolean backstate = saveImageToGallery(DescernActivity.this, screenImage());
                     if (backstate) {
-                        radioGroup.setVisibility(View.VISIBLE);
                         toast = Toast.makeText(DescernActivity.this, R.string.save_success, Toast.LENGTH_SHORT);
                         toast.show();
-                        Log.e("XXX", "保存成功");
                     } else {
-                        radioGroup.setVisibility(View.VISIBLE);
                         toast = Toast.makeText(DescernActivity.this, R.string.save_faile, Toast.LENGTH_SHORT);
                         toast.show();
-                        Log.e("XXX", "保存失败");
                     }
                 }
 //                String path = Environment.getExternalStorageDirectory().getPath();
@@ -632,7 +632,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         } else if (statusCode == STATUS_CONNECT_CLOSED) {
             if(devicesModel.equals("LKMT-D3S")||devicesModel.equals("LKMT-E3S")){
                 handler.sendEmptyMessage(TAG_TWO);
-            }else if(devicesModel.equals("LKMT-D2S")||devicesModel.equals("LKMT-E2S")){
+            }else if(devicesModel.equals("LKMT-D2S")||devicesModel.equals("LKMT-E2S")||devicesModel.equals("LKEAC-CMT6SX")){
                 descernTag = true;
             }
         } else if (statusCode == STATUS_CONNECT_ERROR) {

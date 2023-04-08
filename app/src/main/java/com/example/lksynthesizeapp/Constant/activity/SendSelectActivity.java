@@ -123,6 +123,8 @@ public class SendSelectActivity extends BaseActivity implements VersionInfoContr
             String s = gson.toJson(params);
             RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), gson.toJson(params));
             versionInfoPresenter.getVersionInfo(requestBody);
+        }else {
+            wifiDialog();
         }
     }
 
@@ -298,35 +300,17 @@ public class SendSelectActivity extends BaseActivity implements VersionInfoContr
             }
         }
         if ( Arrays.equals(netVersionArray,localVersionArray)){
-            alertDialogUtil.showDialog("请链接网络" + sharePreferencesUtils.getString(SendSelectActivity.this, "wifiName", ""),
-                    new AlertDialogCallBack() {
-                        @Override
-                        public void confirm(String name) {
-                            Intent intent = new Intent(Settings.ACTION_WIFI_SETTINGS);
-                            startActivity(intent);
-                        }
-
-                        @Override
-                        public void cancel() {
-
-                        }
-
-                        @Override
-                        public void save(String name) {
-
-                        }
-
-                        @Override
-                        public void checkName(String name) {
-
-                        }
-                    });
+            wifiDialog();
         }
     }
 
     @Override
     public void setVersionInfoMessage(String message) {
         Log.e("TAG", message);
+        wifiDialog();
+    }
+
+    private void wifiDialog(){
         alertDialogUtil.showDialog("请链接网络" + sharePreferencesUtils.getString(SendSelectActivity.this, "wifiName", ""),
                 new AlertDialogCallBack() {
                     @Override

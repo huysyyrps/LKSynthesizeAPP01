@@ -5,14 +5,20 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/black"
-        android:scaleType="fitXY" />
+    <FrameLayout
+            android:id="@+id/frameLayout1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/black"
+                android:scaleType="fitXY" />
 
-    <include layout="@layout/activity_header"/>
+        <include layout="@layout/activity_header"/>
+    </FrameLayout>
+
     <RadioGroup
         android:id="@+id/radioGroup"
         android:layout_width="70dp"
