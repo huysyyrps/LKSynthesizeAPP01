@@ -104,13 +104,7 @@ public class LocalActivity extends AppCompatActivity implements EasyPermissions.
         mNotifications = new Notifications(getApplicationContext());
 
         webView.setBackgroundColor(getColor(R.color.black));
-        address = getIntent().getStringExtra("address");
-        if (address != null) {
-            webView.loadUrl("http://" + address + ":8080");
-        } else {
-            Toast.makeText(mNotifications, "IP为空,请等待连接", Toast.LENGTH_SHORT).show();
-            finish();
-        }
+        webView.loadUrl("http://" + Constant.URL + ":8080");
         new BottomUI().hideBottomUIMenu(this.getWindow());
     }
 
@@ -255,7 +249,7 @@ public class LocalActivity extends AppCompatActivity implements EasyPermissions.
     private void startMedia() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             //获取mediaRecorder
-            mediaRecorder = new MyMediaRecorder().getMediaRecorder(this,project, workName, workCode, "/LUKEVideo/");
+            mediaRecorder = new MyMediaRecorder().getMediaRecorder(this, project, workName, workCode, "/LUKEVideo/");
             mVirtualDisplay = mMediaProjection.createVirtualDisplay("你的name",
                     2400, 1080, 1,
                     DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,

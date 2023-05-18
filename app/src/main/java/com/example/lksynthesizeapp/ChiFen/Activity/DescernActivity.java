@@ -186,7 +186,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                 startService(intent);
             }
         }
-        //获取磁化状态的连接
+//        //获取磁化状态的连接
         baseTcpClient = BaseTcpClient.getInstance();
         settingNetty();
     }
@@ -208,18 +208,10 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
             inputstream = conn.getInputStream();
             //创建出一个bitmap
             bmp = BitmapFactory.decodeStream(inputstream);
-//            int wehit = bmp.getWidth();
-//            int height = bmp.getHeight();
-//            Log.e("XXX",wehit+"~"+height);
-//            Bitmap bitmap = Bitmap.createBitmap(bmp.getWidth() / 2, bmp.getHeight() / 2, Bitmap.Config.ARGB_8888);
-//            Log.e("XXX",bitmap.getWidth()+"~"+bitmap.getHeight());
-//            YoloV5Ncnn.Obj[] objects = yolov5ncnn.Detect(bmp, false,selectnum);
             YoloV5Ncnn.Obj[] objects = null;
-//            long startTime = System.currentTimeMillis();
+//            showObjects(objects);
             if (descernTag) {
                 objects = yolov5ncnn.Detect(bmp, false);
-//                long endTime = System.currentTimeMillis();
-//                Log.e("XXX",startTime-endTime+"");
                 showObjects(objects);
             } else {
                 showObjects(objects);
@@ -236,7 +228,6 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         if (objects == null || objects.length == 0) {
             //发送报警信息
             makeData("300A");
-//            Log.e("TAG","发送数据300A");
             imageView.setImageBitmap(bmp);
             return;
         }
@@ -263,10 +254,10 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         imageView.setImageBitmap(rgba);
         mediaPlayer.start();
         makeData("310A");
-//        Log.e("TAG","发送数据310A");
         if (isFirst) {
 //            radioGroup.setVisibility(View.GONE);
-            saveImageToGallery(DescernActivity.this, screenImage());
+//            saveImageToGallery(DescernActivity.this, screenImage());
+            saveImageToGallery(DescernActivity.this, rgba);
 //            radioGroup.setVisibility(View.VISIBLE);
             saveTime = System.currentTimeMillis();
             isFirst = false;
@@ -274,7 +265,8 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
             currentTmeTime = System.currentTimeMillis();
             if (currentTmeTime - saveTime > 3000) {
 //                radioGroup.setVisibility(View.GONE);
-                saveImageToGallery(DescernActivity.this, screenImage());
+//                saveImageToGallery(DescernActivity.this, screenImage());
+                saveImageToGallery(DescernActivity.this, rgba);
 //                radioGroup.setVisibility(View.VISIBLE);
                 saveTime = currentTmeTime;
                 isFirst = true;
@@ -314,17 +306,27 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                 if (toast != null) {
                     toast.cancel();
                 }
-                Bitmap bitmap = screenImage();
-                if (bitmap != null) {
-                    boolean backstate = saveImageToGallery(DescernActivity.this, screenImage());
+//                Bitmap bitmap = screenImage();
+//                if (bitmap != null) {
+//                    boolean backstate = saveImageToGallery(DescernActivity.this, bmp);
+//                    if (backstate) {
+//                        toast = Toast.makeText(DescernActivity.this, R.string.save_success, Toast.LENGTH_SHORT);
+//                        toast.show();
+//                    } else {
+//                        toast = Toast.makeText(DescernActivity.this, R.string.save_faile, Toast.LENGTH_SHORT);
+//                        toast.show();
+//                    }
+//                }
+                if (bmp!=null){
+                    boolean backstate = saveImageToGallery(DescernActivity.this, bmp);
                     if (backstate) {
                         toast = Toast.makeText(DescernActivity.this, R.string.save_success, Toast.LENGTH_SHORT);
-                        toast.show();
                     } else {
                         toast = Toast.makeText(DescernActivity.this, R.string.save_faile, Toast.LENGTH_SHORT);
-                        toast.show();
                     }
+                    toast.show();
                 }
+               
 //                String path = Environment.getExternalStorageDirectory().getPath();
 //                if (Build.VERSION.SDK_INT > 29) {
 //                    path = this.getExternalFilesDir(null).getAbsolutePath() ;

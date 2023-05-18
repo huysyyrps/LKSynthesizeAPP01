@@ -271,7 +271,7 @@
     <color name="result_text">#ffffffff</color>
     <color name="result_view">#b0000000</color>
     <color name="status_text">#ffffffff</color>
-    <color name="viewfinder_laser">#ffcc0000</color> <!-- Android standard ICS color -->
+    <color name="progressLineColor">#ffcc0000</color> <!-- Android standard ICS color -->
     <color name="viewfinder_mask">#60000000</color>
     <color name="dictdialog_bg_gray">#f5f5f5</color>
     <color name="dictdialog_divider_color">#ededed</color>

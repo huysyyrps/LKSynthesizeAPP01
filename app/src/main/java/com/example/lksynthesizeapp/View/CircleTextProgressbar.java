@@ -45,7 +45,7 @@ public class CircleTextProgressbar extends TextView {
     /**
      * 进度条的颜色。
      */
-    private int progressLineColor = getResources().getColor(R.color.company_color);
+    private int progressLineColor = getResources().getColor(R.color.progressLineColor);
 
     /**
      * 进度条的宽度。
