@@ -488,23 +488,14 @@ Java_com_example_lksynthesizeapp_YoloV5Ncnn_Init(JNIEnv *env, jobject thiz, jobj
     // init param
     int ret = yolov5.load_param(mgr, "230518.param");
     if (ret != 0) {
-        __android_log_print(ANDROID_LOG_DEBUG, "YoloV5Ncnn", "load_param failed");
+        __android_log_print(ANDROID_LOG_DEBUG, "best230530-sim-opt-fp16", "load_param failed");
         return JNI_FALSE;
     }
-////        22/10/22注释
-
-////        int ret = yolov5.load_param(mgr, "yolov5s.param");
-////        int ret = yolov5.load_param(mgr, "bz220416_sim.param");
-////        if (ret != 0) {
-////            __android_log_print(ANDROID_LOG_DEBUG, "YoloV5Ncnn", "load_param failed");
-////            return JNI_FALSE;
-////        }
-//    }
 
     // init bin
     {
-//        best230301_simsim-opt-fp16    bz220416_sim    xy211223   best220314_sim   sim-opt-fp16   230510  best230517   best221031_sim
-        int ret = yolov5.load_model(mgr, "230518.bin");
+//        best230301_simsim-opt-fp16    bz220416_sim    xy211223   best220314_sim   sim-opt-fp16   230510  best230517   best221031_sim  230518
+        int ret = yolov5.load_model(mgr, "best230530-sim-opt-fp16.bin");
         if (ret != 0) {
             __android_log_print(ANDROID_LOG_DEBUG, "YoloV5Ncnn", "load_param failed");
             return JNI_FALSE;
@@ -616,18 +607,6 @@ Java_com_example_lksynthesizeapp_YoloV5Ncnn_Detect(JNIEnv *env, jobject thiz, jo
         {
             ncnn::Mat out;
             ex.extract("375", out);
-//            if (mode == 1){
-//                ex.extract("375", out);
-//            }
-//            if (mode == 2){
-//                ex.extract("414", out);
-//            }
-//            if (mode == 3){
-//                ex.extract("414", out);
-//            }
-//            22/10/22注释
-//            ex.extract("375", out);
-
             ncnn::Mat anchors(6);
             anchors[0] = 30.f;
             anchors[1] = 61.f;
@@ -646,18 +625,6 @@ Java_com_example_lksynthesizeapp_YoloV5Ncnn_Detect(JNIEnv *env, jobject thiz, jo
         {
             ncnn::Mat out;
             ex.extract("400", out);
-//            if (mode == 1){
-//                ex.extract("400", out);
-//            }
-//            if (mode == 2){
-//                ex.extract("434", out);
-//            }
-//            if (mode == 3){
-//                ex.extract("434", out);
-//            }
-//            22/10/22注释
-//            ex.extract("400", out);
-
             ncnn::Mat anchors(6);
             anchors[0] = 116.f;
             anchors[1] = 90.f;
