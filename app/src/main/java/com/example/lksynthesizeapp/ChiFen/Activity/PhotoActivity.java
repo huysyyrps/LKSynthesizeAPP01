@@ -16,10 +16,11 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.lksynthesizeapp.ChiFen.Base.StringBase;
 import com.example.lksynthesizeapp.ChiFen.Module.PhotoContract;
 import com.example.lksynthesizeapp.ChiFen.Presenter.PhotoPresenter;
-import com.example.lksynthesizeapp.ChiFen.bean.PhotoUp;
+import com.example.lksynthesizeapp.ChiFen.bean.PhotoAttachments;
+import com.example.lksynthesizeapp.ChiFen.bean.SavePhotoBack;
+import com.example.lksynthesizeapp.ChiFen.bean.UpPhoto;
 import com.example.lksynthesizeapp.Constant.Base.BaseActivity;
 import com.example.lksynthesizeapp.Constant.Base.BaseRecyclerAdapter;
 import com.example.lksynthesizeapp.Constant.Base.BaseViewHolder;
@@ -46,6 +47,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
 public class PhotoActivity extends BaseActivity implements PhotoContract.View {
@@ -71,8 +73,11 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
     private int lastNum = 24;
     private int allNum;
     File[] files;
+    int photoNum = 0;
     List<File> fileListData;
     LoadingDialog loadingDialog;
+    List<UpPhoto> sendPhotoDataList = new ArrayList<>();
+    List<PhotoAttachments> photoAttachmentsList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -318,32 +323,14 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tvSend:
+//                selectList.clear();
+                sendPhotoDataList.clear();
+                photoNum = 0;
                 if (selectList.size() == 0) {
                     Toast.makeText(PhotoActivity.this, "您还未选择图片", Toast.LENGTH_SHORT).show();
                 } else {
-                    String base = "";
-                    String imageName = "";
-                    for (int i = 0; i < selectList.size(); i++) {
-                        if (i == 0) {
-                            base = new StringBase().bitmapToString(selectList.get(0));
-                            imageName = getFileName(selectList.get(0));
-                        } else {
-                            base = base + "---" + new StringBase().bitmapToString(selectList.get(i));
-                            imageName = imageName + "---" + getFileName(selectList.get(i));
-                        }
-                    }
-                    HashMap<String, String> map = new HashMap<String, String>();
-                    map.put("company", compName);
-                    map.put("project", project);
-                    map.put("device", device);
-                    map.put("workpiece", workName);
-                    map.put("workpiecenum", workCode);
-                    map.put("name", imageName);
-                    map.put("pic", base);
-                    Gson gson = new Gson();
-                    String s = gson.toJson(map);
-                    RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), gson.toJson(map));
-                    photoPresenter.getPhoto(requestBody);
+                    sendPhoto(photoNum);
+
                 }
                 break;
             case R.id.tvDelect:
@@ -364,6 +351,13 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
         }
     }
 
+    private void sendPhoto(int photoNum){
+        File  photoFile = new File(selectList.get(photoNum));
+        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), photoFile);
+        MultipartBody.Part part = MultipartBody.Part.createFormData("file", photoFile.getName(), requestFile);
+        photoPresenter.getPhoto(part);
+    }
+
     @Override
     protected int provideContentViewId() {
         return R.layout.activity_photo;
@@ -381,23 +375,61 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
 
 
     @Override
-    public void setPhoto(PhotoUp photoUp) {
-        header.setTvTitle("图库");
-        Toast.makeText(this, "上传成功", Toast.LENGTH_SHORT).show();
-        selectList.clear();
-        recyclerView.setAdapter(null);
-        recyclerView.setAdapter(baseRecyclerAdapter);
+    public void setPhoto(UpPhoto photoUp) {
+        sendPhotoDataList.add(photoUp);
+        photoNum++;
+        if (photoNum<selectList.size()){
+            sendPhoto(photoNum);
+        }else {
+            for (int i = 0; i < sendPhotoDataList.size(); i++) {
+                PhotoAttachments photoAttachments = new PhotoAttachments();
+                photoAttachments.setFileName(sendPhotoDataList.get(i).getFileName());
+                photoAttachments.setName(sendPhotoDataList.get(i).getOriginalFilename());
+                photoAttachmentsList.add(photoAttachments);
+            }
+            Gson gson = new Gson();
+            String s = gson.toJson(photoAttachmentsList);
+            s = s.replace("\"","\'");
+            Log.e("TAG",s);
+            HashMap<String, Object> params = new HashMap<String, Object>();
+            params.put("code",workCode);
+            params.put("project", project);
+            params.put("workpiece", workName);
+            params.put("type", 0);
+            params.put("attachments", s);
+//            Gson gson = new Gson();
+            String s1 = gson.toJson(params);
+            Log.e("TAG",s1);
+            RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), gson.toJson(params));
+            photoPresenter.getsavePhoto(requestBody);
+        }
+//        header.setTvTitle("图库");
+//        Toast.makeText(this, "上传成功", Toast.LENGTH_SHORT).show();
+    }
+    @Override
+    public void setPhotoMessage(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void savePhoto(SavePhotoBack savePhotoBack) {
+        if (savePhotoBack.getMsg().equals("操作成功")){
+            selectList.clear();
+            recyclerView.setAdapter(null);
+            recyclerView.setAdapter(baseRecyclerAdapter);
+            Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void savePhotoMessage(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
         baseRecyclerAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void setPhotoMessage(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
 
@@ -417,4 +449,5 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
         }
 
     }
+
 }

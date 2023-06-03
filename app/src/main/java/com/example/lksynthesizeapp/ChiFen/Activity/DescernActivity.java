@@ -210,12 +210,18 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
             bmp = BitmapFactory.decodeStream(inputstream);
             YoloV5Ncnn.Obj[] objects = null;
 //            showObjects(objects);
-            if (descernTag) {
+            if(devicesModel.equals("LKDAC-CMT2SX")){
                 objects = yolov5ncnn.Detect(bmp, false);
                 showObjects(objects);
-            } else {
-                showObjects(objects);
+            }else {
+                if (descernTag) {
+                    objects = yolov5ncnn.Detect(bmp, false);
+                    showObjects(objects);
+                } else {
+                    showObjects(objects);
+                }
             }
+
             //关闭HttpURLConnection连接
             conn.disconnect();
         } catch (Exception ex) {
@@ -572,6 +578,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
     @Override
     public void onMessageResponseClient(String msg, int index) {
         //如果型号为D3/E3 返回数据如果为空，则默认开启识别
+
         if(devicesModel.equals("LKMT-D3S")||devicesModel.equals("LKMT-E3S")){
             if(msg==null||msg.equals("")){
                 descernTag = true;

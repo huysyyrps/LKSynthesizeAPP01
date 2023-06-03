@@ -3,7 +3,8 @@ package com.example.lksynthesizeapp.ChiFen.Presenter;
 import android.content.Context;
 
 import com.example.lksynthesizeapp.ChiFen.Module.PhotoContract;
-import com.example.lksynthesizeapp.ChiFen.bean.PhotoUp;
+import com.example.lksynthesizeapp.ChiFen.bean.SavePhotoBack;
+import com.example.lksynthesizeapp.ChiFen.bean.UpPhoto;
 import com.example.lksynthesizeapp.Constant.Base.BaseObserverNoEntry;
 import com.example.lksynthesizeapp.Constant.Base.NetStat;
 import com.example.lksynthesizeapp.Constant.Net.RetrofitUtil;
@@ -11,6 +12,7 @@ import com.example.lksynthesizeapp.R;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
 
@@ -29,18 +31,14 @@ public class PhotoPresenter implements PhotoContract.presenter {
         this.context = context;
         this.view = view;
     }
-
-    /**
-     * 登录
-     */
     @Override
-    public void getPhoto(RequestBody company) {
-        RetrofitUtil.getInstance().initLoginRetrofitMainNoSSL().getPhoto(company).subscribeOn(Schedulers.io())
+    public void getPhoto(MultipartBody.Part part) {
+        RetrofitUtil.getInstance().initRetrofitMain().getPhoto(part).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new BaseObserverNoEntry<PhotoUp>(context, context.getResources().getString(R.string.handler_data)) {
+                .subscribe(new BaseObserverNoEntry<UpPhoto>(context, context.getResources().getString(R.string.handler_data)) {
                     @Override
-                    protected void onSuccees(PhotoUp t) throws Exception {
-                        if (t.result){
+                    protected void onSuccees(UpPhoto t) throws Exception {
+                        if (t.getMsg().equals("操作成功")){
                             view.setPhoto(t);
                         }else {
                             view.setPhotoMessage("上传失败");
@@ -52,6 +50,31 @@ public class PhotoPresenter implements PhotoContract.presenter {
                             view.setPhotoMessage(""+ e.getMessage());
                         }else {
                             view.setPhotoMessage("网络异常");
+                        }
+                    }
+                });
+    }
+
+    @Override
+    //String code,String project, String workpiece,int type,String attachments
+    public void getsavePhoto(RequestBody companys) {
+        RetrofitUtil.getInstance().initRetrofitMain().savePhoto(companys).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new BaseObserverNoEntry<SavePhotoBack>(context, context.getResources().getString(R.string.handler_data)) {
+                    @Override
+                    protected void onSuccees(SavePhotoBack t) throws Exception {
+                        if (t.getMsg().equals("操作成功")){
+                            view.savePhoto(t);
+                        }else {
+                            view.savePhotoMessage("上传失败");
+                        }
+                    }
+                    @Override
+                    protected void onFailure(Throwable e, boolean isNetWorkError) throws Exception {
+                        if (new NetStat().isNetworkConnected(context)){
+                            view.savePhotoMessage(""+ e.getMessage());
+                        }else {
+                            view.savePhotoMessage("网络异常");
                         }
                     }
                 });

@@ -18,8 +18,9 @@ public class ApiAddress {
     public final static String getVerifyCode = "getVerityCode.do";
     //登录
     public final static String login = "api/LoginAuth/Login";
-    //图片上传https://172.16.18.73:5001/api/FileProccess/UpLoadPic
-    public final static String photoup = "api/FileProccess/UploadPic";
+    public final static String photoup = "pic-prod-api/common/upload";
+    //图片保存
+    public final static String photosave = "pic-prod-api/pic/info/save";
     //视频上传https://172.16.18.73:5001/api/FileProccess/UpLoadPic
     public final static String havevideoup = "api/UploadVideo/UploadVideo3";
     //测试token

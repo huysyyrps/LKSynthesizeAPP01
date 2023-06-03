@@ -1,6 +1,7 @@
 package com.example.lksynthesizeapp;
 
-import com.example.lksynthesizeapp.ChiFen.bean.PhotoUp;
+import com.example.lksynthesizeapp.ChiFen.bean.SavePhotoBack;
+import com.example.lksynthesizeapp.ChiFen.bean.UpPhoto;
 import com.example.lksynthesizeapp.ChiFen.bean.VersionInfo;
 import com.example.lksynthesizeapp.ChiFen.bean.Video;
 import com.example.lksynthesizeapp.Constant.Bean.Defined;
@@ -44,12 +45,29 @@ public interface AllApi {
 //
 //
     /**
-     * 图片上传
+     * 图片视频上传
      *  @GET(ApiAddress.login)
      */
+    @Multipart
     @POST(ApiAddress.photoup)
+//    @Headers({"Content-Type:multipart/form-data; charset=UTF-8"})
+    Observable<UpPhoto> getPhoto(@Part MultipartBody.Part file);
+
+    /**
+     * 图片视频保存
+     */
+    @POST(ApiAddress.photosave)
     @Headers({"Content-Type:application/json; charset=UTF-8"})
-    Observable<PhotoUp> getPhoto(@Body RequestBody body);
+    Observable<SavePhotoBack> savePhoto(@Body RequestBody body);
+    //@QueryMap Map<String, Object> param
+//    @Field("code") String code,
+//    @Field("project") String project,
+//    @Field("workpiece") String workpiece,
+//    @Field("type") int type,
+//    @Field("attachments") String attachments
+    //@Body RequestBody body
+    //@FieldMap Map<String, Object> param
+
 
     /**
      * 视频上传

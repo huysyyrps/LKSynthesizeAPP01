@@ -486,7 +486,7 @@ Java_com_example_lksynthesizeapp_YoloV5Ncnn_Init(JNIEnv *env, jobject thiz, jobj
     yolov5.register_custom_layer("YoloV5Focus", YoloV5Focus_layer_creator);
 
     // init param
-    int ret = yolov5.load_param(mgr, "230518.param");
+    int ret = yolov5.load_param(mgr, "best230530-sim-opt-fp16.param");
     if (ret != 0) {
         __android_log_print(ANDROID_LOG_DEBUG, "best230530-sim-opt-fp16", "load_param failed");
         return JNI_FALSE;
@@ -494,7 +494,6 @@ Java_com_example_lksynthesizeapp_YoloV5Ncnn_Init(JNIEnv *env, jobject thiz, jobj
 
     // init bin
     {
-//        best230301_simsim-opt-fp16    bz220416_sim    xy211223   best220314_sim   sim-opt-fp16   230510  best230517   best221031_sim  230518
         int ret = yolov5.load_model(mgr, "best230530-sim-opt-fp16.bin");
         if (ret != 0) {
             __android_log_print(ANDROID_LOG_DEBUG, "YoloV5Ncnn", "load_param failed");
@@ -537,7 +536,7 @@ Java_com_example_lksynthesizeapp_YoloV5Ncnn_Detect(JNIEnv *env, jobject thiz, jo
     if (info.format != ANDROID_BITMAP_FORMAT_RGBA_8888)
         return NULL;
 
-    // ncnn from bitmap
+    // ncnn from bitmap  640
     const int target_size = 416;
 
     // letterbox pad to multiple of 32
@@ -568,7 +567,7 @@ Java_com_example_lksynthesizeapp_YoloV5Ncnn_Detect(JNIEnv *env, jobject thiz, jo
     std::vector<Object> objects;
     {
         //置信度prob_threshold   0.45   0.45
-        const float prob_threshold = 0.55f;
+        const float prob_threshold = 0.40f;
         const float nms_threshold = 0.45f;
 
         const float norm_vals[3] = {1 / 255.f, 1 / 255.f, 1 / 255.f};
