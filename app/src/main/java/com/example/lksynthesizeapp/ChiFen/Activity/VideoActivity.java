@@ -17,9 +17,11 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.lksynthesizeapp.ChiFen.Module.VideoContract;
-import com.example.lksynthesizeapp.ChiFen.Presenter.VideoPresenter;
-import com.example.lksynthesizeapp.ChiFen.bean.Video;
+import com.example.lksynthesizeapp.ChiFen.Module.PhotoContract;
+import com.example.lksynthesizeapp.ChiFen.Presenter.PhotoPresenter;
+import com.example.lksynthesizeapp.ChiFen.bean.PhotoAttachments;
+import com.example.lksynthesizeapp.ChiFen.bean.SavePhotoBack;
+import com.example.lksynthesizeapp.ChiFen.bean.UpPhoto;
 import com.example.lksynthesizeapp.ChiFen.bean.VideoLocal;
 import com.example.lksynthesizeapp.Constant.Base.BaseActivity;
 import com.example.lksynthesizeapp.Constant.Base.BaseRecyclerAdapter;
@@ -28,6 +30,7 @@ import com.example.lksynthesizeapp.Constant.Base.Constant;
 import com.example.lksynthesizeapp.Constant.View.Header;
 import com.example.lksynthesizeapp.R;
 import com.example.lksynthesizeapp.SharePreferencesUtils;
+import com.google.gson.Gson;
 import com.scwang.smart.refresh.footer.ClassicsFooter;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
 import com.scwang.smart.refresh.layout.api.RefreshLayout;
@@ -39,6 +42,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
@@ -48,7 +52,7 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
-public class VideoActivity extends BaseActivity implements VideoContract.View {
+public class VideoActivity extends BaseActivity implements PhotoContract.View {
 
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
@@ -70,8 +74,12 @@ public class VideoActivity extends BaseActivity implements VideoContract.View {
     List<File> fileList;
     String tag = "";
     LoadingDialog loadingDialog;
-    private VideoPresenter videoPresenter;
+    private PhotoPresenter photoPresenter;
     private String project = "", workName = "", workCode = "", compName = "", device = "";
+
+    int photoNum = 0;
+    List<UpPhoto> sendPhotoDataList = new ArrayList<>();
+    List<PhotoAttachments> photoAttachmentsList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +94,7 @@ public class VideoActivity extends BaseActivity implements VideoContract.View {
         project = sharePreferencesUtils.getString(VideoActivity.this, "project", "");
         workName = sharePreferencesUtils.getString(VideoActivity.this, "workName", "");
         workCode = sharePreferencesUtils.getString(VideoActivity.this, "workCode", "");
-        videoPresenter = new VideoPresenter(this, this);
+        photoPresenter = new PhotoPresenter(this, this);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(VideoActivity.this, 3);
         recyclerView.setLayoutManager(gridLayoutManager);
         baseRecyclerAdapter = new BaseRecyclerAdapter<VideoLocal>(VideoActivity.this, R.layout.album_item, imagePaths) {
@@ -319,22 +327,30 @@ public class VideoActivity extends BaseActivity implements VideoContract.View {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tvSend:
+//                if (selectList.size() == 0) {
+//                    Toast.makeText(VideoActivity.this, "您还未选择有声视频", Toast.LENGTH_SHORT).show();
+//                } else {
+//                    MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM); //表单类型
+//                    for (int i = 0; i < selectList.size(); i++) {
+//                        RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), selectList.get(i).getFile());
+//                        builder.addFormDataPart("file" + i, selectList.get(i).getFile().getName(), requestBody);//"imgfile"+i 后台接收图片流的参数名
+//                    }
+//                    builder.addFormDataPart("company", compName);
+//                    builder.addFormDataPart("project", project);
+//                    builder.addFormDataPart("device", device);
+//                    builder.addFormDataPart("workpiece", workName);
+//                    builder.addFormDataPart("workpiecenum", workCode);
+//                    builder.addFormDataPart("voice", "audiovideo");
+//                    List<MultipartBody.Part> parts = builder.build().parts();
+//                    videoPresenter.getHaveVideo(parts);
+//                }
+                sendPhotoDataList.clear();
+                photoNum = 0;
                 if (selectList.size() == 0) {
-                    Toast.makeText(VideoActivity.this, "您还未选择有声视频", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(VideoActivity.this, "您还未选择图片", Toast.LENGTH_SHORT).show();
                 } else {
-                    MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM); //表单类型
-                    for (int i = 0; i < selectList.size(); i++) {
-                        RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), selectList.get(i).getFile());
-                        builder.addFormDataPart("file" + i, selectList.get(i).getFile().getName(), requestBody);//"imgfile"+i 后台接收图片流的参数名
-                    }
-                    builder.addFormDataPart("company", compName);
-                    builder.addFormDataPart("project", project);
-                    builder.addFormDataPart("device", device);
-                    builder.addFormDataPart("workpiece", workName);
-                    builder.addFormDataPart("workpiecenum", workCode);
-                    builder.addFormDataPart("voice", "audiovideo");
-                    List<MultipartBody.Part> parts = builder.build().parts();
-                    videoPresenter.getHaveVideo(parts);
+                    sendPhoto(photoNum);
+
                 }
                 break;
             case R.id.tvDelect:
@@ -352,6 +368,13 @@ public class VideoActivity extends BaseActivity implements VideoContract.View {
                 }
                 break;
         }
+    }
+
+    private void sendPhoto(int photoNum){
+        File  photoFile = selectList.get(photoNum).file;
+        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), photoFile);
+        MultipartBody.Part part = MultipartBody.Part.createFormData("file", photoFile.getName(), requestFile);
+        photoPresenter.getPhoto(part);
     }
 
     /**
@@ -431,15 +454,60 @@ public class VideoActivity extends BaseActivity implements VideoContract.View {
     }
 
     @Override
-    public void setHaveVideo(Video HaveVideoUp) {
-        Toast.makeText(this, "上传成功", Toast.LENGTH_SHORT).show();
+    public void setPhoto(UpPhoto photoUp) {
+        sendPhotoDataList.add(photoUp);
+        photoNum++;
+        if (photoNum<selectList.size()){
+            sendPhoto(photoNum);
+        }else {
+            for (int i = 0; i < sendPhotoDataList.size(); i++) {
+                PhotoAttachments photoAttachments = new PhotoAttachments();
+                photoAttachments.setFileName(sendPhotoDataList.get(i).getFileName());
+                photoAttachments.setName(sendPhotoDataList.get(i).getOriginalFilename());
+                photoAttachmentsList.add(photoAttachments);
+            }
+            Gson gson = new Gson();
+            String s = gson.toJson(photoAttachmentsList);
+            s = s.replace("\"","\'");
+            Log.e("TAG",s);
+            HashMap<String, Object> params = new HashMap<String, Object>();
+            params.put("code",workCode);
+            params.put("project", project);
+            params.put("workpiece", workName);
+            params.put("type", 1);
+            params.put("attachments", s);
+//            Gson gson = new Gson();
+            String s1 = gson.toJson(params);
+            Log.e("TAG",s1);
+            RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), gson.toJson(params));
+            photoPresenter.getsavePhoto(requestBody);
+        }
+//        header.setTvTitle("图库");
+//        Toast.makeText(this, "上传成功", Toast.LENGTH_SHORT).show();
+    }
+    @Override
+    public void setPhotoMessage(String message) {
         selectList.clear();
         recyclerView.setAdapter(null);
         recyclerView.setAdapter(baseRecyclerAdapter);
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void setHaveVideoMessage(String message) {
+    public void savePhoto(SavePhotoBack savePhotoBack) {
+        if (savePhotoBack.getMsg().equals("操作成功")){
+            selectList.clear();
+            recyclerView.setAdapter(null);
+            recyclerView.setAdapter(baseRecyclerAdapter);
+            Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void savePhotoMessage(String message) {
+        selectList.clear();
+        recyclerView.setAdapter(null);
+        recyclerView.setAdapter(baseRecyclerAdapter);
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 

@@ -408,6 +408,9 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
     }
     @Override
     public void setPhotoMessage(String message) {
+        selectList.clear();
+        recyclerView.setAdapter(null);
+        recyclerView.setAdapter(baseRecyclerAdapter);
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
@@ -423,6 +426,9 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
 
     @Override
     public void savePhotoMessage(String message) {
+        selectList.clear();
+        recyclerView.setAdapter(null);
+        recyclerView.setAdapter(baseRecyclerAdapter);
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 

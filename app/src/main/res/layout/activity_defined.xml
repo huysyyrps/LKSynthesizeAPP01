@@ -100,9 +100,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical">
+
         <com.example.lksynthesizeapp.Constant.View.Header
-            android:id="@+id/header"
-            style="@style/Header"
-            my_view:header_title="@string/QR_code"/>
+                android:id="@+id/header"
+                style="@style/Header"
+                my_view:header_title="@string/QR_code" />
     </RelativeLayout>
 </FrameLayout>

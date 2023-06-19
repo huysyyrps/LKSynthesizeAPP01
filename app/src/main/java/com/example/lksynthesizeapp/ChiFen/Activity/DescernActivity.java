@@ -233,7 +233,9 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
     private void showObjects(YoloV5Ncnn.Obj[] objects) {
         if (objects == null || objects.length == 0) {
             //发送报警信息
-            makeData("300A");
+            if (mNettyTcpClient!=null&&mNettyTcpClient.isConnecting()){
+                makeData("300A");
+            }
             imageView.setImageBitmap(bmp);
             return;
         }
@@ -259,7 +261,9 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         }
         imageView.setImageBitmap(rgba);
         mediaPlayer.start();
-        makeData("310A");
+        if (mNettyTcpClient!=null&&mNettyTcpClient.isConnecting()){
+            makeData("310A");
+        }
         if (isFirst) {
 //            radioGroup.setVisibility(View.GONE);
 //            saveImageToGallery(DescernActivity.this, screenImage());
