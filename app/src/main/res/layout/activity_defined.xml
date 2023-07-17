@@ -96,7 +96,7 @@
 
     </RelativeLayout>
 
-    <RelativeLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical">
@@ -104,6 +104,22 @@
         <com.example.lksynthesizeapp.Constant.View.Header
                 android:id="@+id/header"
                 style="@style/Header"
-                my_view:header_title="@string/QR_code" />
-    </RelativeLayout>
+                my_view:header_title="@string/QR_code"
+                my_view:header_image_right="@drawable/ic_other"/>
+        <LinearLayout
+                android:id="@+id/tvAlbum"
+                android:layout_width="80dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="right|top"
+                android:layout_marginBottom="3dp"
+                android:gravity="center_horizontal|top">
+            <ImageView
+                    android:id="@+id/iv_right"
+                    android:layout_alignParentRight="true"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_other"
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent" />
+        </LinearLayout>
+    </FrameLayout>
 </FrameLayout>

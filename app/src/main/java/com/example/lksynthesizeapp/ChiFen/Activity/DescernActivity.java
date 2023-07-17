@@ -295,7 +295,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
 
 
     public static boolean saveImageToGallery(Context context, Bitmap bmp) {
-        boolean backstate = new ImageSave().saveBitmap("/LUKEDescImage/", project, workName, workCode, context, bmp);
+        boolean backstate = new ImageSave().saveBitmap("/LUKEDescImage/", context, bmp);
         return backstate;
     }
 
@@ -336,7 +336,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                     }
                     toast.show();
                 }
-               
+
 //                String path = Environment.getExternalStorageDirectory().getPath();
 //                if (Build.VERSION.SDK_INT > 29) {
 //                    path = this.getExternalFilesDir(null).getAbsolutePath() ;
@@ -428,7 +428,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
     private void startMedia() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             //获取mediaRecorder
-            mediaRecorder = new MyMediaRecorder().getMediaRecorder(this, project, workName, workCode, "/LUKEDescVideo/");
+            mediaRecorder = new MyMediaRecorder().getMediaRecorder(this, "/LUKEDescVideo/");
             mVirtualDisplay = mMediaProjection.createVirtualDisplay("你的name",
                     2400, 1080, 1,
                     DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
@@ -667,11 +667,11 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                     Toast.makeText(DescernActivity.this, R.string.connect_success, Toast.LENGTH_SHORT).show();
                     break;
                 case TAG_TWO:
-                    Toast.makeText(DescernActivity.this, R.string.connect_colse, Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(DescernActivity.this, R.string.connect_colse, Toast.LENGTH_SHORT).show();
                     descernTag = true;
                     break;
                 case TAG_THERE:
-                    Toast.makeText(DescernActivity.this, R.string.connect_faile, Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(DescernActivity.this, R.string.connect_faile, Toast.LENGTH_SHORT).show();
                     finish();
                     break;
             }

@@ -16,17 +16,18 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="horizontal"
-                android:visibility="gone"
             android:layout_gravity="right">
+
             <TextView
-                android:id="@+id/tvSend"
-                android:layout_width="80dp"
-                android:layout_height="30dp"
-                android:layout_marginRight="20dp"
-                android:text="上传"
-                android:gravity="center"
-                android:background="@drawable/linelayout_color_radion"
-                android:textColor="@color/whith"/>
+                    android:id="@+id/tvSend"
+                    android:layout_width="80dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="20dp"
+                    android:background="@drawable/linelayout_color_radion"
+                    android:gravity="center"
+                    android:text="上传"
+                    android:visibility="gone"
+                    android:textColor="@color/whith" />
             <TextView
                 android:id="@+id/tvDelect"
                 android:layout_width="80dp"

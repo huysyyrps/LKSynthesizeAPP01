@@ -533,7 +533,7 @@ public class RobotDescernActivity extends AppCompatActivity implements NettyClie
                 view1.buildDrawingCache();
                 Bitmap bitmap = Bitmap.createBitmap(view1.getDrawingCache());
                 if (bitmap != null) {
-                    boolean backstate = new ImageSave().saveBitmap("/LUKERobotDescImage/", project, workName, workCode, this, bitmap);
+                    boolean backstate = new ImageSave().saveBitmap("/LUKERobotDescImage/", this, bitmap);
                     if (backstate) {
                         radioGroup.setVisibility(View.VISIBLE);
                         toast = Toast.makeText(RobotDescernActivity.this, R.string.save_success, Toast.LENGTH_SHORT);
@@ -643,7 +643,7 @@ public class RobotDescernActivity extends AppCompatActivity implements NettyClie
             int width = wm.getDefaultDisplay().getWidth();
             int height = wm.getDefaultDisplay().getHeight();
             //获取mediaRecorder
-            mediaRecorder = new MyMediaRecorder().getMediaRecorder(this, project, workName, workCode, "/LUKERobotDescVideo/");
+            mediaRecorder = new MyMediaRecorder().getMediaRecorder(this, "/LUKERobotDescVideo/");
             mVirtualDisplay = mMediaProjection.createVirtualDisplay("你的name",
                     width, height, 1,
                     DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,

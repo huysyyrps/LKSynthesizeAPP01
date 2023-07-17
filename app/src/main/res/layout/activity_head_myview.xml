@@ -5,15 +5,16 @@
     android:layout_width="match_parent"
     android:background="@color/black"
     android:layout_height="35dp">
+
     <TextView
-        android:id="@+id/tv_tittle"
-        android:textColor="@android:color/white"
-        android:textSize="18sp"
-        android:layout_centerHorizontal="true"
-        android:gravity="center|top"
-        android:text="标题"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+            android:id="@+id/tv_tittle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:gravity="center|top"
+            android:text="标题"
+            android:textColor="@android:color/white"
+            android:textSize="18sp" />
     <ImageView
         android:id="@+id/iv_left"
         android:scaleType="centerInside"
@@ -38,15 +39,16 @@
         android:src="@drawable/ic_search"
         android:layout_width="50dp"
         android:layout_height="match_parent" />
+
     <TextView
-        android:textColor="@android:color/white"
-        android:id="@+id/tv_right"
-        android:text="保存"
-        android:textSize="16sp"
-        android:layout_alignParentRight="true"
-        android:layout_centerHorizontal="true"
-        android:gravity="center|top"
-        android:layout_width="70dp"
-        android:layout_height="match_parent" />
+            android:id="@+id/tv_right"
+            android:layout_width="70dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_centerHorizontal="true"
+            android:gravity="center|top"
+            android:text="保存"
+            android:textColor="@android:color/white"
+            android:textSize="16sp" />
 
 </RelativeLayout>

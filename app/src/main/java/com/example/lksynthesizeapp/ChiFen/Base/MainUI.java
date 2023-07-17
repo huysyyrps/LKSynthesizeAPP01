@@ -10,7 +10,10 @@ import com.example.lksynthesizeapp.ChiFen.Activity.PhotoActivity;
 import com.example.lksynthesizeapp.ChiFen.Activity.VideoActivity;
 import com.example.lksynthesizeapp.ChiFen.Modbus.BytesHexChange;
 import com.example.lksynthesizeapp.ChiFen.Modbus.ModbusCallBack;
+import com.example.lksynthesizeapp.Constant.activity.DefinedActivity;
+import com.example.lksynthesizeapp.Constant.activity.SendSelectActivity;
 import com.example.lksynthesizeapp.R;
+import com.example.lksynthesizeapp.SharePreferencesUtils;
 
 public class MainUI {
     public void showPopupMenu(View view,String tag, Context context) {
@@ -32,6 +35,50 @@ public class MainUI {
                     context.startActivity(intent);
 //                    Intent intent = new Intent(context, VideoActivity.class);
 //                    context.startActivity(intent);
+                }
+                return false;
+            }
+        });
+        // PopupMenu关闭事件
+        popupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
+            @Override
+            public void onDismiss(PopupMenu menu) {
+            }
+        });
+        popupMenu.show();
+    }
+
+    public void showPopupMenuMain(View view,String tag, DefinedActivity context) {
+        // View当前PopupMenu显示的相对View的位置
+        PopupMenu popupMenu = new PopupMenu(context, view);
+        // menu布局
+        popupMenu.getMenuInflater().inflate(R.menu.dialog_item, popupMenu.getMenu());
+        // menu的item点击事件
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                if (item.getTitle().equals("图片")){
+                    Intent intent = new Intent(context, PhotoActivity.class);
+                    intent.putExtra("tag",tag);
+                    context.startActivity(intent);
+                    context.finish();
+                }else if (item.getTitle().equals("视频")){
+                    Intent intent = new Intent(context, VideoActivity.class);
+                    intent.putExtra("tag",tag);
+                    context.startActivity(intent);
+                    context.finish();
+                }else if (item.getTitle().equals("进入程序")){
+                    SharePreferencesUtils sharePreferencesUtils = new SharePreferencesUtils();
+                    sharePreferencesUtils.setString(context, "max", "");
+                    sharePreferencesUtils.setString(context, "deviceCode", "");
+                    sharePreferencesUtils.setString(context, "deviceName", "");
+                    sharePreferencesUtils.setString(context, "deviceModel", "");
+                    sharePreferencesUtils.setString(context, "wifiName", "");
+                    sharePreferencesUtils.setString(context, "haveDescern", "");
+                    Intent intent = new Intent(context, SendSelectActivity.class);
+                    intent.putExtra("tag",tag);
+                    context.startActivity(intent);
+                    context.finish();
                 }
                 return false;
             }

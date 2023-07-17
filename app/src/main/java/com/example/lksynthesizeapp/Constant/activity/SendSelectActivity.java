@@ -245,6 +245,31 @@ public class SendSelectActivity extends BaseActivity implements VersionInfoContr
             if (deviceName.equals("磁探机")) {
                 connect("CFTSYHAVEDESCERN");
             }
+            if (deviceName.equals("")) {
+                alertDialogUtil.showDialog("如想使用后续功能请扫码进入" , new AlertDialogCallBack() {
+                            @Override
+                            public void confirm(String name) {
+                                Intent intent = new Intent(SendSelectActivity.this, DefinedActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+
+                            @Override
+                            public void cancel() {
+
+                            }
+
+                            @Override
+                            public void save(String name) {
+
+                            }
+
+                            @Override
+                            public void checkName(String name) {
+
+                            }
+                        });
+            }
             seSPData();
         }
     }
@@ -311,29 +336,31 @@ public class SendSelectActivity extends BaseActivity implements VersionInfoContr
     }
 
     private void wifiDialog(){
-        alertDialogUtil.showDialog("请链接网络" + sharePreferencesUtils.getString(SendSelectActivity.this, "wifiName", ""),
-                new AlertDialogCallBack() {
-                    @Override
-                    public void confirm(String name) {
-                        Intent intent = new Intent(Settings.ACTION_WIFI_SETTINGS);
-                        startActivity(intent);
-                    }
+        if (sharePreferencesUtils.getString(SendSelectActivity.this, "wifiName", "")!=""){
+            alertDialogUtil.showDialog("请链接网络" + sharePreferencesUtils.getString(SendSelectActivity.this, "wifiName", ""),
+                    new AlertDialogCallBack() {
+                        @Override
+                        public void confirm(String name) {
+                            Intent intent = new Intent(Settings.ACTION_WIFI_SETTINGS);
+                            startActivity(intent);
+                        }
 
-                    @Override
-                    public void cancel() {
+                        @Override
+                        public void cancel() {
 
-                    }
+                        }
 
-                    @Override
-                    public void save(String name) {
+                        @Override
+                        public void save(String name) {
 
-                    }
+                        }
 
-                    @Override
-                    public void checkName(String name) {
+                        @Override
+                        public void checkName(String name) {
 
-                    }
-                });
+                        }
+                    });
+        }
     }
 
 

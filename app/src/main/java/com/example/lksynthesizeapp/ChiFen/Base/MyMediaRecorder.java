@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.Locale;
 
 public class MyMediaRecorder {
-    public MediaRecorder getMediaRecorder(Context context, String project,String workName,String workCode,String path) {
+    public MediaRecorder getMediaRecorder(Context context, String path) {
         MediaRecorder mediaRecorder = new MediaRecorder();
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);    //音频载体
         mediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);    //视频载体
@@ -30,7 +30,7 @@ public class MyMediaRecorder {
 //        } else {
 //            dir = new File(Environment.getExternalStorageDirectory() + path + project + "/" + workName + "/" + workCode + "/");
 //        }
-        File dir = new File(Environment.getExternalStorageDirectory() + path + project + "/" + workName + "/" + workCode + "/");
+        File dir = new File(Environment.getExternalStorageDirectory() + path + "/");
         if (!dir.exists()) {
             dir.mkdirs();
         }

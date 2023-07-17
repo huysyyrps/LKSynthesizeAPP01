@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
+import com.example.lksynthesizeapp.ChiFen.Base.MainUI;
 import com.example.lksynthesizeapp.Constant.Base.AlertDialogCallBack;
 import com.example.lksynthesizeapp.Constant.Base.AlertDialogUtil;
 import com.example.lksynthesizeapp.Constant.Base.BaseActivity;
@@ -45,6 +46,8 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
     RadioButton rbLightOpen;
     @BindView(R.id.rbPhoto)
     RadioButton rbPhoto;
+    @BindView(R.id.tvAlbum)
+    LinearLayout tvAlbum;
     private FrameLayout frameLayout;
     int mScreenWidth;
     int mScreenHeight;
@@ -147,7 +150,7 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
 
     @Override
     protected void rightClient() {
-
+        new MainUI().showPopupMenuMain(tvAlbum, "Desc", DefinedActivity.this);
     }
 
     // 实现“onRequestPermissionsResult”函数接收校验权限结果。

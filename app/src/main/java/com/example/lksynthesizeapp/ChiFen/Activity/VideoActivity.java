@@ -180,13 +180,13 @@ public class VideoActivity extends BaseActivity implements PhotoContract.View {
             @Override
             public void run() {
                 if (tag.equals("Local")) {
-                    getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKEVideo/" + project + "/" + workName + "/" + workCode + "/");
+                    getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKEVideo/" + "/");
                 } else if (tag.equals("Desc")){
-                    getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKEDescVideo/" + project + "/" + workName + "/" + workCode + "/");
+                    getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKEDescVideo/" + "/");
                 } else if (tag.equals("RobotDesc")){
-                    getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKERobotDescVideo/" + project + "/" + workName + "/" + workCode + "/");
+                    getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKERobotDescVideo/" + "/");
                 }else if (tag.equals("Robot")){
-                    getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKERobotVideo/" + project + "/" + workName + "/" + workCode + "/");
+                    getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKERobotVideo/" + "/");
                 }
             }
         }).start();

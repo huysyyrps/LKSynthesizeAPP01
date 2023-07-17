@@ -85,6 +85,7 @@ public class SeeImageOrVideoActivity extends BaseActivity implements View.OnClic
         } else if (tag.equals("video")) {
             drawLineView.setVisibility(View.GONE);
             videoView.setVisibility(View.VISIBLE);
+            linBar.setVisibility(View.GONE);
             setupVideo();
         }
     }

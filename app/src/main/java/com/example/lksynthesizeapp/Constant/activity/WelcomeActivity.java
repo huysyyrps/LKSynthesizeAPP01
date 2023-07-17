@@ -61,8 +61,8 @@ public class WelcomeActivity extends AppCompatActivity {
     private ArrayList<Integer> BannerData() {
         ArrayList<Integer> bannerList = new ArrayList<Integer>();
         bannerList.add(R.drawable.banner2);
-        bannerList.add(R.drawable.banner1);
-        bannerList.add(R.drawable.banner4);
+        bannerList.add(R.drawable.banner5);
+        bannerList.add(R.drawable.banner6);
         return bannerList;
     }
 
