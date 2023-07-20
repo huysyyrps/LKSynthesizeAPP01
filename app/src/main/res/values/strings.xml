@@ -71,6 +71,16 @@
     <string name="send_faile">发送失败</string>
     <string name="receive_faile">接收数据错误</string>
     <string name="connect_colse">连接断开</string>
-
+    <string name="image_list">图片列表</string>
+    <string name="video_list">视频列表</string>
+    <string name="version_check">版本检测</string>
+    <string name="current_version">当前版本</string>
+    <string name="contact_comp">联系我们</string>
     <string name="in_project">进入程序</string>
+    <string name="close_project">退出程序</string>
+    <string name="have_new_version">存在新版本</string>
+    <string name="work_temp">请链接网络</string>
+    <string name="btn_sure">确定</string>
+    <string name="btn_cancel">取消</string>
+
 </resources>

@@ -132,5 +132,9 @@ dependencies {
     api 'com.thanosfisherman.wifiutils:wifiutils:1.6.2'
     //banner
     implementation 'io.github.youth5201314:banner:2.2.2'
+    // AndroidX版本更新弹窗
+    implementation 'com.teprinciple:updateapputilsx:2.3.0'
+    //dialog
+    implementation 'com.afollestad.material-dialogs:core:3.2.1'
 
 }

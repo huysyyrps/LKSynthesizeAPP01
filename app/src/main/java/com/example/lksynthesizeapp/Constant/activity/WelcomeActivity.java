@@ -44,7 +44,7 @@ public class WelcomeActivity extends AppCompatActivity {
                 mHandler.removeCallbacks(this);
                 finish();
             }
-        }, 8000); //延迟6秒跳转
+        }, 4000); //延迟6秒跳转
 
         // 模拟网易新闻跳过。
         tvProgress = (CircleTextProgressbar) findViewById(R.id.tvProgress);
@@ -54,7 +54,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
         ArrayList<Integer> imgList = BannerData();
         banner.setIndicator(new CircleIndicator(this));
-        banner.setLoopTime(2000);
+        banner.setLoopTime(1500);
         banner.setAdapter(new ImageAdapter(imgList), true);
     }
 

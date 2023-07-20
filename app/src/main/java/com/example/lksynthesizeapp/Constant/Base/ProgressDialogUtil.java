@@ -86,7 +86,7 @@ import com.example.lksynthesizeapp.R;
 
             if (null != context) {
                 LayoutInflater flat = LayoutInflater.from(context);
-                View v = flat.inflate(R.layout.loading, null);
+                View v = flat.inflate(R.layout.progress_dialog, null);
                 // v.setBackgroundColor(context.getResources().getColor(android.R.color.transparent));
                 // 创建对话
                 dialog = new AlertDialog.Builder(context, R.style.dialog).create();
@@ -99,15 +99,15 @@ import com.example.lksynthesizeapp.R;
                 // 显示对话
                 dialog.show();
 
-                // 加载控件
-                title = (TextView) v.findViewById(R.id.loading_title);
-
-                if (TextUtils.isEmpty(mssg)) {
-                    title.setVisibility(View.GONE);
-                } else {
-                    title.setVisibility(View.VISIBLE);
-                    title.setText(mssg);
-                }
+//                // 加载控件
+//                title = (TextView) v.findViewById(R.id.loading_title);
+//
+//                if (TextUtils.isEmpty(mssg)) {
+//                    title.setVisibility(View.GONE);
+//                } else {
+//                    title.setVisibility(View.VISIBLE);
+//                    title.setText(mssg);
+//                }
 
                 // 必须放到显示对话框下面，否则显示不出效果
                 Window window = dialog.getWindow();

@@ -1,125 +1,247 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:my_view="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/drawer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        xmlns:my_view="http://schemas.android.com/apk/res-auto">
 
     <FrameLayout
-        android:id="@+id/rim"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </FrameLayout>
-
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_centerInParent="true"
-            android:layout_centerHorizontal="true"
-            android:background="#FF000000"
-            android:alpha="0.1" />
+            android:background="@color/theme_back_color">
+
+        <FrameLayout
+                android:id="@+id/rim"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+        </FrameLayout>
 
 
-        <ImageView
-            android:id="@+id/scan_area"
-            android:layout_width="240dp"
-            android:layout_height="240dp"
-            android:layout_marginTop="180dp"
-            android:layout_centerHorizontal="true"
-            android:background="@drawable/cloors" />
-        <TextView
-            android:layout_below="@id/scan_area"
-            android:layout_marginTop="10dp"
-            android:layout_centerHorizontal="true"
-            android:text="@string/viewfinderview_status_text1"
-            android:textAllCaps="false"
-            android:textColor="#FFFFFF"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:layout_height="20dp"
-            android:layout_width="220dp" />
-    </RelativeLayout>
+        <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="75dp"
-        android:orientation="horizontal"
-        android:layout_gravity="bottom"
-        android:layout_marginBottom="40dp">
-
-        <RadioButton
-            android:id="@+id/rbLightClose"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginLeft="50dp"
-            android:background="@drawable/radionbutton_select"
-            android:button="@null"
-            android:drawableTop="@drawable/ic_light_close"
-            android:gravity="center"
-            android:padding="5dp"
-            android:text="灯光"
-            android:textColor="@color/whith"
-            android:textSize="12dp" />
-        <RadioButton
-            android:id="@+id/rbLightOpen"
-            android:visibility="gone"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:button="@null"
-            android:background="@drawable/radionbutton_select"
-            android:drawableTop="@drawable/ic_light_open"
-            android:layout_marginLeft="50dp"
-            android:padding="5dp"
-            android:text="相册"
-            android:gravity="center"
-            android:textSize="12dp"
-            android:textColor="@color/red"/>
-        <RadioButton
-            android:id="@+id/rbPhoto"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:button="@null"
-            android:background="@drawable/radionbutton_select"
-            android:drawableTop="@drawable/ic_photo"
-            android:text="截图"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="50dp"
-            android:padding="5dp"
-            android:gravity="center"
-            android:textSize="12dp"
-            android:textColor="@color/whith"/>
-
-    </RelativeLayout>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical">
-
-        <com.example.lksynthesizeapp.Constant.View.Header
-                android:id="@+id/header"
-                style="@style/Header"
-                my_view:header_title="@string/QR_code"
-                my_view:header_image_right="@drawable/ic_other"/>
-        <LinearLayout
-                android:id="@+id/tvAlbum"
-                android:layout_width="80dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="right|top"
-                android:layout_marginBottom="3dp"
-                android:gravity="center_horizontal|top">
             <ImageView
-                    android:id="@+id/iv_right"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true"
+                    android:layout_centerHorizontal="true"
+                    android:background="#FF000000"
+                    android:alpha="0.1" />
+
+
+            <ImageView
+                    android:id="@+id/scan_area"
+                    android:layout_width="240dp"
+                    android:layout_height="240dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="180dp"
+                    android:background="@drawable/cloors" />
+            <TextView
+                    android:layout_below="@id/scan_area"
+                    android:layout_marginTop="10dp"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/viewfinderview_status_text1"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_height="20dp"
+                    android:layout_width="220dp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="75dp"
+                android:orientation="horizontal"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="40dp">
+
+            <RadioButton
+                    android:id="@+id/rbLightClose"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginLeft="50dp"
+                    android:background="@drawable/radionbutton_select"
+                    android:button="@null"
+                    android:drawableTop="@drawable/ic_light_close"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:text="灯光"
+                    android:textColor="@color/whith"
+                    android:textSize="12dp" />
+            <RadioButton
+                    android:id="@+id/rbLightOpen"
+                    android:visibility="gone"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:button="@null"
+                    android:background="@drawable/radionbutton_select"
+                    android:drawableTop="@drawable/ic_light_open"
+                    android:layout_marginLeft="50dp"
+                    android:padding="5dp"
+                    android:text="相册"
+                    android:gravity="center"
+                    android:textSize="12dp"
+                    android:textColor="@color/red"/>
+            <RadioButton
+                    android:id="@+id/rbPhoto"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:button="@null"
+                    android:background="@drawable/radionbutton_select"
+                    android:drawableTop="@drawable/ic_photo"
+                    android:text="截图"
                     android:layout_alignParentRight="true"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/ic_other"
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent" />
-        </LinearLayout>
+                    android:layout_marginRight="50dp"
+                    android:padding="5dp"
+                    android:gravity="center"
+                    android:textSize="12dp"
+                    android:textColor="@color/whith"/>
+
+        </RelativeLayout>
+
+        <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical">
+
+            <com.example.lksynthesizeapp.Constant.View.Header
+                    android:id="@+id/header"
+                    style="@style/Header"
+                    my_view:header_title="@string/QR_code"
+                    app:header_is_left_iv_visiable="false"/>
+            <LinearLayout
+                    android:id="@+id/tvAlbum"
+                    android:layout_width="80dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="left|top"
+                    android:layout_marginBottom="3dp"
+                    android:gravity="center_horizontal|top">
+                <ImageView
+                        android:id="@+id/iv_right"
+                        android:layout_alignParentRight="true"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_other"
+                        android:layout_width="50dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_height="20dp" />
+            </LinearLayout>
+        </FrameLayout>
     </FrameLayout>
-</FrameLayout>
+
+    <LinearLayout
+            android:layout_width="200dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:background="@color/theme_back_color"
+            android:orientation="vertical">
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="130dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/ic_drawer_backcolor"
+                android:orientation="vertical">
+
+            <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10dp"
+                    android:src="@drawable/ic_logo1" />
+
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/app_name"
+                    android:textColor="@color/black"
+                    android:textSize="14dp" />
+        </LinearLayout>
+
+        <com.example.lksynthesizeapp.View.BaseLinlayout
+                android:id="@+id/linImageList"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                app:drawer_image_left="@drawable/ic_image_list"
+                app:drawer_title="@string/image_list" />
+
+        <View
+                style="@style/HLine"
+                android:layout_height="0.5dp" />
+
+        <com.example.lksynthesizeapp.View.BaseLinlayout
+                android:id="@+id/linVideoList"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                app:drawer_image_left="@drawable/ic_video_list"
+                app:drawer_title="@string/video_list" />
+
+        <View
+                style="@style/HLine"
+                android:layout_height="0.5dp" />
+
+        <com.example.lksynthesizeapp.View.BaseLinlayout
+                android:id="@+id/linVersionCheck"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                app:drawer_image_left="@drawable/ic_vrsion_check"
+                app:drawer_title="@string/version_check"/>
+        <View
+                style="@style/HLine"
+                android:layout_height="0.5dp" />
+
+        <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp">
+            <com.example.lksynthesizeapp.View.BaseLinlayout
+                    android:id="@+id/linCurrentVersion"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    app:drawer_image_left="@drawable/ic_current_version"
+                    app:drawer_title="@string/current_version"/>
+            <TextView
+                    android:id="@+id/tvCurrentVersion"
+                    android:layout_width="100dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="15dp"
+                    android:layout_gravity="right"
+                    android:gravity="center_vertical|right"
+                    android:layout_marginRight="20dp"
+                    android:textColor="@color/red"
+                    android:text="1.0.4"
+                    android:textSize="14dp" />
+        </FrameLayout>
+        <View
+                style="@style/HLine"
+                android:layout_height="0.5dp" />
+
+        <com.example.lksynthesizeapp.View.BaseLinlayout
+                android:id="@+id/linInProject"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                app:drawer_image_left="@drawable/ic_inproject"
+                app:drawer_title="@string/in_project"
+                app:version_show="false"/>
+
+        <View
+                style="@style/HLine"
+                android:layout_height="0.5dp" />
+
+        <com.example.lksynthesizeapp.View.BaseButton
+                android:id="@+id/btnFinish"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:layout_margin="10dp"
+                android:text="@string/close_project"
+                android:textColor="@color/white"
+                android:textSize="13dp"
+                app:bg_corner="5dp" />
+    </LinearLayout>
+</androidx.drawerlayout.widget.DrawerLayout>
+

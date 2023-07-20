@@ -147,9 +147,9 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         ButterKnife.bind(this);
         intance = this;
         Intent intent = getIntent();
-        project = intent.getStringExtra("project");
-        workName = intent.getStringExtra("etWorkName");
-        workCode = intent.getStringExtra("etWorkCode");
+        project = intent.getStringExtra("project")+"";
+        workName = intent.getStringExtra("etWorkName")+"";
+        workCode = intent.getStringExtra("etWorkCode")+"";
         boolean ret_init = yolov5ncnn.Init(getAssets());
         devicesModel = new SharePreferencesUtils().getString(this,"deviceModel","");
         if (!ret_init) {
@@ -305,8 +305,12 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         if (mythread != null) {
             mythread.interrupt();
         }
+        if (mNettyTcpClient!=null){
+            mNettyTcpClient.disconnect();
+            mNettyTcpClient = null;
+            baseTcpClient = null;
+        }
         runing = false;
-        mNettyTcpClient.disconnect();
     }
 
     @OnClick({R.id.rbCamera, R.id.rbVideo, R.id.rbAlbum, R.id.rbBack, R.id.linearLayoutStop, R.id.rbSetting})
@@ -667,11 +671,26 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                     Toast.makeText(DescernActivity.this, R.string.connect_success, Toast.LENGTH_SHORT).show();
                     break;
                 case TAG_TWO:
+                    if (mNettyTcpClient!=null){
+                        mNettyTcpClient.disconnect();
+                        mNettyTcpClient = null;
+                        baseTcpClient = null;
+                    }
 //                    Toast.makeText(DescernActivity.this, R.string.connect_colse, Toast.LENGTH_SHORT).show();
                     descernTag = true;
                     break;
                 case TAG_THERE:
 //                    Toast.makeText(DescernActivity.this, R.string.connect_faile, Toast.LENGTH_SHORT).show();
+                    if (mythread != null) {
+                        mythread.interrupt();
+                    }
+                    runing = false;
+                    baseTcpClient = null;
+                    if (mNettyTcpClient!=null){
+                        mNettyTcpClient.disconnect();
+                        mNettyTcpClient = null;
+                        baseTcpClient = null;
+                    }
                     finish();
                     break;
             }

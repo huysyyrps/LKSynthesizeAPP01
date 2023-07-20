@@ -293,4 +293,7 @@
     <color name="theme_back_color">#262626</color>
     <color name="theme_color">#F5B12A</color>
     <color name="back_color">#181818</color>
+    <color name="color_preloader_start">#000000</color>
+    <color name="color_preloader_center">#000000</color>
+    <color name="color_preloader_end">#00BD08</color>
 </resources>

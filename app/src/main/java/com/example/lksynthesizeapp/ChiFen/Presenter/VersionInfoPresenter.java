@@ -36,8 +36,8 @@ public class VersionInfoPresenter implements VersionInfoContract.presenter {
 
     @Override
     public void getVersionInfo(RequestBody company) {
-        RetrofitUtil.getInstance().initLoginRetrofitMainNoSSL().getVersionInfo(company).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        RetrofitUtil.getInstance().initLoginRetrofitMainNoSSL().getVersionInfo(company).subscribeOn(Schedulers.io())//请求在新的线程中执行
+                .observeOn(AndroidSchedulers.mainThread())//请求完成后在io线程中执行
                 .subscribe(new BaseObserverNoEntry<VersionInfo>(context, context.getResources().getString(R.string.handler_data)) {
                     @Override
                     protected void onSuccees(VersionInfo t) throws Exception {

@@ -1,5 +1,7 @@
 <resources>
-    <style name="NoAction" parent="Theme.AppCompat.Light.NoActionBar" />
+    <style name="NoAction" parent="Theme.AppCompat.Light.NoActionBar" >
+        <item name="android:navigationBarColor">@color/theme_back_color</item>
+    </style>
 
     <declare-styleable name="CircleTextProgressbar">
         <attr name="in_circle_color" format="color" />
@@ -153,12 +155,43 @@
         <item name="android:windowExitAnimation">@anim/dialog_exit_anim</item>
     </style>
 
+    <!-- 自定义BaseButton属性   -->
+    <style name="BaseButton">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_height">25dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:textSize">13dp</item>
+        <item name="lineHeight">13dp</item>
+        <item name="android:layout_marginLeft">8dp</item>
+        <item name="android:layout_marginRight">8dp</item>
+        <item name="android:layout_marginBottom">5dp</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="android:paddingTop">0dp</item>
+    </style>
+
+
     <!-- 自定义Button控件的属性-->
     <declare-styleable name="BaseButton">
         <!-- 背景颜色-->
         <attr name="bg_color" format="color" />
         <!-- 圆角大小-->
         <attr name="bg_corner" format="dimension" />
+        <!-- 是否可以点击-->
+        <attr name="bg_client" format="boolean" />
+    </declare-styleable>
+
+    <!--自定义header属性-->
+    <declare-styleable name="DrawerLin">
+        <attr name="drawer_title" format="string" />
+        <attr name="version" format="string" />
+        <attr name="version_show" format="boolean" />
+        <attr name="drawer_margin" format="dimension" />
+        <attr name="drawer_image_left" format="reference" />
+        <attr name="drawer_image_right" format="reference" />
     </declare-styleable>
 
 </resources>
