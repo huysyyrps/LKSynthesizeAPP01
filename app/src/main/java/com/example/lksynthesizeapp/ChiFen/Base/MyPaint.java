@@ -7,6 +7,7 @@ public class MyPaint {
     Paint linePaint;
     Paint textbgpaint;
     Paint textpaint;
+    Paint headTextpaint;
     public Paint getLinePaint(){
         linePaint = new Paint();
         linePaint.setStyle(Paint.Style.STROKE);
@@ -22,6 +23,19 @@ public class MyPaint {
         textpaint.setStrokeWidth(2);
         textpaint.setTextAlign(Paint.Align.LEFT);
         return textpaint;
+    }
+
+    public Paint getHeadTextpaint(){
+        headTextpaint = new Paint();
+        headTextpaint.setColor(Color.RED);
+        headTextpaint.setTextSize(26);
+        headTextpaint.setStrokeWidth(2);
+        headTextpaint.setTextScaleX(0.8F);
+        headTextpaint.setAntiAlias(true);//抗锯齿
+//        Typeface font = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL);
+//        headTextpaint.setTypeface( font );
+//        headTextpaint.setTextAlign(Paint.Align.LEFT);
+        return headTextpaint;
     }
 
     public Paint getTextbgpaint(){

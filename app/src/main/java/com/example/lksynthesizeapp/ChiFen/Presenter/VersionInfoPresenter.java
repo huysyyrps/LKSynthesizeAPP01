@@ -1,10 +1,11 @@
 package com.example.lksynthesizeapp.ChiFen.Presenter;
 
 import android.content.Context;
+import android.widget.Toast;
 
 import com.example.lksynthesizeapp.ChiFen.Module.VersionInfoContract;
 import com.example.lksynthesizeapp.ChiFen.bean.VersionInfo;
-import com.example.lksynthesizeapp.Constant.Base.BaseObserverNoEntry;
+import com.example.lksynthesizeapp.Constant.Base.BaseObserverNoEntry2;
 import com.example.lksynthesizeapp.Constant.Base.NetStat;
 import com.example.lksynthesizeapp.Constant.Net.RetrofitUtil;
 import com.example.lksynthesizeapp.R;
@@ -38,7 +39,7 @@ public class VersionInfoPresenter implements VersionInfoContract.presenter {
     public void getVersionInfo(RequestBody company) {
         RetrofitUtil.getInstance().initLoginRetrofitMainNoSSL().getVersionInfo(company).subscribeOn(Schedulers.io())//请求在新的线程中执行
                 .observeOn(AndroidSchedulers.mainThread())//请求完成后在io线程中执行
-                .subscribe(new BaseObserverNoEntry<VersionInfo>(context, context.getResources().getString(R.string.handler_data)) {
+                .subscribe(new BaseObserverNoEntry2<VersionInfo>(context, context.getResources().getString(R.string.handler_data)) {
                     @Override
                     protected void onSuccees(VersionInfo t) throws Exception {
                         if (t.getCode()==1){
@@ -53,6 +54,7 @@ public class VersionInfoPresenter implements VersionInfoContract.presenter {
                             view.setVersionInfoMessage(""+ e.getMessage());
                         }else {
                             view.setVersionInfoMessage("网络异常");
+                            Toast.makeText(mContext, "\"请检查当前网络\"", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

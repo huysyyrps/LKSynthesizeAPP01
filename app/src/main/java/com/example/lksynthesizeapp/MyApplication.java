@@ -22,7 +22,7 @@ import com.message.update.UpdateApkHelper;
 
 public class MyApplication extends Application {
     public static MyApplication myApp;
-    public static final int TIMEOUT = 3;
+    public static final int TIMEOUT = 5;
     private static Context context;//全局上下文
     public static NotificationManager notificationChannelManager;
 

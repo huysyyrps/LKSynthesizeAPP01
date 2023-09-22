@@ -62,13 +62,19 @@ public class SendSelectActivity extends BaseActivity {
     String deviceName;
     private DialogUpdate dialogUpdate;
     BaseDialogProgress dialogProgress;
+    private String inTag = "";
 
     //推出程序
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            new ExitApp().exit(alertDialogUtil, SendSelectActivity.this);
-            return false;
+            if (inTag.equals("button")){
+                finish();
+                return false;
+            }else {
+                new ExitApp().exit(alertDialogUtil, SendSelectActivity.this);
+                return false;
+            }
         }
         return super.onKeyDown(keyCode, event);
     }
@@ -78,6 +84,7 @@ public class SendSelectActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
+        inTag = getIntent().getStringExtra("intag");
         dialogProgress = new BaseDialogProgress(this);
         intance = this;
         loadingDialog = new LoadingDialog(this);

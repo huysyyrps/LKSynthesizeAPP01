@@ -233,7 +233,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
     private void showObjects(YoloV5Ncnn.Obj[] objects) {
         if (objects == null || objects.length == 0) {
             //发送报警信息
-            if (mNettyTcpClient!=null&&mNettyTcpClient.isConnecting()){
+            if (mNettyTcpClient!=null&&mNettyTcpClient.getConnectStatus()){
                 makeData("300A");
             }
             imageView.setImageBitmap(bmp);
@@ -261,23 +261,23 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         }
         imageView.setImageBitmap(rgba);
         mediaPlayer.start();
-        if (mNettyTcpClient!=null&&mNettyTcpClient.isConnecting()){
+        if (mNettyTcpClient!=null&&mNettyTcpClient.getConnectStatus()){
             makeData("310A");
         }
         if (isFirst) {
-//            radioGroup.setVisibility(View.GONE);
-//            saveImageToGallery(DescernActivity.this, screenImage());
+            canvas.drawText("工程名称 ："+project, 10, 30 , new MyPaint().getHeadTextpaint());
+            canvas.drawText("工件名称 ："+workName, 10, 70 , new MyPaint().getHeadTextpaint());
+            canvas.drawText("工件编号 ："+workCode, 10, 110 , new MyPaint().getHeadTextpaint());
             saveImageToGallery(DescernActivity.this, rgba);
-//            radioGroup.setVisibility(View.VISIBLE);
             saveTime = System.currentTimeMillis();
             isFirst = false;
         } else {
             currentTmeTime = System.currentTimeMillis();
             if (currentTmeTime - saveTime > 3000) {
-//                radioGroup.setVisibility(View.GONE);
-//                saveImageToGallery(DescernActivity.this, screenImage());
+                canvas.drawText("工程名称 ："+project, 10, 30 , new MyPaint().getHeadTextpaint());
+                canvas.drawText("工件名称 ："+workName, 10, 70 , new MyPaint().getHeadTextpaint());
+                canvas.drawText("工件编号 ："+workCode, 10, 110 , new MyPaint().getHeadTextpaint());
                 saveImageToGallery(DescernActivity.this, rgba);
-//                radioGroup.setVisibility(View.VISIBLE);
                 saveTime = currentTmeTime;
                 isFirst = true;
             }
@@ -320,19 +320,13 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                 if (toast != null) {
                     toast.cancel();
                 }
-//                Bitmap bitmap = screenImage();
-//                if (bitmap != null) {
-//                    boolean backstate = saveImageToGallery(DescernActivity.this, bmp);
-//                    if (backstate) {
-//                        toast = Toast.makeText(DescernActivity.this, R.string.save_success, Toast.LENGTH_SHORT);
-//                        toast.show();
-//                    } else {
-//                        toast = Toast.makeText(DescernActivity.this, R.string.save_faile, Toast.LENGTH_SHORT);
-//                        toast.show();
-//                    }
-//                }
                 if (bmp!=null){
-                    boolean backstate = saveImageToGallery(DescernActivity.this, bmp);
+                    Bitmap rgba = bmp.copy(Bitmap.Config.ARGB_8888, true);
+                    Canvas canvas = new Canvas(rgba);
+                    canvas.drawText("工程名称 ："+project, 10, 30 , new MyPaint().getHeadTextpaint());
+                    canvas.drawText("工件名称 ："+workName, 10, 70 , new MyPaint().getHeadTextpaint());
+                    canvas.drawText("工件编号 ："+workCode, 10, 110 , new MyPaint().getHeadTextpaint());
+                    boolean backstate = saveImageToGallery(DescernActivity.this, rgba);
                     if (backstate) {
                         toast = Toast.makeText(DescernActivity.this, R.string.save_success, Toast.LENGTH_SHORT);
                     } else {
@@ -340,30 +334,6 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                     }
                     toast.show();
                 }
-
-//                String path = Environment.getExternalStorageDirectory().getPath();
-//                if (Build.VERSION.SDK_INT > 29) {
-//                    path = this.getExternalFilesDir(null).getAbsolutePath() ;
-//                }
-//                try {
-//                    // 截屏-将view作为原图绘制出来
-//                    View v = this.getWindow().getDecorView();
-//                    Bitmap bitmap = Bitmap.createBitmap(v.getWidth(), v.getHeight(),Bitmap.Config.RGB_565);
-//                    Canvas c = new Canvas(bitmap);
-//                    c.translate(-v.getScrollX(), -v.getScrollY());
-//                    v.draw(c);
-//                    // 压缩Bitmap,不支持png图片的压缩
-//                    Uri insertUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, new ContentValues());
-//                    OutputStream outputStream = getContentResolver().openOutputStream(insertUri, "123");
-//                    if (bitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream)) {
-//                        Log.e("XXX", "success");
-//                    } else {
-//                        Log.e("XXX", "fail");
-//                    }
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                    Log.e("XXX",e.toString());
-//                }
                 break;
             case R.id.rbVideo:
                 if (toast != null) {
@@ -575,10 +545,12 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         baseTcpClient.sendTcpData(data, new SendCallBack() {
             @Override
             public void success(String success) {
+                Log.e("TAG","发送成功");
             }
 
             @Override
             public void faild(String message) {
+                Log.e("TAG","发送失败");
             }
         });
     }
@@ -586,7 +558,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
     @Override
     public void onMessageResponseClient(String msg, int index) {
         //如果型号为D3/E3 返回数据如果为空，则默认开启识别
-
+        Log.e("TAG","接收数据"+msg);
         if(devicesModel.equals("LKMT-D3S")||devicesModel.equals("LKMT-E3S")){
             if(msg==null||msg.equals("")){
                 descernTag = true;

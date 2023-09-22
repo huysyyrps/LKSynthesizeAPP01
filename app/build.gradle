@@ -12,7 +12,7 @@ android {
         minSdk 26
         targetSdk 28
         versionCode 1
-        versionName "1.0.4"
+        versionName "1.0.6"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 //        externalNativeBuild {
 //            cmake {
@@ -37,7 +37,8 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            //混淆开关
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }

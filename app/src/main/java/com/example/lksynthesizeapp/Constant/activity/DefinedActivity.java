@@ -34,9 +34,7 @@ import com.example.lksynthesizeapp.Constant.Base.AlertDialogCallBack;
 import com.example.lksynthesizeapp.Constant.Base.AlertDialogUtil;
 import com.example.lksynthesizeapp.Constant.Base.BaseActivity;
 import com.example.lksynthesizeapp.Constant.Base.Constant;
-import com.example.lksynthesizeapp.Constant.Base.NetStat;
 import com.example.lksynthesizeapp.Constant.Base.ProgressDialogUtil;
-import com.example.lksynthesizeapp.Constant.wifi.deal.ConnectionManager;
 import com.example.lksynthesizeapp.R;
 import com.example.lksynthesizeapp.SharePreferencesUtils;
 import com.example.lksynthesizeapp.View.BaseButton;
@@ -56,7 +54,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import constant.UiType;
-import listener.OnBtnClickListener;
 import listener.OnInitUiListener;
 import model.UiConfig;
 import model.UpdateConfig;
@@ -80,8 +77,6 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
     BaseLinlayout linImageList;
     @BindView(R.id.linVideoList)
     BaseLinlayout linVideoList;
-    @BindView(R.id.linCurrentVersion)
-    BaseLinlayout linCurrentVersion;
     @BindView(R.id.btnFinish)
     BaseButton btnFinish;
     @BindView(R.id.linInProject)
@@ -115,10 +110,9 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
         this.savedInstanceState = savedInstanceState;
         ButterKnife.bind(this);
         // Bind the camera preview screen.
+//        new ConnectionManager(DefinedActivity.this).openWithWAP();
 
-        new ConnectionManager(DefinedActivity.this).openWithWAP();
-
-        tvCurrentVersion.setText(getVersionName());
+        tvCurrentVersion.setText("V"+getVersionName());
         versionInfoPresenter = new VersionInfoPresenter(this, this);
 //        ProgressDialogUtil.startLoad(this, "");
         new Thread(new Runnable() {
@@ -131,28 +125,19 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
     }
 
     private void upDataTag() {
-        if (new NetStat().ping()) {
-            HashMap<String, String> params = new HashMap<String, String>();
-            params.put("projectName", "济宁鲁科");
-            params.put("actionName", "鲁科智能检测系统");
-            params.put("appVersion", getVersionName());
-            params.put("channel", "default");
-            params.put("appType", "android");
-            params.put("clientType", "磁探机");
-            params.put("phoneSystemVersion", "10.0.1");
-            params.put("phoneType", "华为");
-            Gson gson = new Gson();
-            String s = gson.toJson(params);
-            RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), gson.toJson(params));
-            versionInfoPresenter.getVersionInfo(requestBody);
-        } else {
-            runOnUiThread(() -> {
-                Toast.makeText(this, "请链接4G网络检测版本", Toast.LENGTH_SHORT).show();
-                remoteSetting(savedInstanceState);
-                ProgressDialogUtil.stopLoad();
-                scanArea.setVisibility(View.VISIBLE);
-            });
-        }
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("projectName", "济宁鲁科");
+        params.put("actionName", "鲁科智能检测系统");
+        params.put("appVersion", getVersionName());
+        params.put("channel", "default");
+        params.put("appType", "android");
+        params.put("clientType", "磁探机");
+        params.put("phoneSystemVersion", "10.0.1");
+        params.put("phoneType", "华为");
+        Gson gson = new Gson();
+        String s = gson.toJson(params);
+        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), gson.toJson(params));
+        versionInfoPresenter.getVersionInfo(requestBody);
     }
 
     @Override
@@ -234,6 +219,7 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
     @Override
     protected void onResume() {
         super.onResume();
+        remoteSetting(savedInstanceState);
     }
 
     @Override
@@ -266,7 +252,7 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
     }
 
     @OnClick({R.id.rbLightClose, R.id.rbLightOpen, R.id.rbPhoto, R.id.tvAlbum, R.id.linImageList,
-            R.id.linVideoList, R.id.linCurrentVersion, R.id.btnFinish, R.id.linInProject, R.id.linVersionCheck})
+            R.id.linVideoList,  R.id.btnFinish, R.id.linInProject, R.id.linVersionCheck})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.rbLightClose:
@@ -311,8 +297,8 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
                 sharePreferencesUtils.setString(this, "haveDescern", "");
                 Intent intent2 = new Intent(this, SendSelectActivity.class);
                 intent2.putExtra("tag", "Desc");
+                intent2.putExtra("intag", "button");
                 startActivity(intent2);
-                finish();
                 break;
             case R.id.btnFinish:
                 finish();
@@ -359,7 +345,10 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
                                 sharePreferencesUtils.setString(DefinedActivity.this, "wifiName", dataArray[4]);
                                 sharePreferencesUtils.setString(DefinedActivity.this, "haveDescern", dataArray[5]);
 //                            definedPresenter.getDefined(data[0]);
-                                startActivity(new Intent(DefinedActivity.this, SendSelectActivity.class));
+                                Intent intent = new Intent(this, SendSelectActivity.class);
+                                intent.putExtra("tag", "Desc");
+                                intent.putExtra("intag", "");
+                                startActivity(intent);
                                 finish();
                                 tag = "second";
                                 return;
@@ -407,7 +396,7 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
         }
 //        remoteSetting(this.savedInstanceState);
         if (isBaseVersion){
-            Toast.makeText(this, "已是最新版本", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "已是最新版本 V"+netVersion, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -445,13 +434,13 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
                     }
 
                 })
-                .setCancelBtnClickListener(new OnBtnClickListener() {
-                    @Override
-                    public boolean onClick() {
-                        remoteSetting(savedInstanceState);
-                        return false;
-                    }
-                })
+//                .setCancelBtnClickListener(new OnBtnClickListener() {
+//                    @Override
+//                    public boolean onClick() {
+//                        remoteSetting(savedInstanceState);
+//                        return false;
+//                    }
+//                })
                 .update();
     }
 
@@ -518,7 +507,10 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
                                 sharePreferencesUtils.setString(DefinedActivity.this, "deviceModel", dataArray[3]);
                                 sharePreferencesUtils.setString(DefinedActivity.this, "wifiName", dataArray[4]);
                                 sharePreferencesUtils.setString(DefinedActivity.this, "haveDescern", dataArray[5]);
-                                startActivity(new Intent(DefinedActivity.this, SendSelectActivity.class));
+                                Intent intent2 = new Intent(DefinedActivity.this, SendSelectActivity.class);
+                                intent2.putExtra("tag", "Desc");
+                                intent2.putExtra("intag", "button");
+                                startActivity(intent2);
                                 tag = "second";
                                 finish();
                                 return;

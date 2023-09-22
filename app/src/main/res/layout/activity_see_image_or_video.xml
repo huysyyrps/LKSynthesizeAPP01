@@ -19,8 +19,7 @@
         <com.example.lksynthesizeapp.ChiFen.View.ScaleImageView
                 android:id="@+id/drawLineView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="fitXY"/>
+                android:layout_height="match_parent"/>
 
         <com.example.lksynthesizeapp.ChiFen.View.CustomerVideoView
                 android:id="@+id/videoView"

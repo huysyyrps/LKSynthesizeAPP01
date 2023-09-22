@@ -162,6 +162,28 @@
                     android:text="@string/app_name"
                     android:textColor="@color/black"
                     android:textSize="14dp" />
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1.3"
+                        android:layout_height="wrap_content"
+                        android:gravity="center|right"
+                        android:text="当前版本："
+                        android:textColor="@color/black"
+                        android:textSize="14dp" />
+                <TextView
+                        android:id="@+id/tvCurrentVersion"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:gravity="center|left"
+                        android:text="V1.0.X"
+                        android:textColor="@color/red"
+                        android:textSize="14dp" />
+            </LinearLayout>
         </LinearLayout>
 
         <com.example.lksynthesizeapp.View.BaseLinlayout
@@ -196,30 +218,6 @@
                 style="@style/HLine"
                 android:layout_height="0.5dp" />
 
-        <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="40dp">
-            <com.example.lksynthesizeapp.View.BaseLinlayout
-                    android:id="@+id/linCurrentVersion"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    app:drawer_image_left="@drawable/ic_current_version"
-                    app:drawer_title="@string/current_version"/>
-            <TextView
-                    android:id="@+id/tvCurrentVersion"
-                    android:layout_width="100dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="15dp"
-                    android:layout_gravity="right"
-                    android:gravity="center_vertical|right"
-                    android:layout_marginRight="20dp"
-                    android:textColor="@color/red"
-                    android:text="1.0.4"
-                    android:textSize="14dp" />
-        </FrameLayout>
-        <View
-                style="@style/HLine"
-                android:layout_height="0.5dp" />
 
         <com.example.lksynthesizeapp.View.BaseLinlayout
                 android:id="@+id/linInProject"
