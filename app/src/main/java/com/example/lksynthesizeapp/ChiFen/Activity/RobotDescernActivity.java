@@ -245,7 +245,7 @@ public class RobotDescernActivity extends AppCompatActivity implements NettyClie
 
     //--------------tcp----------------
     private void settingNetty() {
-        mNettyTcpClient = baseTcpClient.initTcpClient("192.168.43.251", 502);
+        mNettyTcpClient = baseTcpClient.initTcpClient("192.168.144.101", 14551);
 //        mNettyTcpClient = baseTcpClient.initTcpClient("172.16.20.5", 5000);
         mNettyTcpClient.setListener(this); //设置TCP监听
         baseTcpClient.tcpClientConntion(mNettyTcpClient);

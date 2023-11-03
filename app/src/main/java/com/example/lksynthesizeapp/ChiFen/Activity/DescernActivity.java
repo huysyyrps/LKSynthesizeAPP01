@@ -390,7 +390,29 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         chronometer.start();//开始计时
         chronometer.setBase(SystemClock.elapsedRealtime());
         CharSequence time = chronometer.getText();
+        Log.e("TAG",time.toString());
         chronometer.setText(time.toString());
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true){
+                    if (chronometer.getText().toString().equals("00:30")){
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ChronometerEnd();
+                                radioGroup.setVisibility(View.VISIBLE);
+                                linearLayoutStop.setVisibility(View.GONE);
+                                if (mediaRecorder != null) {
+                                    stopMedia();
+                                }
+                            }
+                        });
+                    }
+
+                }
+            }
+        }).start();
     }
 
     //结束计时
@@ -404,7 +426,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
             //获取mediaRecorder
             mediaRecorder = new MyMediaRecorder().getMediaRecorder(this, "/LUKEDescVideo/");
             mVirtualDisplay = mMediaProjection.createVirtualDisplay("你的name",
-                    2400, 1080, 1,
+                    640, 520, 1,
                     DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
                     mediaRecorder.getSurface(),
                     null, null);
@@ -419,7 +441,16 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
     }
 
     private void stopMedia() {
-        mediaRecorder.stop();
+//        mediaRecorder.stop();
+        try {
+            mediaRecorder.stop();
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     //创建申请录屏的 Intent
@@ -545,7 +576,8 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         baseTcpClient.sendTcpData(data, new SendCallBack() {
             @Override
             public void success(String success) {
-                Log.e("TAG","发送成功");
+
+//                Log.e("TAG","发送成功");
             }
 
             @Override

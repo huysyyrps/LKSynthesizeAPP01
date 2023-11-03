@@ -16,13 +16,15 @@ import java.util.Locale;
 public class MyMediaRecorder {
     public MediaRecorder getMediaRecorder(Context context, String path) {
         MediaRecorder mediaRecorder = new MediaRecorder();
-        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);    //音频载体
+//        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);    //音频载体
         mediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);    //视频载体
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);   //输出格式
-        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);  //音频格式
+//        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);  //音频格式
         mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264); //视频格式
-        mediaRecorder.setVideoSize(2400, 1080);  //size
-        mediaRecorder.setVideoFrameRate(30);    //帧率
+//        mediaRecorder.setVideoSize(1280, 740);  //size
+        mediaRecorder.setVideoFrameRate(18);    //帧率
+        mediaRecorder.setVideoSize(640,520);
+
         //创建文件夹
 //        File dir = null;
 //        if (Build.VERSION.SDK_INT > 29) {

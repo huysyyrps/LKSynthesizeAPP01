@@ -57,7 +57,7 @@ public class BaseTcpClient {
             public void isSendSuccss(boolean isSuccess) {
                 if (isSuccess) {
                     sendCallBack.success("send successful");
-                    Log.e("XXX", "send successful");
+//                    Log.e("XXX", "send successful");
                 } else {
                     sendCallBack.faild("send error");
                     Log.e("XXX", "send error");

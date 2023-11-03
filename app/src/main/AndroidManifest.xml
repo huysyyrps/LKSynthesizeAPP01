@@ -94,7 +94,13 @@
         <activity
                 android:name=".ChiFen.Activity.RobotDescernActivity"
                 android:exported="true"
-                android:screenOrientation="landscape" />
+                android:screenOrientation="landscape" >
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+        </activity>
         <activity android:name=".Constant.activity.DefinedActivity" />
         <activity android:name=".Constant.activity.SendSelectActivity" />
         <activity
