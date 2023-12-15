@@ -19,3 +19,9 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+#com.example.lksynthesizeapp
+-keep class com.xxx.** { *; }
+-keep class com.xxx.yyy.** {*;}
+-keep interface com.xxx.** {*;}
+-keep interface com.xxx.yyy.** {*;}
+-keep abstract class package.name.here.module.tfModel{*;}

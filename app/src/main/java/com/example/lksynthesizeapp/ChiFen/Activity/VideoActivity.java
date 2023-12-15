@@ -124,15 +124,15 @@ public class VideoActivity extends BaseActivity implements PhotoContract.View {
                             if (selectList.size() == 0) {
                                 header.setTvTitle("有声视频");
                             } else {
-                                header.setTvTitle("有声视频" + "(" + selectList.size() + "/3)");
+                                header.setTvTitle("有声视频" + "(" + selectList.size() + "/1)");
                             }
                         } else {
-                            if (selectList.size() >= 3) {
+                            if (selectList.size() >= 1) {
                                 holder.setCheckBoxFalse(R.id.cbSelect);
-                                Toast.makeText(VideoActivity.this, "最多只能选择3个视频", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(VideoActivity.this, "最多只能选择1个视频", Toast.LENGTH_SHORT).show();
                             } else {
                                 selectList.add(haveAudio);
-                                header.setTvTitle("有声视频" + "(" + selectList.size() + "/3)");
+                                header.setTvTitle("有声视频" + "(" + selectList.size() + "/1)");
                             }
                         }
                     }

@@ -12,7 +12,7 @@ android {
         minSdk 26
         targetSdk 28
         versionCode 1
-        versionName "1.0.7"
+        versionName "1.0.8"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 //        externalNativeBuild {
 //            cmake {
@@ -27,7 +27,7 @@ android {
         manifestPlaceholders = [
                 //从 3.1.2.0 版本开始，APPID 占位符从 GETUI_APP_ID 切换为 GETUI_APPID
                 //后续所有产品的 APPID 均统一配置为 GETUI_APPID 占位符
-                GETUI_APPID       : "iinLTplUFn7b8Zy2dl8755",
+                GETUI_APPID: "iinLTplUFn7b8Zy2dl8755",
         ]
     }
     lintOptions {
@@ -45,7 +45,17 @@ android {
     signingConfigs {
         release {
             v1SigningEnabled true  //打包时默认勾选 V1（Jar Signature）
-            v2SigningEnabled true  //打包时默认勾选 V2（Full APK Signature）
+            v2SigningEnabled true
+            storeFile file('C:\\Users\\221355\\Desktop\\androidkeystore.jks')
+            storePassword 'android'
+            keyAlias 'luke'
+            keyPassword 'android'//打包时默认勾选 V2（Full APK Signature）
+        }
+        debug {
+            storeFile file('C:\\Users\\221355\\Desktop\\androidkeystore.jks')
+            storePassword 'android'
+            keyAlias 'luke'
+            keyPassword 'android'
         }
     }
 //    compileOptions {
@@ -85,11 +95,11 @@ dependencies {
     implementation 'com.huawei.hms:scanplus:2.4.0.302'
 
     // Retrofit库
-    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
-    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.9.0'
     // gson解析，可以自行替换
-    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
-    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.9.0'
     // 日志的拦截器，也可以自行选择
     implementation 'com.squareup.okhttp3:logging-interceptor:3.6.0'
     implementation 'io.reactivex.rxjava2:rxjava:2.0.1'
@@ -99,8 +109,8 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview-selection:1.1.0-rc01"
     //上拉加载
     implementation 'androidx.appcompat:appcompat:1.0.0'//必须 1.0.0 以上
-    implementation  'io.github.scwang90:refresh-layout-kernel:2.0.5'      //核心必须依赖
-    implementation  'io.github.scwang90:refresh-footer-classics:2.0.5'    //经典加载
+    implementation 'io.github.scwang90:refresh-layout-kernel:2.0.5'      //核心必须依赖
+    implementation 'io.github.scwang90:refresh-footer-classics:2.0.5'    //经典加载
     //glide
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'

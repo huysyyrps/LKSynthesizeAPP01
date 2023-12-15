@@ -20,7 +20,7 @@ import android.graphics.Bitmap;
 public class YoloV5Ncnn
 {
 //    public native boolean Init(AssetManager mgr, int selecynum);
-    public native boolean Init(AssetManager mgr);
+    public static native boolean Init(AssetManager mgr);
 
     public class Obj
     {

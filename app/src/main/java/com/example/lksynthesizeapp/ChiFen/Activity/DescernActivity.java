@@ -221,7 +221,6 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                     showObjects(objects);
                 }
             }
-
             //关闭HttpURLConnection连接
             conn.disconnect();
         } catch (Exception ex) {
@@ -426,7 +425,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
             //获取mediaRecorder
             mediaRecorder = new MyMediaRecorder().getMediaRecorder(this, "/LUKEDescVideo/");
             mVirtualDisplay = mMediaProjection.createVirtualDisplay("你的name",
-                    640, 520, 1,
+                    800, 600, 1,
                     DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
                     mediaRecorder.getSurface(),
                     null, null);
@@ -595,39 +594,42 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
             if(msg==null||msg.equals("")){
                 descernTag = true;
             }else {
-                String first = msg.substring(2, msg.length() - 2);
-                String end = msg.substring(msg.length() - 2);
-                String checkData = bytesHexChange.hexStringToBytes(first);
-                if (checkData.length() >= 2) {
-                    String checkDataLow = checkData.substring(checkData.length() - 2).toUpperCase();
-                    if (checkDataLow.equals(end)) {
-                        String[] backHeartData = bytesHexChange.HexToByteArr(msg);
-                        //循环返回数据
-                        if (backHeartData[0].equals("D3")|| backHeartData[0].equals("E3")) {
-                            if (backHeartData[1].equals("1B")){
-                                runOnUiThread(new Runnable() {
-                                    public void run() {
-                                        String controlData = bytesHexChange.HexToBinary(backHeartData[2]);
-                                        if (controlData.length() == 8) {
-                                            String mode = controlData.substring(7, 8);
-                                            if (mode.equals("1")){
-                                                descernTag = true;
-                                            }else if (mode.equals("0")){
-                                                descernTag = false;
+                if (msg.length()==26){
+                    String first = msg.substring(2, msg.length() - 2);
+                    String end = msg.substring(msg.length() - 2);
+                    String checkData = bytesHexChange.hexStringToBytes(first);
+                    if (checkData.length() >= 2) {
+                        String checkDataLow = checkData.substring(checkData.length() - 2).toUpperCase();
+                        if (checkDataLow.equals(end)) {
+                            String[] backHeartData = bytesHexChange.HexToByteArr(msg);
+                            //循环返回数据
+                            if (backHeartData[0].equals("D3")|| backHeartData[0].equals("E3")) {
+                                if (backHeartData[1].equals("1B")){
+                                    runOnUiThread(new Runnable() {
+                                        public void run() {
+                                            String controlData = bytesHexChange.HexToBinary(backHeartData[2]);
+                                            if (controlData.length() == 8) {
+                                                String mode = controlData.substring(7, 8);
+                                                if (mode.equals("1")){
+                                                    descernTag = true;
+                                                }else if (mode.equals("0")){
+                                                    descernTag = false;
+                                                }
                                             }
                                         }
-                                    }
-                                });
+                                    });
+                                }
                             }
-                        }
-                    }else {
-                        if (devicesModel.equals("LKMT-D3S")){
-                            makeData("D3220000000000000000000022");
-                        }else if (devicesModel.equals("LKMT-E3S")){
-                            makeData("E3220000000000000000000022");
+                        }else {
+                            if (devicesModel.equals("LKMT-D3S")){
+                                makeData("D3220000000000000000000022");
+                            }else if (devicesModel.equals("LKMT-E3S")){
+                                makeData("E3220000000000000000000022");
+                            }
                         }
                     }
                 }
+
             }
         }else {
             if (msg.equals("300A")){
@@ -681,7 +683,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                         baseTcpClient = null;
                     }
 //                    Toast.makeText(DescernActivity.this, R.string.connect_colse, Toast.LENGTH_SHORT).show();
-                    descernTag = true;
+                    descernTag = false;
                     break;
                 case TAG_THERE:
 //                    Toast.makeText(DescernActivity.this, R.string.connect_faile, Toast.LENGTH_SHORT).show();

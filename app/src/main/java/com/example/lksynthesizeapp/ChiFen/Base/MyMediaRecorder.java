@@ -23,7 +23,7 @@ public class MyMediaRecorder {
         mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264); //视频格式
 //        mediaRecorder.setVideoSize(1280, 740);  //size
         mediaRecorder.setVideoFrameRate(18);    //帧率
-        mediaRecorder.setVideoSize(640,520);
+        mediaRecorder.setVideoSize(800,600);
 
         //创建文件夹
 //        File dir = null;
