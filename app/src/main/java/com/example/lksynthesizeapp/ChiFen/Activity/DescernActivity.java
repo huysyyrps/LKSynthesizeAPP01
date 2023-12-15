@@ -268,12 +268,12 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         if (isFirst) {
             isFirst = false;
             saveTime = System.currentTimeMillis();
-            saveImage();
+            saveImage(objects);
         } else {
             currentTmeTime = System.currentTimeMillis();
             if (currentTmeTime - saveTime > 3000) {
                 isFirst = true;
-                saveImage();
+                saveImage(objects);
             }
         }
     }
@@ -314,7 +314,8 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                 if (toast != null) {
                     toast.cancel();
                 }
-                saveImage();
+                YoloV5Ncnn.Obj[] objects = null;
+                saveImage(objects);
 //                if (croppedBitmap!=null){
 //                    Bitmap rgba = croppedBitmap.copy(Bitmap.Config.ARGB_8888, true);
 //                    Canvas canvas = new Canvas(rgba);
@@ -380,20 +381,47 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         }
     }
 
-    private void saveImage() {
-        if (croppedBitmap!=null){
-            Bitmap rgba = croppedBitmap.copy(Bitmap.Config.ARGB_8888, true);
-            Canvas canvas = new Canvas(rgba);
-            canvas.drawText("工程名称 ："+project, 10, 30 , new MyPaint().getHeadTextpaint());
-            canvas.drawText("工件名称 ："+workName, 10, 70 , new MyPaint().getHeadTextpaint());
-            canvas.drawText("工件编号 ："+workCode, 10, 110 , new MyPaint().getHeadTextpaint());
-            boolean backstate = saveImageToGallery(DescernActivity.this, rgba);
+    private void saveImage(YoloV5Ncnn.Obj[] objects) {
+        if (objects == null || objects.length == 0) {
+            boolean backstate = saveImageToGallery(DescernActivity.this, croppedBitmap);
             if (backstate) {
                 toast = Toast.makeText(DescernActivity.this, R.string.save_success, Toast.LENGTH_SHORT);
             } else {
                 toast = Toast.makeText(DescernActivity.this, R.string.save_faile, Toast.LENGTH_SHORT);
             }
             toast.show();
+        }else {
+            if (croppedBitmap!=null){
+                Bitmap rgba = croppedBitmap.copy(Bitmap.Config.ARGB_8888, true);
+                Canvas canvas = new Canvas(rgba);
+                for (int i = 0; i < objects.length; i++) {
+                    canvas.drawRect(objects[i].x, objects[i].y, objects[i].x + objects[i].w, objects[i].y + objects[i].h, new MyPaint().getLinePaint());
+                    {
+                        String text = objects[i].label + " = " + String.format("%.1f", objects[i].prob * 100) + "%";
+
+                        float text_width = new MyPaint().getTextpaint().measureText(text) + 10;
+                        float text_height = -new MyPaint().getTextpaint().ascent() + new MyPaint().getTextpaint().descent() + 10;
+
+                        float x = objects[i].x;
+                        float y = objects[i].y - text_height;
+                        if (y < 0)
+                            y = 0;
+                        if (x + text_width > rgba.getWidth())
+                            x = rgba.getWidth() - text_width;
+                        canvas.drawText(text, x, y - new MyPaint().getTextpaint().ascent(), new MyPaint().getTextpaint());
+                    }
+                }
+                canvas.drawText("工程名称 ："+project, 10, 30 , new MyPaint().getHeadTextpaint());
+                canvas.drawText("工件名称 ："+workName, 10, 70 , new MyPaint().getHeadTextpaint());
+                canvas.drawText("工件编号 ："+workCode, 10, 110 , new MyPaint().getHeadTextpaint());
+                boolean backstate = saveImageToGallery(DescernActivity.this, rgba);
+                if (backstate) {
+                    toast = Toast.makeText(DescernActivity.this, R.string.save_success, Toast.LENGTH_SHORT);
+                } else {
+                    toast = Toast.makeText(DescernActivity.this, R.string.save_faile, Toast.LENGTH_SHORT);
+                }
+                toast.show();
+            }
         }
     }
 
