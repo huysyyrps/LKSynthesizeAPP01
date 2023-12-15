@@ -28,8 +28,8 @@ public class MyPaint {
     public Paint getHeadTextpaint(){
         headTextpaint = new Paint();
         headTextpaint.setColor(Color.RED);
-        headTextpaint.setTextSize(26);
-        headTextpaint.setStrokeWidth(2);
+        headTextpaint.setTextSize(25);
+        headTextpaint.setStrokeWidth(1);
         headTextpaint.setTextScaleX(0.8F);
         headTextpaint.setAntiAlias(true);//抗锯齿
 //        Typeface font = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL);

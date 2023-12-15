@@ -102,7 +102,8 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
     @BindView(R.id.chronometer)
     Chronometer chronometer;
     private String url;
-    private Bitmap bmp = null;
+//    private Bitmap bmp = null;
+    private Bitmap croppedBitmap = null;
     private Bitmap rgba;
     private Thread mythread, saveThread;
     private YoloV5Ncnn yolov5ncnn = new YoloV5Ncnn();
@@ -207,15 +208,16 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
             //得到网络返回的输入流
             inputstream = conn.getInputStream();
             //创建出一个bitmap
-            bmp = BitmapFactory.decodeStream(inputstream);
+            Bitmap bmp = BitmapFactory.decodeStream(inputstream);
+            croppedBitmap = Bitmap.createBitmap(bmp, 172, 100, bmp.getWidth()-172, bmp.getHeight()-100);
             YoloV5Ncnn.Obj[] objects = null;
 //            showObjects(objects);
             if(devicesModel.equals("LKDAC-CMT2SX")){
-                objects = yolov5ncnn.Detect(bmp, false);
+                objects = yolov5ncnn.Detect(croppedBitmap, false);
                 showObjects(objects);
             }else {
                 if (descernTag) {
-                    objects = yolov5ncnn.Detect(bmp, false);
+                    objects = yolov5ncnn.Detect(croppedBitmap, false);
                     showObjects(objects);
                 } else {
                     showObjects(objects);
@@ -235,11 +237,11 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
             if (mNettyTcpClient!=null&&mNettyTcpClient.getConnectStatus()){
                 makeData("300A");
             }
-            imageView.setImageBitmap(bmp);
+            imageView.setImageBitmap(croppedBitmap);
             return;
         }
 
-        Bitmap rgba = bmp.copy(Bitmap.Config.ARGB_8888, true);
+        Bitmap rgba = croppedBitmap.copy(Bitmap.Config.ARGB_8888, true);
         Canvas canvas = new Canvas(rgba);
         for (int i = 0; i < objects.length; i++) {
             canvas.drawRect(objects[i].x, objects[i].y, objects[i].x + objects[i].w, objects[i].y + objects[i].h, new MyPaint().getLinePaint());
@@ -264,21 +266,14 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
             makeData("310A");
         }
         if (isFirst) {
-            canvas.drawText("工程名称 ："+project, 10, 30 , new MyPaint().getHeadTextpaint());
-            canvas.drawText("工件名称 ："+workName, 10, 70 , new MyPaint().getHeadTextpaint());
-            canvas.drawText("工件编号 ："+workCode, 10, 110 , new MyPaint().getHeadTextpaint());
-            saveImageToGallery(DescernActivity.this, rgba);
-            saveTime = System.currentTimeMillis();
             isFirst = false;
+            saveTime = System.currentTimeMillis();
+            saveImage();
         } else {
             currentTmeTime = System.currentTimeMillis();
             if (currentTmeTime - saveTime > 3000) {
-                canvas.drawText("工程名称 ："+project, 10, 30 , new MyPaint().getHeadTextpaint());
-                canvas.drawText("工件名称 ："+workName, 10, 70 , new MyPaint().getHeadTextpaint());
-                canvas.drawText("工件编号 ："+workCode, 10, 110 , new MyPaint().getHeadTextpaint());
-                saveImageToGallery(DescernActivity.this, rgba);
-                saveTime = currentTmeTime;
                 isFirst = true;
+                saveImage();
             }
         }
     }
@@ -319,20 +314,21 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                 if (toast != null) {
                     toast.cancel();
                 }
-                if (bmp!=null){
-                    Bitmap rgba = bmp.copy(Bitmap.Config.ARGB_8888, true);
-                    Canvas canvas = new Canvas(rgba);
-                    canvas.drawText("工程名称 ："+project, 10, 30 , new MyPaint().getHeadTextpaint());
-                    canvas.drawText("工件名称 ："+workName, 10, 70 , new MyPaint().getHeadTextpaint());
-                    canvas.drawText("工件编号 ："+workCode, 10, 110 , new MyPaint().getHeadTextpaint());
-                    boolean backstate = saveImageToGallery(DescernActivity.this, rgba);
-                    if (backstate) {
-                        toast = Toast.makeText(DescernActivity.this, R.string.save_success, Toast.LENGTH_SHORT);
-                    } else {
-                        toast = Toast.makeText(DescernActivity.this, R.string.save_faile, Toast.LENGTH_SHORT);
-                    }
-                    toast.show();
-                }
+                saveImage();
+//                if (croppedBitmap!=null){
+//                    Bitmap rgba = croppedBitmap.copy(Bitmap.Config.ARGB_8888, true);
+//                    Canvas canvas = new Canvas(rgba);
+//                    canvas.drawText("工程名称 ："+project, 10, 30 , new MyPaint().getHeadTextpaint());
+//                    canvas.drawText("工件名称 ："+workName, 10, 70 , new MyPaint().getHeadTextpaint());
+//                    canvas.drawText("工件编号 ："+workCode, 10, 110 , new MyPaint().getHeadTextpaint());
+//                    boolean backstate = saveImageToGallery(DescernActivity.this, rgba);
+//                    if (backstate) {
+//                        toast = Toast.makeText(DescernActivity.this, R.string.save_success, Toast.LENGTH_SHORT);
+//                    } else {
+//                        toast = Toast.makeText(DescernActivity.this, R.string.save_faile, Toast.LENGTH_SHORT);
+//                    }
+//                    toast.show();
+//                }
                 break;
             case R.id.rbVideo:
                 if (toast != null) {
@@ -381,6 +377,23 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
 //                startActivity(new Intent(this, SendSelectActivity.class));
                 finish();
                 break;
+        }
+    }
+
+    private void saveImage() {
+        if (croppedBitmap!=null){
+            Bitmap rgba = croppedBitmap.copy(Bitmap.Config.ARGB_8888, true);
+            Canvas canvas = new Canvas(rgba);
+            canvas.drawText("工程名称 ："+project, 10, 30 , new MyPaint().getHeadTextpaint());
+            canvas.drawText("工件名称 ："+workName, 10, 70 , new MyPaint().getHeadTextpaint());
+            canvas.drawText("工件编号 ："+workCode, 10, 110 , new MyPaint().getHeadTextpaint());
+            boolean backstate = saveImageToGallery(DescernActivity.this, rgba);
+            if (backstate) {
+                toast = Toast.makeText(DescernActivity.this, R.string.save_success, Toast.LENGTH_SHORT);
+            } else {
+                toast = Toast.makeText(DescernActivity.this, R.string.save_faile, Toast.LENGTH_SHORT);
+            }
+            toast.show();
         }
     }
 

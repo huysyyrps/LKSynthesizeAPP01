@@ -178,38 +178,40 @@ int sendVideo(int8_t *buf, int len, long tms) {
     return ret;
 }
 
-RTMPPacket *createAudioPacket(int8_t *buf, const int len, const int type, const long tms,
-                              Live *live) {
-
-//    组装音频包  两个字节    是固定的   af    如果是第一次发  你就是 01       如果后面   00  或者是 01  aac
-    int body_size = len + 2;
-    RTMPPacket *packet = (RTMPPacket *) malloc(sizeof(RTMPPacket));
-    RTMPPacket_Alloc(packet, body_size);
-//         音频头
-    packet->m_body[0] = 0xAF;
-    if (type == 1) {
-//        头
-        packet->m_body[1] = 0x00;
-    } else {
-        packet->m_body[1] = 0x01;
-    }
-    memcpy(&packet->m_body[2], buf, len);
-    packet->m_packetType = RTMP_PACKET_TYPE_AUDIO;
-    packet->m_nChannel = 0x05;
-    packet->m_nBodySize = body_size;
-    packet->m_nTimeStamp = tms;
-    packet->m_hasAbsTimestamp = 0;
-    packet->m_headerType = RTMP_PACKET_SIZE_LARGE;
-    packet->m_nInfoField2 = live->rtmp->m_stream_id;
-    return packet;
-}
-
-int sendAudio(int8_t *buf, int len, int type, int tms) {
-//    创建音频包   如何组装音频包
-    RTMPPacket *packet = createAudioPacket(buf, len, type, tms, live);
-    int ret = sendPacket(packet);
-    return ret;
-}
+//2023-12-15注释 如果不识别取消注释活git回滚到2023-12-15
+//RTMPPacket *createAudioPacket(int8_t *buf, const int len, const int type, const long tms,
+//                              Live *live) {
+//
+////    组装音频包  两个字节    是固定的   af    如果是第一次发  你就是 01       如果后面   00  或者是 01  aac
+//    int body_size = len + 2;
+//    RTMPPacket *packet = (RTMPPacket *) malloc(sizeof(RTMPPacket));
+//    RTMPPacket_Alloc(packet, body_size);
+////         音频头
+//    packet->m_body[0] = 0xAF;
+//    if (type == 1) {
+////        头
+//        packet->m_body[1] = 0x00;
+//    } else {
+//        packet->m_body[1] = 0x01;
+//    }
+//    memcpy(&packet->m_body[2], buf, len);
+//    packet->m_packetType = RTMP_PACKET_TYPE_AUDIO;
+//    packet->m_nChannel = 0x05;
+//    packet->m_nBodySize = body_size;
+//    packet->m_nTimeStamp = tms;
+//    packet->m_hasAbsTimestamp = 0;
+//    packet->m_headerType = RTMP_PACKET_SIZE_LARGE;
+//    packet->m_nInfoField2 = live->rtmp->m_stream_id;
+//    return packet;
+//}
+//
+//2023-12-15注释 如果不识别取消注释活git回滚到2023-12-15
+//int sendAudio(int8_t *buf, int len, int type, int tms) {
+////    创建音频包   如何组装音频包
+//    RTMPPacket *packet = createAudioPacket(buf, len, type, tms, live);
+//    int ret = sendPacket(packet);
+//    return ret;
+//}
 
 
 static ncnn::UnlockedPoolAllocator g_blob_pool_allocator;
@@ -770,10 +772,11 @@ Java_com_example_lksynthesizeapp_ChiFen_MediaCodec_ScreenLive_sendData(JNIEnv *e
             LOGI("send video  lenght :%d", len);
             ret = sendVideo(data, len, tms);
             break;
-        default: //audio
-            ret = sendAudio(data, len, type, tms);
-            LOGI("send Audio  lenght :%d", len);
-            break;
+//2023-12-15注释 如果不识别取消注释活git回滚到2023-12-15
+//        default: //audio
+//            ret = sendAudio(data, len, type, tms);
+//            LOGI("send Audio  lenght :%d", len);
+//            break;
     }
     env->ReleaseByteArrayElements(data_, data, 0);
     return ret;
