@@ -95,6 +95,7 @@ public class SendSelectActivity extends BaseActivity {
         new EditTextLengClient().textLeng(etWorkCode, this);
         new EditTextLengClient().textLeng(etWorkName, this);
         deviceName = sharePreferencesUtils.getString(SendSelectActivity.this, "deviceName", "");
+//        deviceName = "机器人";
         wifiDialog();
     }
 

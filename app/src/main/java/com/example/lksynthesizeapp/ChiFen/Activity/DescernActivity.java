@@ -196,7 +196,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         try {
             InputStream inputstream = null;
             //创建一个URL对象
-            videoUrl = new URL(url);
+            URL videoUrl = new URL("http://192.168.43.251:8080?action=snapshot");
             //利用HttpURLConnection对象从网络中获取网页数据
             conn = (HttpURLConnection) videoUrl.openConnection();
             //设置输入流
@@ -616,8 +616,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         baseTcpClient.sendTcpData(data, new SendCallBack() {
             @Override
             public void success(String success) {
-
-//                Log.e("TAG","发送成功");
+                Log.e("TAG","发送成功");
             }
 
             @Override
