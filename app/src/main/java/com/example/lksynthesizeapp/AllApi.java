@@ -50,8 +50,8 @@ public interface AllApi {
      */
     @Multipart
     @POST(ApiAddress.photoup)
-//    @Headers({"Content-Type:multipart/form-data; charset=UTF-8"})
     Observable<UpPhoto> getPhoto(@Part MultipartBody.Part file);
+//    @Headers({"Content-Type:multipart/form-data; charset=UTF-8"})
 
     /**
      * 图片视频保存

@@ -487,16 +487,16 @@ Java_com_example_lksynthesizeapp_YoloV5Ncnn_Init(JNIEnv *env, jobject thiz, jobj
 
     yolov5.register_custom_layer("YoloV5Focus", YoloV5Focus_layer_creator);
 
-    // init param
-    int ret = yolov5.load_param(mgr, "best230530-sim-opt-fp16.param");
+    // init param  best20250314.param   bestncnn
+    int ret = yolov5.load_param(mgr, "best20250314.param");
     if (ret != 0) {
-        __android_log_print(ANDROID_LOG_DEBUG, "best230530-sim-opt-fp16", "load_param failed");
+        __android_log_print(ANDROID_LOG_DEBUG, "best20250305", "load_param failed");
         return JNI_FALSE;
     }
 
     // init bin
     {
-        int ret = yolov5.load_model(mgr, "best230530-sim-opt-fp16.bin");
+        int ret = yolov5.load_model(mgr, "best20250314.bin");
         if (ret != 0) {
             __android_log_print(ANDROID_LOG_DEBUG, "YoloV5Ncnn", "load_param failed");
             return JNI_FALSE;
@@ -672,9 +672,16 @@ Java_com_example_lksynthesizeapp_YoloV5Ncnn_Detect(JNIEnv *env, jobject thiz, jo
     }
 
     // objects to Obj[]
+    //'straight','circle','cross crack','long crack',
+    //'trans crack',
+    //'edge crack'，
+    //'diver crack'
     static const char *class_names[] = {
             "Circulardefect", "crack","inclusion"
     };
+//    static const char *class_names[] = {
+//            "straight", "circle","cross crack","long crack","trans crack","edge crack","diver crack",
+//    };
 
     jobjectArray jObjArray = env->NewObjectArray(objects.size(), objCls, NULL);
 

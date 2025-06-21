@@ -100,12 +100,17 @@ public class VideoActivity extends BaseActivity implements PhotoContract.View {
         baseRecyclerAdapter = new BaseRecyclerAdapter<VideoLocal>(VideoActivity.this, R.layout.album_item, imagePaths) {
             @Override
             public void convert(BaseViewHolder holder, final VideoLocal haveAudio) {
-                if (haveAudio.getFile().getName() + "" != null) {
-                    holder.setBitmap(R.id.imageView, haveAudio.getBitmap());
-                    holder.setVisitionTextView(R.id.tvTime);
-                    holder.setText(R.id.tvName, haveAudio.getFile().getName() + "");
-                    holder.setText(R.id.tvTime, haveAudio.getTime());
+                try {
+                    if (haveAudio.getFile().getName() + "" != null) {
+                        holder.setBitmap(R.id.imageView, haveAudio.getBitmap());
+                        holder.setVisitionTextView(R.id.tvTime);
+                        holder.setText(R.id.tvName, haveAudio.getFile().getName() + "");
+                        holder.setText(R.id.tvTime, haveAudio.getTime());
+                    }
+                }catch (Exception e){
+                    Log.e("VideoActivity",e.toString());
                 }
+
                 holder.setOnClickListener(R.id.imageView, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

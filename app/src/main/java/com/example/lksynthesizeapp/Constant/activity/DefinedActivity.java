@@ -3,6 +3,8 @@ package com.example.lksynthesizeapp.Constant.activity;
 import static com.huawei.hms.hmsscankit.RemoteView.REQUEST_CODE_PHOTO;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -103,6 +105,7 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
     VersionInfoPresenter versionInfoPresenter;
     private Bundle savedInstanceState;
     private boolean isBaseVersion = false;
+    private Dialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,13 +118,6 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
         tvCurrentVersion.setText("V"+getVersionName());
         versionInfoPresenter = new VersionInfoPresenter(this, this);
 //        ProgressDialogUtil.startLoad(this, "");
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                upDataTag();
-            }
-        }).start();
-        remoteSetting(savedInstanceState);
     }
 
     private void upDataTag() {
@@ -187,33 +183,35 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
 
     @Override
     public void onPermissionsDenied(int requestCode, List<String> list) {
-        new AlertDialogUtil(DefinedActivity.this).showDialog("为了您正常使用此程序，请您 "
-                + "\n"
-                + "到设置界面手动开启程序所需权限。", new AlertDialogCallBack() {
-            @Override
-            public void confirm(String name) {
-                Intent intent = new Intent();
-                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                intent.setData(Uri.parse("package:" + DefinedActivity.this.getPackageName()));
-                startActivityForResult(intent, Constant.TAG_ONE);
-                finish();
-            }
+        if (dialog==null){
+            dialog = new AlertDialogUtil(DefinedActivity.this).showDialog("为了您正常使用此程序，请您 "
+                    + "\n"
+                    + "到设置界面手动开启程序所需权限。", new AlertDialogCallBack() {
+                @Override
+                public void confirm(String name) {
+                    Intent intent = new Intent();
+                    intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    intent.setData(Uri.parse("package:" + DefinedActivity.this.getPackageName()));
+                    startActivityForResult(intent, Constant.TAG_ONE);
+                    finish();
+                }
 
-            @Override
-            public void cancel() {
+                @Override
+                public void cancel() {
 
-            }
+                }
 
-            @Override
-            public void save(String name) {
+                @Override
+                public void save(String name) {
 
-            }
+                }
 
-            @Override
-            public void checkName(String name) {
+                @Override
+                public void checkName(String name) {
 
-            }
-        });
+                }
+            });
+        }
     }
 
     @Override
@@ -479,6 +477,12 @@ public class DefinedActivity extends BaseActivity implements EasyPermissions.Per
         if (EasyPermissions.hasPermissions(this, PERMS)) {
             // 已经申请过权限，做想做的事
             remoteView.onStart();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    upDataTag();
+                }
+            }).start();
         } else {
             // 没有申请过权限，现在去申请
             /**

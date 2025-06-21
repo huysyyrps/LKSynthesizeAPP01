@@ -27,7 +27,7 @@ public class AlertDialogUtil {
         this.context = context;
     }
 
-    public void showDialog(String description, final AlertDialogCallBack alertDialogCallBack) {
+    public Dialog showDialog(String description, final AlertDialogCallBack alertDialogCallBack) {
         if (dialog == null || !dialog.isShowing()) {
             dialog = new AlertDialog.Builder(context).create();
             dialog.setCancelable(false);
@@ -56,6 +56,7 @@ public class AlertDialogUtil {
             });
             dialog.getWindow().setContentView(view);
         }
+        return dialog;
     }
 
     public void showWifiSetting(Context context,String ssid,String pwd,final DialogCallBack dialogCallBack) {

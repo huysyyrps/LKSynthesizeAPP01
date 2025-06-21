@@ -29,7 +29,6 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Chronometer;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -52,6 +51,7 @@ import com.example.lksynthesizeapp.ChiFen.Netty.BaseTcpClient;
 import com.example.lksynthesizeapp.ChiFen.Netty.NettyTcpClient;
 import com.example.lksynthesizeapp.ChiFen.Netty.SendCallBack;
 import com.example.lksynthesizeapp.ChiFen.service.WhiteService;
+import com.example.lksynthesizeapp.ChiFen.test.ScreenCaptureService;
 import com.example.lksynthesizeapp.Constant.Base.Constant;
 import com.example.lksynthesizeapp.R;
 import com.example.lksynthesizeapp.SharePreferencesUtils;
@@ -99,15 +99,11 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
     RadioButton rbSetting;
     @BindView(R.id.linlayoutData)
     LinearLayout linlayoutData;
-    @BindView(R.id.chronometer)
-    Chronometer chronometer;
     private String url;
-//    private Bitmap bmp = null;
     private Bitmap croppedBitmap = null;
     private Bitmap rgba;
     private Thread mythread, saveThread;
     private YoloV5Ncnn yolov5ncnn = new YoloV5Ncnn();
-    URL videoUrl;
     HttpURLConnection conn;
     private MediaPlayer mediaPlayer;
     public boolean runing = true;
@@ -115,24 +111,19 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
     public boolean isFirst = true;
     public long saveTime = 0;
     public long currentTmeTime = 0;
-    public static final int TIME = 3000;
     private Toast toast;
-    private Notifications mNotifications;
-    //创建一个虚屏VirtualDisplay，内含一个真实的Display对象
-    private VirtualDisplay mVirtualDisplay;
-    //获取电源锁
-    private MediaProjection mMediaProjection;
     private MediaProjectionManager mMediaProjectionManager;
-    String[] PERMS = {Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.FOREGROUND_SERVICE};
-    private MediaRecorder mediaRecorder;
     public static DescernActivity intance = null;
     NettyTcpClient mNettyTcpClient;
     BaseTcpClient baseTcpClient;
     BytesHexChange bytesHexChange = BytesHexChange.getInstance();
     boolean descernTag = false;
     String devicesModel;
+
+    private long startTime = 0;
+    private long endTime = 0;
+    private boolean isRecording = false;
+    private boolean videoState = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -213,10 +204,12 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
             YoloV5Ncnn.Obj[] objects = null;
 //            showObjects(objects);
             if(devicesModel.equals("LKDAC-CMT2SX")){
+                startTime = System.currentTimeMillis();
                 objects = yolov5ncnn.Detect(croppedBitmap, false);
                 showObjects(objects);
             }else {
                 if (descernTag) {
+                    startTime = System.currentTimeMillis();
                     objects = yolov5ncnn.Detect(croppedBitmap, false);
                     showObjects(objects);
                 } else {
@@ -240,7 +233,6 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
             imageView.setImageBitmap(croppedBitmap);
             return;
         }
-
         Bitmap rgba = croppedBitmap.copy(Bitmap.Config.ARGB_8888, true);
         Canvas canvas = new Canvas(rgba);
         for (int i = 0; i < objects.length; i++) {
@@ -260,6 +252,9 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                 canvas.drawText(text, x, y - new MyPaint().getTextpaint().ascent(), new MyPaint().getTextpaint());
             }
         }
+        endTime = System.currentTimeMillis();
+        Log.e("TAG11111111111",(endTime-startTime)+"");
+        startTime = endTime;
         imageView.setImageBitmap(rgba);
         mediaPlayer.start();
         if (mNettyTcpClient!=null&&mNettyTcpClient.getConnectStatus()){
@@ -277,16 +272,6 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
             }
         }
     }
-
-    //截图
-    private Bitmap screenImage(){
-        View view1 = frameLayout1;
-        view1.setDrawingCacheEnabled(true);
-        view1.buildDrawingCache();
-        Bitmap bitmap = Bitmap.createBitmap(view1.getDrawingCache());
-        return bitmap;
-    }
-
 
     public static boolean saveImageToGallery(Context context, Bitmap bmp) {
         boolean backstate = new ImageSave().saveBitmap("/LUKEDescImage/", context, bmp);
@@ -337,25 +322,13 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                 }
                 radioGroup.setVisibility(View.GONE);
                 linearLayoutStop.setVisibility(View.VISIBLE);
-                if (mMediaProjection == null) {
-                    requestMediaProjection();
-                } else {
-                    if (EasyPermissions.hasPermissions(this, PERMS)) {
-                        new TirenSet().checkTirem(ivTimer);
-                        startMedia();
-                    } else {
-                        // 没有申请过权限，现在去申请
-                        EasyPermissions.requestPermissions(this, "PERMISSION_STORAGE_MSG", Constant.TAG_ONE, PERMS);
-                    }
-                }
+                requestMediaProjection();
                 break;
             case R.id.linearLayoutStop:
-                ChronometerEnd();
                 radioGroup.setVisibility(View.VISIBLE);
                 linearLayoutStop.setVisibility(View.GONE);
-                if (mediaRecorder != null) {
-                    stopMedia();
-                }
+                videoState = true;
+                stopMedia();
                 break;
             case R.id.rbAlbum:
                 new MainUI().showPopupMenu(rbAlbum, "Desc", this);
@@ -425,71 +398,15 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         }
     }
 
-    //开始计时
-    private void ChronometerStart() {
-        chronometer.start();//开始计时
-        chronometer.setBase(SystemClock.elapsedRealtime());
-        CharSequence time = chronometer.getText();
-        Log.e("TAG",time.toString());
-        chronometer.setText(time.toString());
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (true){
-                    if (chronometer.getText().toString().equals("00:30")){
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                ChronometerEnd();
-                                radioGroup.setVisibility(View.VISIBLE);
-                                linearLayoutStop.setVisibility(View.GONE);
-                                if (mediaRecorder != null) {
-                                    stopMedia();
-                                }
-                            }
-                        });
-                    }
-
-                }
-            }
-        }).start();
-    }
-
-    //结束计时
-    private void ChronometerEnd() {
-        chronometer.stop();
-        chronometer.setBase(SystemClock.elapsedRealtime());
-    }
-
-    private void startMedia() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            //获取mediaRecorder
-            mediaRecorder = new MyMediaRecorder().getMediaRecorder(this, "/LUKEDescVideo/");
-            mVirtualDisplay = mMediaProjection.createVirtualDisplay("你的name",
-                    800, 600, 1,
-                    DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
-                    mediaRecorder.getSurface(),
-                    null, null);
-        }
-        //开始录制
-        try {
-            mediaRecorder.start();
-            ChronometerStart();
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        }
-    }
-
     private void stopMedia() {
-//        mediaRecorder.stop();
-        try {
-            mediaRecorder.stop();
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (isRecording) {
+            Intent serviceIntent = new Intent(this, ScreenCaptureService.class);
+            serviceIntent.setAction(ScreenCaptureService.ACTION_STOP);
+            startService(serviceIntent); // Send stop command to service
+            isRecording = false;
+            Toast.makeText(this, "屏幕录制已停止", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "没有正在进行的录制", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -507,11 +424,15 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                 if (resultCode == Activity.RESULT_OK) {
                     if (resultCode == Activity.RESULT_OK) {
                         new BottomUI().hideBottomUIMenu(this.getWindow());
-                        mMediaProjection = mMediaProjectionManager.getMediaProjection(resultCode, backdata);
-                        new TirenSet().checkTirem(ivTimer);
-                        startMedia();
-                    } else {
-                        finish();
+                        ScreenCaptureService.sMediaProjection = mMediaProjectionManager.getMediaProjection(resultCode, backdata);
+                        if (ScreenCaptureService.sMediaProjection != null) {
+                            startRecordingService(5 * 60 * 1000); // Record segments of 5 minutes
+                            isRecording = true;
+                            Toast.makeText(this, "屏幕录制已开始 (分段存储)", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(this, "获取MediaProjection失败", Toast.LENGTH_SHORT).show();
+                        }
+//                        new TirenSet().checkTirem(ivTimer);
                     }
                 } else {
                     finish();
@@ -522,6 +443,18 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
                     String position = backdata.getStringExtra("position");
                 }
 
+        }
+    }
+
+    private void startRecordingService(long segmentDurationMs) {
+        Intent serviceIntent = new Intent(this, ScreenCaptureService.class);
+        serviceIntent.setAction(ScreenCaptureService.ACTION_START);
+        serviceIntent.putExtra(ScreenCaptureService.EXTRA_SEGMENT_DURATION_MS, segmentDurationMs);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(serviceIntent);
+        } else {
+            startService(serviceIntent);
         }
     }
 
@@ -616,7 +549,6 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
         baseTcpClient.sendTcpData(data, new SendCallBack() {
             @Override
             public void success(String success) {
-                Log.e("TAG","发送成功");
             }
 
             @Override
@@ -629,7 +561,7 @@ public class DescernActivity extends AppCompatActivity implements EasyPermission
     @Override
     public void onMessageResponseClient(String msg, int index) {
         //如果型号为D3/E3 返回数据如果为空，则默认开启识别
-        Log.e("TAG","接收数据"+msg);
+//        Log.e("TAG","接收数据"+msg);
         if(devicesModel.equals("LKMT-D3S")||devicesModel.equals("LKMT-E3S")){
             if(msg==null||msg.equals("")){
                 descernTag = true;
